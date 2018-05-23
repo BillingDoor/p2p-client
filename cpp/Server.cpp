@@ -21,11 +21,15 @@ void Server::setup_socket(uint16_t port) {
   //Avoid bind error if the socket was not close()'d last time;
   setsockopt(connection_socket, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int));
 
+
   connection_socket = socket(AF_INET, SOCK_STREAM, 0);
   if(!connection_socket) {
     std::cerr << "ERROR: Failed to create socket." << std::endl;
     exit(-1);
   }
+
+  // set to nonblocking
+  fcntl(connection_socket, F_SETFL, O_NONBLOCK);
 
   if(bind(connection_socket, (struct sockaddr *) &server_address, sizeof(sockaddr_in)) < 0) {
     std::cerr << "ERROR: Failed to bind socket." << std::endl;
@@ -49,14 +53,20 @@ void Server::run() {
     client.socket = accept(connection_socket, (struct sockaddr *) &client_address, &cliSize);
 
     if(client.socket < 0) {
-      std::cerr << "Error: Failed to accept client." << std::endl;
+//      std::cerr << "Error: Failed to accept client." << std::endl;
     } else {
-      client_connections.emplace_back(
-        std::move(std::thread([&](ClientConnection client) { Server::handle_client(client); }, client)));
+      std::thread conn([&](ClientConnection client) { Server::handle_client(client); }, client);
+      client_connections.emplace_back(conn.native_handle());
+      conn.detach();
       std::cout << "Client connected!" << std::endl;
     }
   }
-  close_socket();
+}
+
+void Server::stop() {
+  for(auto &&thread : client_connections) {
+    pthread_cancel(thread);
+  }
 }
 
 void Server::close_socket() {
@@ -76,7 +86,11 @@ void Server::handle_client(ClientConnection client) {
     // break if an error occurred
     if(not success) break;
   }
+  // remove client
   close(client.socket);
+//  mutex.lock();
+  client_connections.erase(std::remove(client_connections.begin(), client_connections.end(), pthread_self()), client_connections.end());
+//  mutex.unlock();
 }
 
 std::string Server::get_request(ClientConnection client) {
