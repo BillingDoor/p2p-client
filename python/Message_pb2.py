@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='Message.proto',
   package='botnet_p2p',
   syntax='proto3',
-  serialized_pb=_b('\n\rMessage.proto\x12\nbotnet_p2p\"\xd3\t\n\x07Message\x12\x0c\n\x04uuid\x18\x01 \x01(\x04\x12-\n\x04type\x18\x02 \x01(\x0e\x32\x1f.botnet_p2p.Message.MessageType\x12\x0e\n\x06sender\x18\x03 \x01(\t\x12\x10\n\x08receiver\x18\x04 \x01(\t\x12\x13\n\x0bpropagation\x18\x05 \x01(\x08\x12\x11\n\tsignature\x18\x06 \x01(\x0c\x12/\n\x08pCommand\x18\x07 \x01(\x0b\x32\x1b.botnet_p2p.Message.CommandH\x00\x12\x31\n\tpResponse\x18\x08 \x01(\x0b\x32\x1c.botnet_p2p.Message.ResponseH\x00\x12.\n\x05pFile\x18\t \x01(\x0b\x32\x1d.botnet_p2p.Message.FileChunkH\x00\x12\x35\n\x0bpNATRequest\x18\n \x01(\x0b\x32\x1e.botnet_p2p.Message.NATRequestH\x00\x12\x31\n\tpNATCheck\x18\x0b \x01(\x0b\x32\x1c.botnet_p2p.Message.NATCheckH\x00\x12+\n\x06pLeave\x18\x0c \x01(\x0b\x32\x19.botnet_p2p.Message.LeaveH\x00\x12\x31\n\tpFindMode\x18\r \x01(\x0b\x32\x1c.botnet_p2p.Message.FindNodeH\x00\x12\x35\n\x0bpFoundNodes\x18\x0e \x01(\x0b\x32\x1e.botnet_p2p.Message.FoundNodesH\x00\x1aH\n\x0fNodeDescription\x12\x0c\n\x04guid\x18\x01 \x01(\x04\x12\n\n\x02IP\x18\x02 \x01(\t\x12\x0c\n\x04Port\x18\x03 \x01(\t\x12\r\n\x05isNAT\x18\x04 \x01(\x08\x1a\x36\n\x07\x43ommand\x12\x15\n\rcommandString\x18\x01 \x01(\t\x12\x14\n\x0csendResponse\x18\x02 \x01(\x08\x1a\x45\n\x08Response\x12\r\n\x05value\x18\x01 \x01(\t\x12*\n\x06status\x18\x02 \x01(\x0e\x32\x1a.botnet_p2p.Message.Status\x1ap\n\tFileChunk\x12\x0c\n\x04path\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\x08\x12\x13\n\x0b\x63hunkNumber\x18\x03 \x01(\r\x12\x11\n\tallChunks\x18\x04 \x01(\r\x12\x11\n\tchunkSize\x18\x05 \x01(\r\x12\x0c\n\x04\x64\x61ta\x18\x06 \x01(\x0c\x1a\x1c\n\nNATRequest\x12\x0e\n\x06target\x18\x01 \x01(\x04\x1a\x1a\n\x08NATCheck\x12\x0e\n\x06source\x18\x01 \x01(\x04\x1a\x15\n\x05Leave\x12\x0c\n\x04guid\x18\x01 \x01(\x04\x1a\x18\n\x08\x46indNode\x12\x0c\n\x04guid\x18\x01 \x01(\x04\x1a@\n\nFoundNodes\x12\x32\n\x05nodes\x18\x01 \x03(\x0b\x32#.botnet_p2p.Message.NodeDescription\"\x9c\x01\n\x0bMessageType\x12\r\n\tUNDEFINED\x10\x00\x12\x0b\n\x07\x43OMMAND\x10\x01\x12\x0c\n\x08RESPONSE\x10\x02\x12\x0e\n\nFILE_CHUNK\x10\x03\x12\x0f\n\x0bNAT_REQUEST\x10\x04\x12\r\n\tNAT_CHECK\x10\x05\x12\x08\n\x04PING\x10\x06\x12\t\n\x05LEAVE\x10\x07\x12\r\n\tFIND_NODE\x10\x08\x12\x0f\n\x0b\x46OUND_NODES\x10\t\"\x1a\n\x06Status\x12\x08\n\x04\x46\x41IL\x10\x00\x12\x06\n\x02OK\x10\x01\x42\t\n\x07payloadb\x06proto3')
+  serialized_pb=_b('\n\rMessage.proto\x12\nbotnet_p2p\"\xb3\n\n\x07Message\x12\x0c\n\x04uuid\x18\x01 \x01(\x04\x12-\n\x04type\x18\x02 \x01(\x0e\x32\x1f.botnet_p2p.Message.MessageType\x12\x0e\n\x06sender\x18\x03 \x01(\t\x12\x10\n\x08receiver\x18\x04 \x01(\t\x12\x13\n\x0bpropagation\x18\x05 \x01(\x08\x12\x11\n\tsignature\x18\x06 \x01(\x0c\x12/\n\x08pCommand\x18\x07 \x01(\x0b\x32\x1b.botnet_p2p.Message.CommandH\x00\x12\x31\n\tpResponse\x18\x08 \x01(\x0b\x32\x1c.botnet_p2p.Message.ResponseH\x00\x12.\n\x05pFile\x18\t \x01(\x0b\x32\x1d.botnet_p2p.Message.FileChunkH\x00\x12\x35\n\x0bpNATRequest\x18\n \x01(\x0b\x32\x1e.botnet_p2p.Message.NATRequestH\x00\x12\x31\n\tpNATCheck\x18\x0b \x01(\x0b\x32\x1c.botnet_p2p.Message.NATCheckH\x00\x12+\n\x06pLeave\x18\x0c \x01(\x0b\x32\x19.botnet_p2p.Message.LeaveH\x00\x12\x31\n\tpFindMode\x18\r \x01(\x0b\x32\x1c.botnet_p2p.Message.FindNodeH\x00\x12\x35\n\x0bpFoundNodes\x18\x0e \x01(\x0b\x32\x1e.botnet_p2p.Message.FoundNodesH\x00\x12\x33\n\npFindValue\x18\x0f \x01(\x0b\x32\x1d.botnet_p2p.Message.FindValueH\x00\x1aH\n\x0fNodeDescription\x12\x0c\n\x04guid\x18\x01 \x01(\x04\x12\n\n\x02IP\x18\x02 \x01(\t\x12\x0c\n\x04Port\x18\x03 \x01(\t\x12\r\n\x05isNAT\x18\x04 \x01(\x08\x1a\x36\n\x07\x43ommand\x12\x15\n\rcommandString\x18\x01 \x01(\t\x12\x14\n\x0csendResponse\x18\x02 \x01(\x08\x1a\x45\n\x08Response\x12\r\n\x05value\x18\x01 \x01(\t\x12*\n\x06status\x18\x02 \x01(\x0e\x32\x1a.botnet_p2p.Message.Status\x1ap\n\tFileChunk\x12\x0c\n\x04path\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\x08\x12\x13\n\x0b\x63hunkNumber\x18\x03 \x01(\r\x12\x11\n\tallChunks\x18\x04 \x01(\r\x12\x11\n\tchunkSize\x18\x05 \x01(\r\x12\x0c\n\x04\x64\x61ta\x18\x06 \x01(\x0c\x1a\x1c\n\nNATRequest\x12\x0e\n\x06target\x18\x01 \x01(\x04\x1a\x1a\n\x08NATCheck\x12\x0e\n\x06source\x18\x01 \x01(\x04\x1a\x19\n\tFindValue\x12\x0c\n\x04guid\x18\x01 \x01(\x04\x1a\x15\n\x05Leave\x12\x0c\n\x04guid\x18\x01 \x01(\x04\x1a\x18\n\x08\x46indNode\x12\x0c\n\x04guid\x18\x01 \x01(\x04\x1a@\n\nFoundNodes\x12\x32\n\x05nodes\x18\x01 \x03(\x0b\x32#.botnet_p2p.Message.NodeDescription\"\xac\x01\n\x0bMessageType\x12\r\n\tUNDEFINED\x10\x00\x12\x0b\n\x07\x43OMMAND\x10\x01\x12\x0c\n\x08RESPONSE\x10\x02\x12\x0e\n\nFILE_CHUNK\x10\x03\x12\x0f\n\x0bNAT_REQUEST\x10\x04\x12\r\n\tNAT_CHECK\x10\x05\x12\x08\n\x04PING\x10\x06\x12\t\n\x05LEAVE\x10\x07\x12\r\n\tFIND_NODE\x10\x08\x12\x0f\n\x0b\x46OUND_NODES\x10\t\x12\x0e\n\nFIND_VALUE\x10\n\"\x1a\n\x06Status\x12\x08\n\x04\x46\x41IL\x10\x00\x12\x06\n\x02OK\x10\x01\x42\t\n\x07payloadb\x06proto3')
 )
 
 
@@ -70,11 +70,15 @@ _MESSAGE_MESSAGETYPE = _descriptor.EnumDescriptor(
       name='FOUND_NODES', index=9, number=9,
       options=None,
       type=None),
+    _descriptor.EnumValueDescriptor(
+      name='FIND_VALUE', index=10, number=10,
+      options=None,
+      type=None),
   ],
   containing_type=None,
   options=None,
-  serialized_start=1070,
-  serialized_end=1226,
+  serialized_start=1150,
+  serialized_end=1322,
 )
 _sym_db.RegisterEnumDescriptor(_MESSAGE_MESSAGETYPE)
 
@@ -95,8 +99,8 @@ _MESSAGE_STATUS = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=1228,
-  serialized_end=1254,
+  serialized_start=1324,
+  serialized_end=1350,
 )
 _sym_db.RegisterEnumDescriptor(_MESSAGE_STATUS)
 
@@ -148,8 +152,8 @@ _MESSAGE_NODEDESCRIPTION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=581,
-  serialized_end=653,
+  serialized_start=634,
+  serialized_end=706,
 )
 
 _MESSAGE_COMMAND = _descriptor.Descriptor(
@@ -185,8 +189,8 @@ _MESSAGE_COMMAND = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=655,
-  serialized_end=709,
+  serialized_start=708,
+  serialized_end=762,
 )
 
 _MESSAGE_RESPONSE = _descriptor.Descriptor(
@@ -222,8 +226,8 @@ _MESSAGE_RESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=711,
-  serialized_end=780,
+  serialized_start=764,
+  serialized_end=833,
 )
 
 _MESSAGE_FILECHUNK = _descriptor.Descriptor(
@@ -287,8 +291,8 @@ _MESSAGE_FILECHUNK = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=782,
-  serialized_end=894,
+  serialized_start=835,
+  serialized_end=947,
 )
 
 _MESSAGE_NATREQUEST = _descriptor.Descriptor(
@@ -317,8 +321,8 @@ _MESSAGE_NATREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=896,
-  serialized_end=924,
+  serialized_start=949,
+  serialized_end=977,
 )
 
 _MESSAGE_NATCHECK = _descriptor.Descriptor(
@@ -347,8 +351,38 @@ _MESSAGE_NATCHECK = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=926,
-  serialized_end=952,
+  serialized_start=979,
+  serialized_end=1005,
+)
+
+_MESSAGE_FINDVALUE = _descriptor.Descriptor(
+  name='FindValue',
+  full_name='botnet_p2p.Message.FindValue',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='guid', full_name='botnet_p2p.Message.FindValue.guid', index=0,
+      number=1, type=4, cpp_type=4, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=1007,
+  serialized_end=1032,
 )
 
 _MESSAGE_LEAVE = _descriptor.Descriptor(
@@ -377,8 +411,8 @@ _MESSAGE_LEAVE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=954,
-  serialized_end=975,
+  serialized_start=1034,
+  serialized_end=1055,
 )
 
 _MESSAGE_FINDNODE = _descriptor.Descriptor(
@@ -407,8 +441,8 @@ _MESSAGE_FINDNODE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=977,
-  serialized_end=1001,
+  serialized_start=1057,
+  serialized_end=1081,
 )
 
 _MESSAGE_FOUNDNODES = _descriptor.Descriptor(
@@ -437,8 +471,8 @@ _MESSAGE_FOUNDNODES = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1003,
-  serialized_end=1067,
+  serialized_start=1083,
+  serialized_end=1147,
 )
 
 _MESSAGE = _descriptor.Descriptor(
@@ -546,10 +580,17 @@ _MESSAGE = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='pFindValue', full_name='botnet_p2p.Message.pFindValue', index=14,
+      number=15, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
-  nested_types=[_MESSAGE_NODEDESCRIPTION, _MESSAGE_COMMAND, _MESSAGE_RESPONSE, _MESSAGE_FILECHUNK, _MESSAGE_NATREQUEST, _MESSAGE_NATCHECK, _MESSAGE_LEAVE, _MESSAGE_FINDNODE, _MESSAGE_FOUNDNODES, ],
+  nested_types=[_MESSAGE_NODEDESCRIPTION, _MESSAGE_COMMAND, _MESSAGE_RESPONSE, _MESSAGE_FILECHUNK, _MESSAGE_NATREQUEST, _MESSAGE_NATCHECK, _MESSAGE_FINDVALUE, _MESSAGE_LEAVE, _MESSAGE_FINDNODE, _MESSAGE_FOUNDNODES, ],
   enum_types=[
     _MESSAGE_MESSAGETYPE,
     _MESSAGE_STATUS,
@@ -564,7 +605,7 @@ _MESSAGE = _descriptor.Descriptor(
       index=0, containing_type=None, fields=[]),
   ],
   serialized_start=30,
-  serialized_end=1265,
+  serialized_end=1361,
 )
 
 _MESSAGE_NODEDESCRIPTION.containing_type = _MESSAGE
@@ -574,6 +615,7 @@ _MESSAGE_RESPONSE.containing_type = _MESSAGE
 _MESSAGE_FILECHUNK.containing_type = _MESSAGE
 _MESSAGE_NATREQUEST.containing_type = _MESSAGE
 _MESSAGE_NATCHECK.containing_type = _MESSAGE
+_MESSAGE_FINDVALUE.containing_type = _MESSAGE
 _MESSAGE_LEAVE.containing_type = _MESSAGE
 _MESSAGE_FINDNODE.containing_type = _MESSAGE
 _MESSAGE_FOUNDNODES.fields_by_name['nodes'].message_type = _MESSAGE_NODEDESCRIPTION
@@ -587,6 +629,7 @@ _MESSAGE.fields_by_name['pNATCheck'].message_type = _MESSAGE_NATCHECK
 _MESSAGE.fields_by_name['pLeave'].message_type = _MESSAGE_LEAVE
 _MESSAGE.fields_by_name['pFindMode'].message_type = _MESSAGE_FINDNODE
 _MESSAGE.fields_by_name['pFoundNodes'].message_type = _MESSAGE_FOUNDNODES
+_MESSAGE.fields_by_name['pFindValue'].message_type = _MESSAGE_FINDVALUE
 _MESSAGE_MESSAGETYPE.containing_type = _MESSAGE
 _MESSAGE_STATUS.containing_type = _MESSAGE
 _MESSAGE.oneofs_by_name['payload'].fields.append(
@@ -613,6 +656,9 @@ _MESSAGE.fields_by_name['pFindMode'].containing_oneof = _MESSAGE.oneofs_by_name[
 _MESSAGE.oneofs_by_name['payload'].fields.append(
   _MESSAGE.fields_by_name['pFoundNodes'])
 _MESSAGE.fields_by_name['pFoundNodes'].containing_oneof = _MESSAGE.oneofs_by_name['payload']
+_MESSAGE.oneofs_by_name['payload'].fields.append(
+  _MESSAGE.fields_by_name['pFindValue'])
+_MESSAGE.fields_by_name['pFindValue'].containing_oneof = _MESSAGE.oneofs_by_name['payload']
 DESCRIPTOR.message_types_by_name['Message'] = _MESSAGE
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
@@ -660,6 +706,13 @@ Message = _reflection.GeneratedProtocolMessageType('Message', (_message.Message,
     ))
   ,
 
+  FindValue = _reflection.GeneratedProtocolMessageType('FindValue', (_message.Message,), dict(
+    DESCRIPTOR = _MESSAGE_FINDVALUE,
+    __module__ = 'Message_pb2'
+    # @@protoc_insertion_point(class_scope:botnet_p2p.Message.FindValue)
+    ))
+  ,
+
   Leave = _reflection.GeneratedProtocolMessageType('Leave', (_message.Message,), dict(
     DESCRIPTOR = _MESSAGE_LEAVE,
     __module__ = 'Message_pb2'
@@ -691,6 +744,7 @@ _sym_db.RegisterMessage(Message.Response)
 _sym_db.RegisterMessage(Message.FileChunk)
 _sym_db.RegisterMessage(Message.NATRequest)
 _sym_db.RegisterMessage(Message.NATCheck)
+_sym_db.RegisterMessage(Message.FindValue)
 _sym_db.RegisterMessage(Message.Leave)
 _sym_db.RegisterMessage(Message.FindNode)
 _sym_db.RegisterMessage(Message.FoundNodes)

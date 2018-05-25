@@ -24,7 +24,7 @@ class Peer(object):
 
     def find_node(self, ID):
         """
-        Send FIND_NODE to this message containing given ID
+        Send FIND_NODE message containing given ID to this peer
         """
         # Make socket and connect to this
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -41,6 +41,25 @@ class Peer(object):
 
         found_nodes_message = putils.read_message(response)
         return found_nodes_message
+
+    def find_value(self, ID):
+        """
+        Send FIND_VALUE message containing given ID to this peer
+        :param ID: id of wanted peer
+        :return: Found Peer or None
+        """
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.connect(self.address())
+
+        msg = putils.create_find_value_message(ID)
+        sock.send(msg)
+
+        response = sock.recv(12000)
+        sock.close()
+
+        found_node = putils.read_message(response)
+        return
+
 
     def get_info(self):
         return self.host, self.port, self.id

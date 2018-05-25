@@ -100,38 +100,37 @@ class KademliaNode(object):
         :param id: id of our wanted peer.
         :return: Peer or None if could not find.
         """
-
         k = self.routing_table.bucket_size
-        nearest_nodes = self.routing_table.nearest_nodes(id, limit=k)
+        peers_to_ask = self.routing_table.nearest_nodes(id, limit=k)
 
-        found_nodes = []
-        for peer in nearest_nodes:
-            found_nodes.extend(peer.find_node(id).pFoundNodes.nodes)
+        smallest_distance = peers_to_ask[0].id ^ id
 
-        found_peers = []
-        for node in found_nodes:
-            guid = node.guid
-            ip = node.IP
-            port = node.Port
-            new_peer = Peer(ip, port, guid)
-            found_peers.append(new_peer)
+        while True:
+            found_peers = []
+            for peer in peers_to_ask:
+                for node in peer.find_node(id).pFoundNodes.nodes:
+                    guid = node.guid
+                    ip = node.IP
+                    port = node.Port
+                    new_peer = Peer(ip, port, guid)
+                    found_peers.append(new_peer)
 
-        # Now we get k best peers
-        best_peers = heapq.nsmallest(k, found_peers, lambda peer: peer.)
+            # Now we get k best peers and insert them into our routing table
+            best_peers = heapq.nsmallest(k, found_peers, lambda p: p.id ^ id)
+            for peer in best_peers:
+                self.routing_table.insert(peer)
+            # If we didn't get any peer closer to our wanted peer break (we should now have all necessary nodes
+            if best_peers[0].id  ^ id <= smallest_distance:
+                break
+            # And ask them about our wanted peer
+            peers_to_ask = best_peers
 
-        # get only k best results
-        heapq.nsmallest(k, found_nodes, lambda p: key ^ p.get_info()[2])
+        # After asking other peers we ask nearest k nodes about our node by sending FIND_VALUE message
+        peers_to_ask = self.routing_table.nearest_nodes(id, limit=k)
 
-        nodes_to_ask = []
-        found_nodes = boot_peer.find_node(key)
-        nodes_to_ask.extend(found_nodes.pFoundNodes.nodes)
+        for peer in peers_to_ask:
+            found_peer = peer.find_value(id)
+            if found_peer:
+                self.routing_table.insert(found_peer)
+                return found_peer
 
-        for peer in nodes_to_ask:
-            guid = peer.guid
-            ip = peer.IP
-            port = peer.Port
-            new_peer = Peer(ip, port, guid)
-            self.routing_table.insert(new_peer)
-
-            found_nodes = new_peer.find_node(key)
-            nodes_to_ask.extend(found_nodes.pFoundNodes.nodes)

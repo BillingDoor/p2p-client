@@ -9,10 +9,23 @@ def create_find_node_message(ID):
     """
 
     msg = python.Message_pb2.Message()
-    msg.pFindMode.guid = ID
+    msg.pFindNode.guid = ID
     msg.type = msg.FIND_NODE
 
     return msg.SerializeToString()
+
+def create_find_value_message(ID):
+    """
+    Creates protobuf message of FindValue type and returns it as a serialized string of bytes
+    :param ID: ID to find
+    :return: String message of bytes
+    """
+    msg = python.Message_pb2.Message()
+    msg.pFindValue.guid = ID
+    msg.type = msg.FIND_VALUE
+
+    return msg.SerializeToString()
+
 
 def read_message(message):
     """

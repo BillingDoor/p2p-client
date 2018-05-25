@@ -13,6 +13,7 @@ message Message {
         LEAVE = 7;
         FIND_NODE = 8;
         FOUND_NODES = 9;
+        FIND_VALUE = 10;
     }
     enum Status {
         FAIL = 0;
@@ -52,7 +53,11 @@ message Message {
     message NATCheck {
         uint64 source = 1;
     }
-    
+
+    message FindValue {
+        uint64 guid = 1;
+    }
+
     message Leave {
         uint64 guid = 1;
     }
@@ -80,6 +85,7 @@ message Message {
         NATCheck pNATCheck = 11;
         Leave pLeave = 12;
         FindNode pFindMode = 13;
-        FoundNodes pFoundNodes = 14;        
+        FoundNodes pFoundNodes = 14;
+        FindValue pFindValue = 15;
     }
 }
