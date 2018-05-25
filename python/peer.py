@@ -1,19 +1,46 @@
 import python.Message_pb2
 import random
-
+import socket
+import python.protobuf_utils as putils
 class Peer(object):
     """
     Peer
     """
 
-    def __init__(self, host, port):
+    def __init__(self, host, port, guid = None):
         self.host, self.port = host, port
         local_random = random.Random()
         local_random.seed(int(''.join(host.split('.')))*int(port))
-        self.id = local_random.getrandbits(128)
+        if guid is None:
+            self.id = local_random.getrandbits(64)
+        else:
+            self.id = guid
+
+    def __eq__(self, other):
+        return self.get_info() == other.get_info()
 
     def address(self):
         return (self.host, self.port)
+
+    def find_node(self, ID):
+        """
+        Send FIND_NODE to this message containing given ID
+        """
+        # Make socket and connect to this
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.connect(self.address())
+
+        msg = putils.create_find_node_message(ID)
+        sock.send(msg)
+
+        # Code below will be changed later to accommodate server-client architecture
+        response = sock.recv(12000)
+        sock.send(bytes("done", 'utf-8'))
+
+        sock.close()
+
+        found_nodes_message = putils.read_message(response)
+        return found_nodes_message
 
     def get_info(self):
         return self.host, self.port, self.id
