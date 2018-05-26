@@ -1,7 +1,6 @@
 import heapq
 import threading
-
-from python.peer import Peer
+import itertools
 
 def largest_differing_bit(value1, value2):
     """
@@ -30,6 +29,19 @@ class BucketList(object):
         self.buckets = [[] for i in range(buckets_number)]
         self.id = id
         self.lock = threading.Lock()
+
+    def __getitem__(self, id):
+        """
+        Return Peer if in routing table. Otherwise None
+        :param id: searched id
+        :return: Found Peer or None
+        """
+        with self.lock:
+            for peer in itertools.chain.from_iterable(self.buckets):
+                if peer.id == id:
+                    return peer
+
+        return None
 
     def insert(self, peer):
         """

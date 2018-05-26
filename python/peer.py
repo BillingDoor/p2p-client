@@ -7,7 +7,7 @@ class Peer(object):
     Peer
     """
 
-    def __init__(self, host, port, guid = None):
+    def __init__(self, host, port, guid = None, is_NAT = False):
         self.host, self.port = host, port
         local_random = random.Random()
         local_random.seed(int(''.join(host.split('.')))*int(port))
@@ -15,6 +15,7 @@ class Peer(object):
             self.id = local_random.getrandbits(64)
         else:
             self.id = guid
+        self.is_NAT = is_NAT
 
     def __eq__(self, other):
         return self.get_info() == other.get_info()
@@ -30,13 +31,11 @@ class Peer(object):
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.connect(self.address())
 
-        msg = putils.create_find_node_message(ID)
+        msg = putils.create_find_node_message(self.id, ID)
         sock.send(msg)
 
         # Code below will be changed later to accommodate server-client architecture
         response = sock.recv(12000)
-        sock.send(bytes("done", 'utf-8'))
-
         sock.close()
 
         found_nodes_message = putils.read_message(response)
@@ -51,7 +50,7 @@ class Peer(object):
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.connect(self.address())
 
-        msg = putils.create_find_value_message(ID)
+        msg = putils.create_find_value_message(self.id, ID)
         sock.send(msg)
 
         response = sock.recv(12000)
@@ -59,7 +58,6 @@ class Peer(object):
 
         found_node = putils.read_message(response)
         return
-
 
     def get_info(self):
         return self.host, self.port, self.id

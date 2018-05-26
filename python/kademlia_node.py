@@ -1,41 +1,109 @@
 from python.peer import Peer
 from python.BucketList import BucketList, largest_differing_bit
-import python.Message_pb2
+import python.protobuf_utils as putils
 import socket
 import socketserver
 import threading
 import heapq
 
 class Server(socketserver.ThreadingMixIn, socketserver.TCPServer):
-    def __init__(self, server_address, request_handler_class):
+    def __init__(self, server_address, request_handler_class, kademlia_node):
         socketserver.TCPServer.__init__(self, server_address, request_handler_class)
-        self.kademlia_node = None
+        self.node = kademlia_node
 
 class RequestHandler(socketserver.BaseRequestHandler):
     def handle(self):
         # self.request is the TCP socket connected to the client
-        self.data = self.request.recv(12000).strip()
-        message = python.Message_pb2.Message().ParseFromString(self.data)
-        print("{} wrote: ".format(self.client_address[0]))
-        print(message)
+        data = self.request.recv(12000)
+        message = putils.read_message(data)
+        """
+        UNDEFINED = 0;
+        COMMAND = 1;
+        RESPONSE = 2;
+        FILE_CHUNK = 3;
+        NAT_REQUEST = 4;
+        NAT_CHECK = 5;
+        PING = 6;
+        LEAVE = 7;
+        FIND_NODE = 8;
+        FOUND_NODES = 9;
+        FIND_VALUE = 10;
+        """
+        if message.type == message.PING:
+            self._handle_ping(message)
+        elif message.type == message.FIND_NODE:
+            self._handle_find_node(message)
+        elif message.type == message.FOUND_NODES:
+            self._handle_found_nodes(message)
+        elif message.type == message.FIND_VALUE:
+            self._handle_find_value(message)
+        elif message.type == message.LEAVE:
+            self._handle_leave(message)
+        else:
+            self._handle_default(message)
 
+    def _handle_ping(self, message):
+        """
+        Handles ping message
+        """
+        address, port = self.request.getpeername()
+        id = message.uuid
+        self.server.node.routing_table.insert(Peer(address, port, id))
+
+        # Send response
+        msg = putils.create_ping_message(self.server.node.peer.id)
+        self.request.send(msg)
+
+    def _handle_find_node(self, message):
+        """
+        Handles find node message
+        """
+        address, port = self.request.getpeername()
+        id = message.uuid
+        self.server.node.routing_table.insert(Peer(address, port, id))
+
+        target_id = message.pFindNode.guid
+        closest_peers = self.server.node.routing_table.nearest_nodes(target_id, limit=self.server.node.routing_table.bucket_size)
+
+        msg = putils.create_found_nodes_message(self.server.node.peer.id, closest_peers)
+        self.request.send(msg)
+
+    def _handle_found_nodes(self, message):
+        """
+        Handles found nodes message
+        """
+
+    def _handle_find_value(self, message):
+        """
+        Handles find value message
+        """
+
+    def _handle_leave(self, message):
+        """
+        Handles leave message
+        """
+
+    def _handle_default(self, message):
+        """
+        Handles other messages
+        """
 
 
 class KademliaNode(object):
-    def __init__(self, host, port, id=None, seeds=[], requesthandler=RequestHandler):
+    def __init__(self, host, port, id=None, seeds=(), requesthandler=RequestHandler):
         # Create kademlia node info object
         self.peer = Peer(host, port)
         self.other_peers = []
         # Create Server
-        self.server = Server(self.peer.address(), requesthandler)
-        self.server.kademlia_node = self
+        self.server = Server(self.peer.address(), requesthandler, self)
+        # Lock so server and client won't send data at the same time
+        self.send_lock = threading.Lock
 
         self.server_thread = threading.Thread(target=self.server.serve_forever)
         self.server_thread.daemon = True
         self.server_thread.start()
 
         self.routing_table = BucketList(5, 64, self.peer.id)
-        self.peers_connections = []
         self.bootstrap(seeds)
 
     def find_nodes(self, key, boot_peer=None):
@@ -72,26 +140,10 @@ class KademliaNode(object):
 
             _ = self.lookup_node(id)
 
-
-    def bootstrap(self, bootstrap_nodes = []):
+    def bootstrap(self, bootstrap_nodes = ()):
         for bnode in bootstrap_nodes:
             boot_peer = Peer(bnode[0], bnode[1])
             self.find_nodes(self.peer.id, boot_peer=boot_peer)
-
-        if len(bootstrap_nodes) == 0:
-            for bnode in self.buckets.to_list():
-                self.find_nodes(self.peer.id, boot_peer=Peer(bnode[0], bnode[1], bnode[2], bnode[3]))
-
-        for bnode in bootstrap_nodes:
-            print("Bootstraping")
-            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            self.peers_connections.append(sock)
-
-            boot_peer = Peer(bnode[0], bnode[1])
-            self.other_peers.append(boot_peer)
-
-            sock.connect(boot_peer.address())
-            boot_peer.ping(socket=sock)
 
     def lookup_node(self, id, alfa=3):
         """
@@ -100,6 +152,10 @@ class KademliaNode(object):
         :param id: id of our wanted peer.
         :return: Peer or None if could not find.
         """
+        peer = self.routing_table[id]
+        if peer:
+            return peer
+
         k = self.routing_table.bucket_size
         peers_to_ask = self.routing_table.nearest_nodes(id, limit=k)
 

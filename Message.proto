@@ -84,7 +84,7 @@ message Message {
         NATRequest pNATRequest = 10;
         NATCheck pNATCheck = 11;
         Leave pLeave = 12;
-        FindNode pFindMode = 13;
+        FindNode pFindNode = 13;
         FoundNodes pFoundNodes = 14;
         FindValue pFindValue = 15;
     }
