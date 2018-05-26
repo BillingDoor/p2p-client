@@ -1,4 +1,5 @@
 import python.Message_pb2
+import python.peer
 
 def create_find_node_message(sender_id, target_id):
     """
@@ -78,6 +79,5 @@ def get_peers_from_found_nodes_message(message):
     :param message: FOUND_NODES message
     :return: List containing Peers
     """
-    #TODO finish
-    return [Peer(node.IP, node.Port, node.guid, node.isNAT) for ]
+    return [python.peer.Peer(node.IP, int(node.Port), node.guid, node.isNAT) for node in message.pFoundNodes.nodes]
 

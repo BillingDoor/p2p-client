@@ -58,15 +58,15 @@ class RequestHandler(socketserver.BaseRequestHandler):
         """
         Handles find node message
         """
-        address, port = self.request.getpeername()
-        id = message.uuid
-        self.server.node.routing_table.insert(Peer(address, port, id))
-
         target_id = message.pFindNode.guid
         closest_peers = self.server.node.routing_table.nearest_nodes(target_id, limit=self.server.node.routing_table.bucket_size)
 
         msg = putils.create_found_nodes_message(self.server.node.peer.id, closest_peers)
         self.request.send(msg)
+
+        address, port = self.request.getpeername()
+        id = message.uuid
+        self.server.node.routing_table.insert(Peer(address, port, id))
 
     def _handle_found_nodes(self, message):
         """
