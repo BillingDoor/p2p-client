@@ -18,6 +18,7 @@ public class Botnet {
     public static void main(String args[]) {
         logger.info("starting");
         Botnet botnet = new Botnet(3000);
+        logger.info("started");
     }
 
     class ShutdownHandler extends Thread {

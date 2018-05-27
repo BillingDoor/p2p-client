@@ -10,6 +10,7 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import java.util.*;
+import java.util.concurrent.CountDownLatch;
 
 class Client extends Thread {
     private static final Logger logger = LogManager.getLogger(Client.class);
@@ -17,7 +18,7 @@ class Client extends Thread {
     private Selector selector;
     private List<BotnetNode> nodes;
     private Queue<PendingMessage> waitingForWrite;
-
+    private CountDownLatch initLatch;
 
     Client() {
         nodes = new ArrayList<>();
@@ -25,12 +26,19 @@ class Client extends Thread {
         this.messageHandler = new MessageHandlers();
     }
 
+    Client(CountDownLatch initLatch) {
+        nodes = new ArrayList<>();
+        waitingForWrite = new LinkedList<>();
+        this.messageHandler = new MessageHandlers();
+        this.initLatch = initLatch;
+    }
+
     @Override
     public void run() {
         logger.info("starting client");
         try {
             selector = Selector.open();
-
+            this.initLatch.countDown();
             while (true) {
                 // blocking call, waiting for at least one ready channel
                 int channels = selector.select();
@@ -67,7 +75,7 @@ class Client extends Thread {
             }
         } catch (IOException e) {
             if (isInterrupted()) {
-                logger.info("thread interrupted");
+                logger.info("mainThread interrupted");
                 Thread.currentThread().interrupt();
             } else {
                 e.printStackTrace();
