@@ -23,15 +23,19 @@ class Peer(object):
     def address(self):
         return (self.host, self.port)
 
-    def find_node(self, ID):
+    def find_node(self, ID, address, port):
         """
         Send FIND_NODE message containing given ID to this peer
+        :param ID: id of peer we want to find
+        :param address: IP address of source peer
+        :param port: port of source peer
+
         """
         # Make socket and connect to this
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.connect(self.address())
 
-        msg = putils.create_find_node_message(self.id, ID, self.host, self.port)
+        msg = putils.create_find_node_message(ID, ID, address, port)
         sock.send(msg)
 
         # Code below will be changed later to accommodate server-client architecture
@@ -41,41 +45,54 @@ class Peer(object):
         found_nodes_message = putils.read_message(response)
         return found_nodes_message
 
-    def find_value(self, ID):
+    def find_value(self, ID, address, port):
         """
         Send FIND_VALUE message containing given ID to this peer
         :param ID: id of wanted peer
+        :param address: IP address of source peer
+        :param port: port of source peer
         :return: Found Peer or None
         """
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.connect(self.address())
 
-        msg = putils.create_find_value_message(self.id, ID, self.host, self.port)
+        msg = putils.create_find_value_message(ID, ID, address, port)
         sock.send(msg)
 
         response = sock.recv(12000)
         sock.close()
 
-        found_node = putils.read_message(response)
-        return
+        found_node_message = putils.read_message(response)
+        node = found_node_message.pFoundNodes.nodes
+        if node:
+            guid = node.guid
+            ip = node.IP
+            port = int(node.Port)
+            is_NAT = node.isNAT
+            new_peer = Peer(ip, port, guid, is_NAT)
+            return new_peer
+        return None
+
 
     def get_info(self):
         return self.host, self.port, self.id
 
-    def ping(self, socket=None):
-        data = "Hello"
-        self._sendmessage(data, socket)
-        self._receivemessage(socket)
+    def ping(self, address, port):
+        """
+        Send PING message to this peer
+        :param address: IP address of source peer
+        :param port: port of source peer
+        :return:
+        """
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.connect(self.address())
 
-    def _sendmessage(self, message, sock=None):
-        mess = python.Message_pb2.Message()
-        mess.TYPE = mess.JOIN
-        if sock:
-            sock.sendall(mess.SerializeToString())
+        msg = putils.create_ping_message(self.id, address, port)
+        sock.send(msg)
 
-    def _receivemessage(self, socket):
-        mess = socket.recv(12000)
-        message = python.Message_pb2.Message()
-        message.ParseFromString(mess)
+        response = sock.recv(12000)
+        sock.close()
 
-        print(mess)
+        ping_response = putils.read_message(response)
+        return ping_response
+

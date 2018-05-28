@@ -82,6 +82,20 @@ class RequestHandler(socketserver.BaseRequestHandler):
         """
         Handles find value message
         """
+        target_id = message.pFindNode.guid
+        peer = self.server.node.routing_table[target_id]
+        if peer:
+            peers = [peer]
+        else:
+            peers = []
+        msg = putils.create_found_nodes_message(self.server.node.peer.id, peers,
+                                                self.server.node.peer.host, self.server.node.peer.port)
+        self.request.send(msg)
+
+        address, port = message.sender.split(':')
+        port = int(port)
+        id = message.uuid
+        self.server.node.routing_table.insert(Peer(address, port, id))
 
     def _handle_leave(self, message):
         """
@@ -119,9 +133,11 @@ class KademliaNode(object):
         # bootstrap node. Then we insert them in our routing table send FIND_MESSAGE to them. We repeat that iteratively
         # and in the end we populate our routing table with all nodes between us and the booting node.
         nodes_to_ask = []
-        found_nodes = boot_peer.find_node(key)
+        found_nodes = boot_peer.find_node(key, self.peer.host, self.peer.port)
         nodes_to_ask.extend(found_nodes.pFoundNodes.nodes)
 
+        if nodes_to_ask:
+            smallest_distance = nodes_to_ask[0].id ^ id
         for node in nodes_to_ask:
             guid = node.guid
             ip = node.IP
@@ -130,7 +146,7 @@ class KademliaNode(object):
             new_peer = Peer(ip, port, guid, is_NAT)
             self.routing_table.insert(new_peer)
 
-            found_nodes = new_peer.find_node(key)
+            found_nodes = new_peer.find_node(key, self.peer.host, self.peer.port)
             nodes_to_ask.extend(found_nodes.pFoundNodes.nodes)
 
         # After that we need to populate buckets that are further than bootstrap node by doing lookup of random
@@ -171,7 +187,7 @@ class KademliaNode(object):
         while True:
             found_peers = []
             for peer in peers_to_ask:
-                for node in peer.find_node(id).pFoundNodes.nodes:
+                for node in peer.find_node(id, self.peer.host, self.peer.port).pFoundNodes.nodes:
                     guid = node.guid
                     ip = node.IP
                     port = int(node.Port)
@@ -197,7 +213,7 @@ class KademliaNode(object):
         peers_to_ask = self.routing_table.nearest_nodes(id, limit=k)
 
         for peer in peers_to_ask:
-            found_peer = peer.find_value(id)
+            found_peer = peer.find_value(id, self.peer.host, self.peer.port)
             if found_peer:
                 self.routing_table.insert(found_peer)
                 return found_peer
