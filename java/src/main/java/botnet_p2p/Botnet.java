@@ -2,22 +2,27 @@ package botnet_p2p;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 public class Botnet {
 
     private static final Logger logger = LogManager.getLogger(Server.class);
     private Server server;
 
+    private MessageReceiver messageReceiver;
 
-    Botnet(int port) {
+
+    Botnet(int port, MessageReceiver messageReceiver, NodeManager nodeManager) {
         Runtime.getRuntime().addShutdownHook(new ShutdownHandler());
-        server = new Server(port);
+        server = new Server(port, messageReceiver, nodeManager);
         server.start();
     }
 
     public static void main(String args[]) {
         logger.info("starting");
-        Botnet botnet = new Botnet(3000);
+        ApplicationContext context = new AnnotationConfigApplicationContext(Config.class);
+        Botnet botnet = context.getBean(Botnet.class);
         logger.info("started");
     }
 
@@ -29,5 +34,7 @@ public class Botnet {
             server.interrupt();
         }
     }
+
+
 
 }

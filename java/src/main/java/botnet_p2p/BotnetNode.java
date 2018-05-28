@@ -13,4 +13,9 @@ public class BotnetNode {
         this.status = status;
     }
 
+    public BotnetNode(SocketChannel socketChannel, InetSocketAddress address, NodeStatus status) {
+        this.socketChannel = socketChannel;
+        this.address = address;
+        this.status = status;
+    }
 }

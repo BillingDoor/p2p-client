@@ -6,13 +6,20 @@ import org.apache.logging.log4j.Logger;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectableChannel;
-import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import botnet_p2p.MessageOuterClass.Message;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
+public class MessageReceiver {
+    private static final Logger logger = LogManager.getLogger(MessageReceiver.class);
 
-public class MessageHandlers {
-    private static final Logger logger = LogManager.getLogger(MessageHandlers.class);
+    private MessageHandler messageHandler;
+
+    public MessageReceiver(MessageHandler messageHandler) {
+        this.messageHandler = messageHandler;
+    }
 
     public void handleNewMessage(SelectableChannel channel) throws IOException {
         SocketChannel client = (SocketChannel) channel;
@@ -34,6 +41,8 @@ public class MessageHandlers {
 
         ByteBuffer messageBuffer = ByteBuffer.wrap(inputBuffer.array(), 0, inputBuffer.position());
         Message message = Message.parseFrom(messageBuffer);
+        messageHandler.handle(message);
+
         inputBuffer.clear();
 
         logger.info("message parsed");

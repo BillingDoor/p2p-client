@@ -12,24 +12,21 @@ import java.nio.channels.SocketChannel;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
 
-class Client extends Thread {
+public class Client extends Thread {
     private static final Logger logger = LogManager.getLogger(Client.class);
-    private final MessageHandlers messageHandler;
+    private final MessageReceiver messageReceiver;
+    private final NodeManager nodeManager;
     private Selector selector;
-    private List<BotnetNode> nodes;
     private Queue<PendingMessage> waitingForWrite;
     private CountDownLatch initLatch;
 
-    Client() {
-        nodes = new ArrayList<>();
-        waitingForWrite = new LinkedList<>();
-        this.messageHandler = new MessageHandlers();
-    }
 
-    Client(CountDownLatch initLatch) {
-        nodes = new ArrayList<>();
+    public Client(CountDownLatch initLatch,
+                  MessageReceiver messageReceiver,
+                  NodeManager nodeManager) {
         waitingForWrite = new LinkedList<>();
-        this.messageHandler = new MessageHandlers();
+        this.messageReceiver = messageReceiver;
+        this.nodeManager = nodeManager;
         this.initLatch = initLatch;
     }
 
@@ -61,7 +58,7 @@ class Client extends Thread {
 
                     if (key.isReadable()) {
                         logger.info("incoming message");
-                        messageHandler.handleNewMessage(key.channel());
+                        messageReceiver.handleNewMessage(key.channel());
                     }
 
                     it.remove();
@@ -83,8 +80,21 @@ class Client extends Thread {
         }
     }
 
+    public synchronized void sendMessage(MessageOuterClass.Message message, String address, int port) throws IOException {
+        InetSocketAddress destAddress = new InetSocketAddress(address, port);
+        Optional<BotnetNode> node = nodeManager.getConnectedNodeByAddress(destAddress);
+        if (node.isPresent()) {
+            logger.info("already connected, sending message");
+            node.get().socketChannel.write(ByteBuffer.wrap(message.toByteArray()));
+        } else {
+            logger.info("not connected, message goes to queue");
+            waitingForWrite.add(new PendingMessage(destAddress, message));
+            selector.wakeup();
+        }
+    }
+
     private void connectWaitingConnections() {
-        nodes.stream().filter(botnetNode -> botnetNode.status == NodeStatus.WAITING_FOR_CONNECT)
+        nodeManager.getByStatus(NodeStatus.WAITING_FOR_CONNECT)
                 .forEach(botnetNode -> {
                     botnetNode.status = NodeStatus.CONNECTING;
                     try {
@@ -98,15 +108,15 @@ class Client extends Thread {
     private synchronized void sendPendingMessages() throws IOException {
         for (Iterator<PendingMessage> iter = waitingForWrite.iterator(); iter.hasNext(); ) {
             PendingMessage pendingMessage = iter.next();
-            Optional<BotnetNode> node = getConnectedNodeByAddress(pendingMessage.destination);
+            Optional<BotnetNode> node = nodeManager.getConnectedNodeByAddress(pendingMessage.destination);
 
             if (node.isPresent()) {
                 logger.info("sending pending message to " + getDestinationDescription(pendingMessage.destination));
                 sendPendingMessageNow(pendingMessage, node.get().socketChannel);
                 iter.remove();
             } else {
-                if (!getNodeByAddress(pendingMessage.destination).isPresent()) {
-                    nodes.add(new BotnetNode(pendingMessage.destination, NodeStatus.WAITING_FOR_CONNECT));
+                if (!nodeManager.getNodeByAddress(pendingMessage.destination).isPresent()) {
+                    nodeManager.add(new BotnetNode(pendingMessage.destination, NodeStatus.WAITING_FOR_CONNECT));
                 }
             }
         }
@@ -125,41 +135,14 @@ class Client extends Thread {
         }
     }
 
-    public synchronized void sendMessage(MessageOuterClass.Message message, String address, int port) throws IOException {
-        InetSocketAddress destAddress = new InetSocketAddress(address, port);
-        Optional<BotnetNode> node = getConnectedNodeByAddress(destAddress);
-        if (node.isPresent()) {
-            logger.info("already connected, sending message");
-            node.get().socketChannel.write(ByteBuffer.wrap(message.toByteArray()));
-        } else {
-            logger.info("not connected, message goes to queue");
-            waitingForWrite.add(new PendingMessage(destAddress, message));
-            selector.wakeup();
-        }
-    }
 
-    private Optional<BotnetNode> getConnectedNodeByAddress(InetSocketAddress destAddress) {
-        return nodes.stream().filter(
-                botnetNode -> {
-                    InetSocketAddress remoteAddress = botnetNode.address;
-                    return remoteAddress.equals(destAddress);
-                }).filter(botnetNode -> botnetNode.status == NodeStatus.CONNECTED).findFirst();
-    }
-
-    private Optional<BotnetNode> getNodeByAddress(InetSocketAddress destAddress) {
-        return nodes.stream().filter(
-                botnetNode -> {
-                    InetSocketAddress remoteAddress = botnetNode.address;
-                    return remoteAddress.equals(destAddress);
-                }).findFirst();
-    }
 
     private void sendPendingMessageNow(PendingMessage pendingMessage, SocketChannel socketChannel) throws IOException {
         socketChannel.write(ByteBuffer.wrap(pendingMessage.message.toByteArray()));
     }
 
     private void handleConnectionEstablished(SocketChannel socketChannel) throws IOException {
-        Optional<BotnetNode> node = getNodeByAddress((InetSocketAddress) socketChannel.getRemoteAddress());
+        Optional<BotnetNode> node = nodeManager.getNodeByAddress((InetSocketAddress) socketChannel.getRemoteAddress());
         if (!node.isPresent()) {
             throw new RuntimeException("unknown node");
         }
