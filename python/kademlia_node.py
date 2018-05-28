@@ -133,11 +133,11 @@ class KademliaNode(object):
         # bootstrap node. Then we insert them in our routing table send FIND_MESSAGE to them. We repeat that iteratively
         # and in the end we populate our routing table with all nodes between us and the booting node.
         nodes_to_ask = []
+        asked_nodes = [boot_peer]
         found_nodes = boot_peer.find_node(key, self.peer.host, self.peer.port)
         nodes_to_ask.extend(found_nodes.pFoundNodes.nodes)
 
-        if nodes_to_ask:
-            smallest_distance = nodes_to_ask[0].id ^ id
+
         for node in nodes_to_ask:
             guid = node.guid
             ip = node.IP
@@ -147,7 +147,10 @@ class KademliaNode(object):
             self.routing_table.insert(new_peer)
 
             found_nodes = new_peer.find_node(key, self.peer.host, self.peer.port)
-            nodes_to_ask.extend(found_nodes.pFoundNodes.nodes)
+            asked_nodes.append(new_peer)
+            for node in found_nodes.pFoundNodes.nodes:
+                if Peer(node.IP, int(node.Port), node.guid, node.isNAT) not in asked_nodes:
+                    nodes_to_ask.append(found_nodes.pFoundNodes.nodes)
 
         # After that we need to populate buckets that are further than bootstrap node by doing lookup of random
         # key that falls into that bucket

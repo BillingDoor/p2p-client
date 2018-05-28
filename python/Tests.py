@@ -79,7 +79,7 @@ class TestMessaging(unittest.TestCase):
         print("k1.routingtable: {}".format(id(k1.routing_table)))
         k2 = KademliaNode("127.0.0.1", 9081, 12, seeds=[("127.0.0.1", 9080, 11)])
         time.sleep(2)
-        k3 = KademliaNode("127.0.0.1", 9082, 13, seeds=[("127.0.0.1", 9080, 11)])
+        #k3 = KademliaNode("127.0.0.1", 9082, 13, seeds=[("127.0.0.1", 9080, 11)])
         time.sleep(2)
         #k4 = KademliaNode("127.0.0.1", 9083, 14, seeds=[("127.0.0.1", 9080, 11)])
 
@@ -87,7 +87,7 @@ class TestMessaging(unittest.TestCase):
         time.sleep(3)
         self.assertEqual(len(k1.routing_table), 3)
         self.assertIn(python.peer.Peer("127.0.0.1", 9081, 12), k1.routing_table)
-        self.assertIn(k3.peer, k1.routing_table)
+        #self.assertIn(k3.peer, k1.routing_table)
         #self.assertIn(k4.peer, k1.routing_table)
 
         self.assertIn(k3.peer, k2.routing_table)
