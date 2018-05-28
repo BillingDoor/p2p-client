@@ -1,0 +1,42 @@
+import { flatten, slice, find, propEq } from 'ramda';
+
+import { mostSignificantBit } from '../utils';
+import { Contact } from '../contact/contact';
+
+export class RoutingTable {
+  private buckets: Contact[][];
+
+  static readonly bucketCount = 64;
+  static readonly bucketSize = 10;
+
+  constructor(private selfNode: Contact) {
+    this.buckets = [
+      ...Array({ length: RoutingTable.bucketCount }).map(() => [])
+    ];
+  }
+
+  addNode(node: Contact): void {
+    let bucket = this.buckets[this.selectBucket(node.guid)];
+
+    const notSelf = node.guid !== this.selfNode.guid;
+    const bucketNotFull = bucket.length < RoutingTable.bucketSize;
+
+    if (notSelf && bucketNotFull) {
+      bucket = [...bucket, node];
+    }
+  }
+
+  getNodeByGUID(guid: number): Contact | undefined {
+    return find(propEq('guid', guid), this.buckets[this.selectBucket(guid)]);
+  }
+
+  getNearestNodes(
+    limit = RoutingTable.bucketCount * RoutingTable.bucketSize
+  ): Contact[] {
+    return slice(-limit, Infinity)(flatten(this.buckets));
+  }
+
+  private selectBucket(guid: number): number {
+    return Math.log2(mostSignificantBit(guid ^ this.selfNode.guid));
+  }
+}
