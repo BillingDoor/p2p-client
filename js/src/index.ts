@@ -1,8 +1,6 @@
 import { Peer } from './peer';
 import { StringDecoder } from 'string_decoder';
 
-// import { Message } from '../protobuf/Message_pb';
-
 const peer = new Peer({ host: '127.0.0.1', port: 1337 });
 
 peer.runServer();

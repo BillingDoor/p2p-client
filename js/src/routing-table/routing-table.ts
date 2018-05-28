@@ -1,6 +1,6 @@
 import { flatten, slice, find, propEq } from 'ramda';
+import * as bigInt from 'big-integer';
 
-import { mostSignificantBit } from '../utils';
 import { Contact } from '../contact/contact';
 
 export class RoutingTable {
@@ -10,14 +10,12 @@ export class RoutingTable {
   static readonly bucketSize = 10;
 
   constructor(private selfNode: Contact) {
-    this.buckets = [
-      ...Array({ length: RoutingTable.bucketCount }).map(() => [])
-    ];
+    this.buckets = Array(RoutingTable.bucketCount).fill([]);
   }
 
   addNode(node: Contact): void {
     let bucket = this.buckets[this.selectBucket(node.guid)];
-
+    console.log('bucket', this.selectBucket(node.guid));
     const notSelf = node.guid !== this.selfNode.guid;
     const bucketNotFull = bucket.length < RoutingTable.bucketSize;
 
@@ -37,6 +35,8 @@ export class RoutingTable {
   }
 
   private selectBucket(guid: number): number {
-    return Math.log2(mostSignificantBit(guid ^ this.selfNode.guid));
+    const xor = bigInt(guid).xor(bigInt(this.selfNode.guid));
+    console.log(xor)
+    return xor.toArray(2).value.length;
   }
 }

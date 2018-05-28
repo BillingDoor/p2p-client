@@ -4,8 +4,8 @@
 import * as jspb from "google-protobuf";
 
 export class Message extends jspb.Message {
-  getUuid(): string;
-  setUuid(value: string): void;
+  getUuid(): number;
+  setUuid(value: number): void;
 
   getType(): Message.MessageType;
   setType(value: Message.MessageType): void;
@@ -24,40 +24,50 @@ export class Message extends jspb.Message {
   getSignature_asB64(): string;
   setSignature(value: Uint8Array | string): void;
 
-  hasCommand(): boolean;
-  clearCommand(): void;
-  getCommand(): Message.Command | undefined;
-  setCommand(value?: Message.Command): void;
+  hasPcommand(): boolean;
+  clearPcommand(): void;
+  getPcommand(): Message.Command | undefined;
+  setPcommand(value?: Message.Command): void;
 
-  hasResponse(): boolean;
-  clearResponse(): void;
-  getResponse(): Message.Response | undefined;
-  setResponse(value?: Message.Response): void;
+  hasPresponse(): boolean;
+  clearPresponse(): void;
+  getPresponse(): Message.Response | undefined;
+  setPresponse(value?: Message.Response): void;
 
-  hasFile(): boolean;
-  clearFile(): void;
-  getFile(): Message.FileChunk | undefined;
-  setFile(value?: Message.FileChunk): void;
+  hasPfile(): boolean;
+  clearPfile(): void;
+  getPfile(): Message.FileChunk | undefined;
+  setPfile(value?: Message.FileChunk): void;
 
-  hasNatrequest(): boolean;
-  clearNatrequest(): void;
-  getNatrequest(): Message.NATRequest | undefined;
-  setNatrequest(value?: Message.NATRequest): void;
+  hasPnatrequest(): boolean;
+  clearPnatrequest(): void;
+  getPnatrequest(): Message.NATRequest | undefined;
+  setPnatrequest(value?: Message.NATRequest): void;
 
-  hasNatcheck(): boolean;
-  clearNatcheck(): void;
-  getNatcheck(): Message.NATCheck | undefined;
-  setNatcheck(value?: Message.NATCheck): void;
+  hasPnatcheck(): boolean;
+  clearPnatcheck(): void;
+  getPnatcheck(): Message.NATCheck | undefined;
+  setPnatcheck(value?: Message.NATCheck): void;
 
-  hasJoin(): boolean;
-  clearJoin(): void;
-  getJoin(): Message.Join | undefined;
-  setJoin(value?: Message.Join): void;
+  hasPleave(): boolean;
+  clearPleave(): void;
+  getPleave(): Message.Leave | undefined;
+  setPleave(value?: Message.Leave): void;
 
-  hasLeave(): boolean;
-  clearLeave(): void;
-  getLeave(): Message.Leave | undefined;
-  setLeave(value?: Message.Leave): void;
+  hasPfindnode(): boolean;
+  clearPfindnode(): void;
+  getPfindnode(): Message.FindNode | undefined;
+  setPfindnode(value?: Message.FindNode): void;
+
+  hasPfoundnodes(): boolean;
+  clearPfoundnodes(): void;
+  getPfoundnodes(): Message.FoundNodes | undefined;
+  setPfoundnodes(value?: Message.FoundNodes): void;
+
+  hasPfindvalue(): boolean;
+  clearPfindvalue(): void;
+  getPfindvalue(): Message.FindValue | undefined;
+  setPfindvalue(value?: Message.FindValue): void;
 
   getPayloadCase(): Message.PayloadCase;
   serializeBinary(): Uint8Array;
@@ -72,24 +82,58 @@ export class Message extends jspb.Message {
 
 export namespace Message {
   export type AsObject = {
-    uuid: string,
+    uuid: number,
     type: Message.MessageType,
     sender: string,
     receiver: string,
     propagation: boolean,
     signature: Uint8Array | string,
-    command?: Message.Command.AsObject,
-    response?: Message.Response.AsObject,
-    file?: Message.FileChunk.AsObject,
-    natrequest?: Message.NATRequest.AsObject,
-    natcheck?: Message.NATCheck.AsObject,
-    join?: Message.Join.AsObject,
-    leave?: Message.Leave.AsObject,
+    pcommand?: Message.Command.AsObject,
+    presponse?: Message.Response.AsObject,
+    pfile?: Message.FileChunk.AsObject,
+    pnatrequest?: Message.NATRequest.AsObject,
+    pnatcheck?: Message.NATCheck.AsObject,
+    pleave?: Message.Leave.AsObject,
+    pfindnode?: Message.FindNode.AsObject,
+    pfoundnodes?: Message.FoundNodes.AsObject,
+    pfindvalue?: Message.FindValue.AsObject,
+  }
+
+  export class NodeDescription extends jspb.Message {
+    getGuid(): number;
+    setGuid(value: number): void;
+
+    getIp(): string;
+    setIp(value: string): void;
+
+    getPort(): string;
+    setPort(value: string): void;
+
+    getIsnat(): boolean;
+    setIsnat(value: boolean): void;
+
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): NodeDescription.AsObject;
+    static toObject(includeInstance: boolean, msg: NodeDescription): NodeDescription.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: NodeDescription, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): NodeDescription;
+    static deserializeBinaryFromReader(message: NodeDescription, reader: jspb.BinaryReader): NodeDescription;
+  }
+
+  export namespace NodeDescription {
+    export type AsObject = {
+      guid: number,
+      ip: string,
+      port: string,
+      isnat: boolean,
+    }
   }
 
   export class Command extends jspb.Message {
-    getCommand(): string;
-    setCommand(value: string): void;
+    getCommandstring(): string;
+    setCommandstring(value: string): void;
 
     getSendresponse(): boolean;
     setSendresponse(value: boolean): void;
@@ -106,7 +150,7 @@ export namespace Message {
 
   export namespace Command {
     export type AsObject = {
-      command: string,
+      commandstring: string,
       sendresponse: boolean,
     }
   }
@@ -178,8 +222,8 @@ export namespace Message {
   }
 
   export class NATRequest extends jspb.Message {
-    getTarget(): string;
-    setTarget(value: string): void;
+    getTarget(): number;
+    setTarget(value: number): void;
 
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): NATRequest.AsObject;
@@ -193,13 +237,13 @@ export namespace Message {
 
   export namespace NATRequest {
     export type AsObject = {
-      target: string,
+      target: number,
     }
   }
 
   export class NATCheck extends jspb.Message {
-    getSource(): string;
-    setSource(value: string): void;
+    getSource(): number;
+    setSource(value: number): void;
 
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): NATCheck.AsObject;
@@ -213,41 +257,33 @@ export namespace Message {
 
   export namespace NATCheck {
     export type AsObject = {
-      source: string,
+      source: number,
     }
   }
 
-  export class Join extends jspb.Message {
-    getIp(): string;
-    setIp(value: string): void;
-
-    getPort(): string;
-    setPort(value: string): void;
-
-    getIsnat(): boolean;
-    setIsnat(value: boolean): void;
+  export class FindValue extends jspb.Message {
+    getGuid(): number;
+    setGuid(value: number): void;
 
     serializeBinary(): Uint8Array;
-    toObject(includeInstance?: boolean): Join.AsObject;
-    static toObject(includeInstance: boolean, msg: Join): Join.AsObject;
+    toObject(includeInstance?: boolean): FindValue.AsObject;
+    static toObject(includeInstance: boolean, msg: FindValue): FindValue.AsObject;
     static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
     static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
-    static serializeBinaryToWriter(message: Join, writer: jspb.BinaryWriter): void;
-    static deserializeBinary(bytes: Uint8Array): Join;
-    static deserializeBinaryFromReader(message: Join, reader: jspb.BinaryReader): Join;
+    static serializeBinaryToWriter(message: FindValue, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): FindValue;
+    static deserializeBinaryFromReader(message: FindValue, reader: jspb.BinaryReader): FindValue;
   }
 
-  export namespace Join {
+  export namespace FindValue {
     export type AsObject = {
-      ip: string,
-      port: string,
-      isnat: boolean,
+      guid: number,
     }
   }
 
   export class Leave extends jspb.Message {
-    getGuid(): string;
-    setGuid(value: string): void;
+    getGuid(): number;
+    setGuid(value: number): void;
 
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): Leave.AsObject;
@@ -261,7 +297,49 @@ export namespace Message {
 
   export namespace Leave {
     export type AsObject = {
-      guid: string,
+      guid: number,
+    }
+  }
+
+  export class FindNode extends jspb.Message {
+    getGuid(): number;
+    setGuid(value: number): void;
+
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): FindNode.AsObject;
+    static toObject(includeInstance: boolean, msg: FindNode): FindNode.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: FindNode, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): FindNode;
+    static deserializeBinaryFromReader(message: FindNode, reader: jspb.BinaryReader): FindNode;
+  }
+
+  export namespace FindNode {
+    export type AsObject = {
+      guid: number,
+    }
+  }
+
+  export class FoundNodes extends jspb.Message {
+    clearNodesList(): void;
+    getNodesList(): Array<Message.NodeDescription>;
+    setNodesList(value: Array<Message.NodeDescription>): void;
+    addNodes(value?: Message.NodeDescription, index?: number): Message.NodeDescription;
+
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): FoundNodes.AsObject;
+    static toObject(includeInstance: boolean, msg: FoundNodes): FoundNodes.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: FoundNodes, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): FoundNodes;
+    static deserializeBinaryFromReader(message: FoundNodes, reader: jspb.BinaryReader): FoundNodes;
+  }
+
+  export namespace FoundNodes {
+    export type AsObject = {
+      nodesList: Array<Message.NodeDescription.AsObject>,
     }
   }
 
@@ -273,8 +351,10 @@ export namespace Message {
     NAT_REQUEST = 4,
     NAT_CHECK = 5,
     PING = 6,
-    JOIN = 7,
-    LEAVE = 8,
+    LEAVE = 7,
+    FIND_NODE = 8,
+    FOUND_NODES = 9,
+    FIND_VALUE = 10,
   }
 
   export enum Status {
@@ -284,13 +364,15 @@ export namespace Message {
 
   export enum PayloadCase {
     PAYLOAD_NOT_SET = 0,
-    COMMAND = 7,
-    RESPONSE = 8,
-    FILE = 9,
-    NATREQUEST = 10,
-    NATCHECK = 11,
-    JOIN = 12,
-    LEAVE = 13,
+    PCOMMAND = 7,
+    PRESPONSE = 8,
+    PFILE = 9,
+    PNATREQUEST = 10,
+    PNATCHECK = 11,
+    PLEAVE = 12,
+    PFINDNODE = 13,
+    PFOUNDNODES = 14,
+    PFINDVALUE = 15,
   }
 }
 

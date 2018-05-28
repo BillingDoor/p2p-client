@@ -1,17 +1,26 @@
+import * as bigInt from 'big-integer';
+
 export class Contact {
-  guid: number;
   host: string;
   port: number;
+  guid: number;
+  isNAT: boolean;
 
-  constructor(config: { host: string; port: number }) {
-    const { host, port } = config;
+  constructor(config: {
+    host: string;
+    port: number;
+    guid?: number;
+    isNAT?: boolean;
+  }) {
+    const { host, port, guid, isNAT } = config;
 
-    this.guid = Contact.generateGUID();
+    this.guid = guid || Contact.generateGUID();
     this.host = host;
     this.port = port;
+    this.isNAT = isNAT || false;
   }
 
   static generateGUID() {
-    return Math.floor(Math.random() * 2 ** 32);
+    return bigInt.randBetween(0, 2 ** 63).toJSNumber();
   }
 }

@@ -1,9 +1,10 @@
-export function mostSignificantBit(value: number) {
-  value |= value >> 1;
-  value |= value >> 2;
-  value |= value >> 4;
-  value |= value >> 8;
-  value |= value >> 16;
-  value++;
-  return value >> 1;
+export function mostSignificantBit(value: bigInt.BigInteger) {
+  value = value.or(value.shiftRight(1));
+  value = value.or(value.shiftRight(2));
+  value = value.or(value.shiftRight(4));
+  value = value.or(value.shiftRight(8));
+  value = value.or(value.shiftRight(16));
+  value = value.or(value.shiftRight(32));
+  value = value.plus(1);
+  return value.shiftRight(1);
 }
