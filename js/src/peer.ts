@@ -42,7 +42,27 @@ export class Peer {
   }
 
   stopServer(): void {
-    console.log('Stopping server!')
+    console.log('Stopping server!');
     this.serverConfig.server.close();
   }
+
+  connectTo(config: { host: string; port: number }) {
+    const { host, port } = config;
+    var client = new net.Socket();
+    client.connect(port, host, function() {
+      console.log('Connected');
+      client.write('Hello, server! Love, Client.');
+    });
+
+    client.on('data', function(data) {
+      console.log('Received: ' + data);
+      client.destroy(); // kill client after server's response
+    });
+
+    client.on('close', function() {
+      console.log('Connection closed');
+    });
+  }
+
+  joinNetwork(config: { host: string; port: number }): void {}
 }
