@@ -48,6 +48,7 @@ class BucketList(object):
         Insert peer into appropriate bucket
         :param peer: Peer to insert
         """
+        print("Adding ({},{},{})".format(*peer.get_info()))
         if peer.id != self.id:
             bucket_number = largest_differing_bit(self.id, peer.id)
             with self.lock:
@@ -57,6 +58,7 @@ class BucketList(object):
                     bucket.pop(0)
                 if peer not in bucket:
                     bucket.append(peer)
+                    print("Added ({},{},{})".format(*peer.get_info()))
 
     def nearest_nodes(self, key, limit=None):
         num_results = limit if limit else self.bucket_size

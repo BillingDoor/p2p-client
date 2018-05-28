@@ -65,6 +65,8 @@ class RequestHandler(socketserver.BaseRequestHandler):
         self.request.send(msg)
 
         address, port = self.request.getpeername()
+        print(address)
+        print(port)
         id = message.uuid
         self.server.node.routing_table.insert(Peer(address, port, id))
 
@@ -90,9 +92,9 @@ class RequestHandler(socketserver.BaseRequestHandler):
 
 
 class KademliaNode(object):
-    def __init__(self, host, port, id=None, seeds=(), requesthandler=RequestHandler):
+    def __init__(self, host, port, id=None, seeds=[], requesthandler=RequestHandler):
         # Create kademlia node info object
-        self.peer = Peer(host, port)
+        self.peer = Peer(host, port, id)
         self.other_peers = []
         # Create Server
         self.server = Server(self.peer.address(), requesthandler, self)
@@ -120,8 +122,9 @@ class KademliaNode(object):
         for node in nodes_to_ask:
             guid = node.guid
             ip = node.IP
-            port = node.Port
-            new_peer = Peer(ip, port, guid)
+            port = int(node.Port)
+            is_NAT = node.isNAT
+            new_peer = Peer(ip, port, guid, is_NAT)
             self.routing_table.insert(new_peer)
 
             found_nodes = new_peer.find_node(key)
@@ -140,9 +143,10 @@ class KademliaNode(object):
 
             _ = self.lookup_node(id)
 
-    def bootstrap(self, bootstrap_nodes = ()):
+    def bootstrap(self, bootstrap_nodes = []):
         for bnode in bootstrap_nodes:
-            boot_peer = Peer(bnode[0], bnode[1])
+            boot_peer = Peer(bnode[0], bnode[1], bnode[2])
+            self.routing_table.insert(boot_peer)
             self.find_nodes(self.peer.id, boot_peer=boot_peer)
 
     def lookup_node(self, id, alfa=3):
@@ -167,9 +171,14 @@ class KademliaNode(object):
                 for node in peer.find_node(id).pFoundNodes.nodes:
                     guid = node.guid
                     ip = node.IP
-                    port = node.Port
-                    new_peer = Peer(ip, port, guid)
+                    port = int(node.Port)
+                    is_NAT = node.isNAT
+                    new_peer = Peer(ip, port, guid, is_NAT)
                     found_peers.append(new_peer)
+
+            # If we didn't receive any new peers
+            if not found_peers:
+                break
 
             # Now we get k best peers and insert them into our routing table
             best_peers = heapq.nsmallest(k, found_peers, lambda p: p.id ^ id)

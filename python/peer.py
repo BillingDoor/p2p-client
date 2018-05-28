@@ -7,7 +7,7 @@ class Peer(object):
     Peer
     """
 
-    def __init__(self, host, port, guid = None, is_NAT = False):
+    def __init__(self, host, port, guid, is_NAT = False):
         self.host, self.port = host, port
         local_random = random.Random()
         local_random.seed(int(''.join(host.split('.')))*int(port))
