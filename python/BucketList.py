@@ -30,6 +30,18 @@ class BucketList(object):
         self.id = id
         self.lock = threading.Lock()
 
+    def __len__(self):
+        """
+        Returns ammount of nodes in bucketlist
+        """
+        return sum([len(bucket) for bucket in self.buckets])
+
+    def __contains__(self, peer):
+        """
+        :return: True if peer is in one of the buckets, otherwise False
+        """
+        return peer in self.buckets[largest_differing_bit(self.id, peer.id)]
+
     def __getitem__(self, id):
         """
         Return Peer if in routing table. Otherwise None

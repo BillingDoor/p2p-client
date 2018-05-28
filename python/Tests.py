@@ -26,11 +26,10 @@ class TestPeers(unittest.TestCase):
 
 
 class TestMessaging(unittest.TestCase):
-    @unittest.skip
     def test_ping(self):
         k1 = KademliaNode("127.0.0.1", 8080)
 
-        msg = putils.create_ping_message(123)
+        msg = putils.create_ping_message(123, "127.0.0.1", 8081)
 
         sock = socket.socket()
         sock.connect(("127.0.0.1", 8080))
@@ -44,9 +43,11 @@ class TestMessaging(unittest.TestCase):
         time.sleep(2)
         all_peers = [peer for bucket in k1.routing_table.buckets for peer in bucket]
         self.assertEqual(all_peers[0].id, 123)
+        self.assertEqual(all_peers[0].host, "127.0.0.1")
+        self.assertEqual(all_peers[0].port, 8081)
+
         self.assertEqual(message.uuid, k1.peer.id)
 
-    @unittest.skip
     def test_find_node(self):
         test_node = KademliaNode("127.0.0.1", 8081, 123)
         b_l = python.BucketList.BucketList(5, 64, 123)
@@ -59,7 +60,7 @@ class TestMessaging(unittest.TestCase):
         b_l.insert(python.peer.Peer("127.0.23.1", 123, 0b00011101))
         test_node.routing_table = b_l
 
-        test_peer = python.peer.Peer("127.0.0.1", 8081)
+        test_peer = python.peer.Peer("127.0.0.1", 8081, 12)
         found_nodes = test_peer.find_node(0b00010101)
         nodes = putils.get_peers_from_found_nodes_message(found_nodes)
         self.assertEqual(len(found_nodes.pFoundNodes.nodes), 5)
@@ -103,6 +104,36 @@ class TestBucketList(unittest.TestCase):
         self.assertEqual(b_l[0b00110101].get_info(), ("127.66.1.1", 33, 0b00110101))
         self.assertEqual(b_l[32323], None)
 
+    def test_contains(self):
+        b_l = python.BucketList.BucketList(15, 10, 0)
+
+        b_l.insert(python.peer.Peer("127.11.11.1", 1, 0b01010101))
+        b_l.insert(python.peer.Peer("127.66.1.1", 33, 0b00110101))
+        b_l.insert(python.peer.Peer("127.0.9.1", 22, 0b00100101))
+        b_l.insert(python.peer.Peer("127.3.0.1", 5252523, 0b01010111))
+        b_l.insert(python.peer.Peer("125.0.0.1", 434, 0b10110101))
+        b_l.insert(python.peer.Peer("127.55.0.1", 2235, 0b00111101))
+        b_l.insert(python.peer.Peer("127.0.23.1", 123, 0b00011101))
+
+        self.assertIn(python.peer.Peer("127.0.9.1", 22, 0b00100101), b_l)
+
+    def test_len(self):
+        b_l = python.BucketList.BucketList(15, 10, 0)
+
+        b_l.insert(python.peer.Peer("127.11.11.1", 1, 0b01010101))
+        self.assertEqual(len(b_l), 1)
+        b_l.insert(python.peer.Peer("127.66.1.1", 33, 0b00110101))
+        self.assertEqual(len(b_l), 2)
+        b_l.insert(python.peer.Peer("127.0.9.1", 22, 0b00100101))
+        self.assertEqual(len(b_l), 3)
+        b_l.insert(python.peer.Peer("127.3.0.1", 5252523, 0b01010111))
+        self.assertEqual(len(b_l), 4)
+        b_l.insert(python.peer.Peer("125.0.0.1", 434, 0b10110101))
+        self.assertEqual(len(b_l), 5)
+        b_l.insert(python.peer.Peer("127.55.0.1", 2235, 0b00111101))
+        self.assertEqual(len(b_l), 6)
+        b_l.insert(python.peer.Peer("127.0.23.1", 123, 0b00011101))
+        self.assertEqual(len(b_l), 7)
     def test_nearest_nodes(self):
         b_l = python.BucketList.BucketList(15, 10, 0)
         key_peer = python.peer.Peer("127.0.0.1", 33, 0b00010101)
@@ -124,7 +155,6 @@ class TestBucketList(unittest.TestCase):
         self.assertIn(python.peer.Peer("127.0.0.1", 33, 0b00110101), nodes)
         self.assertIn(python.peer.Peer("127.0.0.1", 33, 0b00111101), nodes)
         self.assertIn(python.peer.Peer("127.0.0.1", 33, 0b00011101), nodes)
-
 
 if __name__ == '__main__':
     unittest.main()

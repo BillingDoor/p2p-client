@@ -46,12 +46,15 @@ class RequestHandler(socketserver.BaseRequestHandler):
         """
         Handles ping message
         """
-        address, port = self.request.getpeername()
+        address, port = message.sender.split(':')
+        port = int(port)
         id = message.uuid
         self.server.node.routing_table.insert(Peer(address, port, id))
 
         # Send response
-        msg = putils.create_ping_message(self.server.node.peer.id)
+        msg = putils.create_ping_message(self.server.node.peer.id,
+                                         self.server.node.peer.host,
+                                         self.server.node.peer.port)
         self.request.send(msg)
 
     def _handle_find_node(self, message):
@@ -61,12 +64,12 @@ class RequestHandler(socketserver.BaseRequestHandler):
         target_id = message.pFindNode.guid
         closest_peers = self.server.node.routing_table.nearest_nodes(target_id, limit=self.server.node.routing_table.bucket_size)
 
-        msg = putils.create_found_nodes_message(self.server.node.peer.id, closest_peers)
+        msg = putils.create_found_nodes_message(self.server.node.peer.id, closest_peers,
+                                                self.server.node.peer.host, self.server.node.peer.port)
         self.request.send(msg)
 
-        address, port = self.request.getpeername()
-        print(address)
-        print(port)
+        address, port = message.sender.split(':')
+        port = int(port)
         id = message.uuid
         self.server.node.routing_table.insert(Peer(address, port, id))
 

@@ -31,7 +31,7 @@ class Peer(object):
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.connect(self.address())
 
-        msg = putils.create_find_node_message(self.id, ID)
+        msg = putils.create_find_node_message(self.id, ID, self.host, self.port)
         sock.send(msg)
 
         # Code below will be changed later to accommodate server-client architecture
@@ -50,7 +50,7 @@ class Peer(object):
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.connect(self.address())
 
-        msg = putils.create_find_value_message(self.id, ID)
+        msg = putils.create_find_value_message(self.id, ID, self.host, self.port)
         sock.send(msg)
 
         response = sock.recv(12000)
@@ -68,7 +68,6 @@ class Peer(object):
         self._receivemessage(socket)
 
     def _sendmessage(self, message, sock=None):
-        # HERE ENCODE MESSAGE
         mess = python.Message_pb2.Message()
         mess.TYPE = mess.JOIN
         if sock:
