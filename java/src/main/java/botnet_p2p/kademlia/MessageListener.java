@@ -8,4 +8,6 @@ public interface MessageListener {
     void foundNodesMessageReceived(MessageOuterClass.Message message);
 
     void pingMessageReceived(MessageOuterClass.Message message, SocketChannel sender);
+
+    void findNodeMessageReceived(MessageOuterClass.Message message, SocketChannel sender);
 }

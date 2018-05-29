@@ -20,6 +20,9 @@ public class MessageHandler {
             case FOUND_NODES:
                 this.messageListener.foundNodesMessageReceived(message);
                 break;
+            case FIND_NODE:
+                this.messageListener.findNodeMessageReceived(message,sender);
+                break;
             default:
                 logger.error("received message of unsupported type, type: " + message.getType());
         }

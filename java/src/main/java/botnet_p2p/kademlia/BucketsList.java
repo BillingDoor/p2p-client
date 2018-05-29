@@ -91,5 +91,7 @@ public class BucketsList {
         return Math.max(0, length);
     }
 
-
+    public int getMaxBucketSize() {
+        return maxBucketSize;
+    }
 }

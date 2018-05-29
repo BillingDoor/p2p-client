@@ -25,11 +25,11 @@ public class KademliaNode implements MessageListener {
     private Semaphore askedNodesAccess = new Semaphore(1);
 
 
-    public KademliaNode(Server server, Client client, long ownId, KademliaPeer bootPeer, MessageHandler messageHandler) throws IOException {
+    public KademliaNode(Server server, Client client, long ownId, int maxBucketSize, KademliaPeer bootPeer, MessageHandler messageHandler) throws IOException {
         this.server = server;
         this.client = client;
         this.me = new KademliaPeer("127.0.0.1", 3000, ownId);
-        this.routingTable = new BucketsList(64, 20, me.getId());
+        this.routingTable = new BucketsList(64, maxBucketSize, me.getId());
         this.askedNodes = new ArrayList<>();
 
         messageHandler.setFoundNodesListener(this);
@@ -46,10 +46,8 @@ public class KademliaNode implements MessageListener {
     }
 
     private void sendFindNode(KademliaPeer peer) throws IOException {
-        Message message = Message.newBuilder()
-                .setType(Message.MessageType.FIND_NODE)
-                .setPFindNode(Message.FindNode.newBuilder().setGuid(this.me.getId()))
-                .build();
+        Message message = MsgUtils.createFindNode(me);
+
 
         this.client.sendMessage(message, peer.getAddress(), peer.getPort());
     }
@@ -58,18 +56,20 @@ public class KademliaNode implements MessageListener {
     @Override
     public void foundNodesMessageReceived(Message message) {
         Message.FoundNodes pFoundNodes = message.getPFoundNodes();
+        try {
+            askedNodesAccess.acquire();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         pFoundNodes.getNodesList().forEach(nodeDescription -> {
-            try {
-                askedNodesAccess.acquire();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
             // if not in askedNodes
             if (askedNodes
                     .stream().noneMatch(kademliaPeer -> kademliaPeer.getId() == nodeDescription.getGuid())) {
 
-                KademliaPeer kademliaPeer = new KademliaPeer(nodeDescription.getIP(), Integer.parseInt(nodeDescription.getPort()), nodeDescription.getGuid());
+                KademliaPeer kademliaPeer = new KademliaPeer(
+                        nodeDescription.getIP(),
+                        Integer.parseInt(nodeDescription.getPort()),
+                        nodeDescription.getGuid());
                 // add to routing table
                 this.routingTable.insert(kademliaPeer);
 
@@ -83,8 +83,27 @@ public class KademliaNode implements MessageListener {
                     e.printStackTrace();
                 }
             }
-            askedNodesAccess.release();
         });
+        askedNodesAccess.release();
+    }
+
+
+    @Override
+    public void findNodeMessageReceived(Message message, SocketChannel sender) {
+        // respond with nearest nodes list
+        List<KademliaPeer> nearestPeers = this.routingTable.getNearestPeers(message.getPFindNode().getGuid(),
+                this.routingTable.getMaxBucketSize());
+        Message newMessage = MsgUtils.createFoundNodes(this.me, nearestPeers);
+        try {
+            client.sendMessage(newMessage, sender);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // add sender to our routing table
+        KademliaPeer senderPeer = MsgUtils.getSenderAsPeer(message);
+        this.routingTable.insert(senderPeer);
+
     }
 
     @Override
@@ -93,7 +112,7 @@ public class KademliaNode implements MessageListener {
         KademliaPeer kademliaPeer = MsgUtils.getSenderAsPeer(message);
         routingTable.insert(kademliaPeer);
 
-        Message newMessage = MsgUtils.getBase(this.me)
+        Message newMessage = MsgUtils.createBase(this.me)
                 .setType(Message.MessageType.RESPONSE)
                 .build();
 
@@ -107,4 +126,6 @@ public class KademliaNode implements MessageListener {
     public List<KademliaPeer> getPeers() {
         return routingTable.getPeers();
     }
+
+
 }
