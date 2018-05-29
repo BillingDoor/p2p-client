@@ -95,6 +95,7 @@ class RequestHandler(socketserver.BaseRequestHandler):
         address, port = message.sender.split(':')
         port = int(port)
         id = message.uuid
+        print("UID:{}  TARGET_GUID:{}".format(id, target_id))
         self.server.node.routing_table.insert(Peer(address, port, id))
 
     def _handle_leave(self, message):

@@ -56,7 +56,7 @@ class Peer(object):
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.connect(self.address())
 
-        msg = putils.create_find_value_message(ID, ID, address, port)
+        msg = putils.create_find_value_message(self.id, ID, address, port)
         sock.send(msg)
 
         response = sock.recv(12000)
