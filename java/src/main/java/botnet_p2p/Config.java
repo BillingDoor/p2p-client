@@ -6,9 +6,20 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class Config {
+
     @Bean
     public Botnet botnet() {
         return new Botnet(3000, messageReceiver(), nodeManager());
+    }
+
+    @Bean
+    public Server server() {
+        return new Server(3000, messageReceiver(), nodeManager());
+    }
+
+    @Bean
+    public Client client() {
+        return new Client(null, messageReceiver(), nodeManager());
     }
 
     @Bean

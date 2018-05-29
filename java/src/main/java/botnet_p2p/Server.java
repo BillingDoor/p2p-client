@@ -22,7 +22,7 @@ public class Server extends Thread {
     private ServerSocketChannel serverSocketChannel;
     private Selector selector;
 
-    Server(int port, MessageReceiver messageReceiver,
+    public Server(int port, MessageReceiver messageReceiver,
            NodeManager nodeManager) {
         this.port = port;
         this.messageReceiver = messageReceiver;

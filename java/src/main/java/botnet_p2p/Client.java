@@ -35,7 +35,9 @@ public class Client extends Thread {
         logger.info("starting client");
         try {
             selector = Selector.open();
-            this.initLatch.countDown();
+            if (initLatch != null) {
+                this.initLatch.countDown();
+            }
             while (true) {
                 // blocking call, waiting for at least one ready channel
                 int channels = selector.select();
@@ -93,6 +95,10 @@ public class Client extends Thread {
         }
     }
 
+    public void sendMessage(MessageOuterClass.Message message, SocketChannel receiver) throws IOException {
+        receiver.write(ByteBuffer.wrap(message.toByteArray()));
+    }
+
     private void connectWaitingConnections() {
         nodeManager.getByStatus(NodeStatus.WAITING_FOR_CONNECT)
                 .forEach(botnetNode -> {
@@ -134,7 +140,6 @@ public class Client extends Thread {
             logger.info("connect will be finished later");
         }
     }
-
 
 
     private void sendPendingMessageNow(PendingMessage pendingMessage, SocketChannel socketChannel) throws IOException {

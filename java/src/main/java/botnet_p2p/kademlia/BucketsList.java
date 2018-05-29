@@ -1,6 +1,9 @@
 package botnet_p2p.kademlia;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.PriorityQueue;
 import java.util.stream.Collectors;
 
 public class BucketsList {
@@ -9,9 +12,11 @@ public class BucketsList {
     private ArrayList<ArrayList<KademliaPeer>> buckets;
     private long selfId;
 
-    public BucketsList(int idBits, int maxBucketSize, int selfId) {
+    public BucketsList(int idBits, int maxBucketSize, long selfId) {
         this.buckets = new ArrayList<>(idBits);
-        this.buckets.addAll(Collections.nCopies(idBits, new ArrayList<>()));
+        for (int i = 0 ; i < idBits; i++) {
+            this.buckets.add(new ArrayList<>(maxBucketSize));
+        }
         this.maxBucketSize = maxBucketSize;
         this.selfId = selfId;
     }
@@ -67,6 +72,10 @@ public class BucketsList {
         if (!bucket.contains(kademliaPeer)) {
             bucket.add(kademliaPeer);
         }
+    }
+
+    public synchronized int size() {
+        return this.buckets.stream().map(ArrayList::size).reduce(0,(a, b) -> a + b);
     }
 
     private int largestDifferingBit(long distance) {

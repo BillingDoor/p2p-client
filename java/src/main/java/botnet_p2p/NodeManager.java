@@ -2,6 +2,7 @@ package botnet_p2p;
 
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -10,7 +11,7 @@ public class NodeManager {
     private List<BotnetNode> nodes;
 
     public NodeManager() {
-        this.nodes = new ArrayList<>();
+        this.nodes = Collections.synchronizedList(new ArrayList<>());
 
     }
 

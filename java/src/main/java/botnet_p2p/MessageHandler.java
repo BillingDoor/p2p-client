@@ -1,16 +1,31 @@
 package botnet_p2p;
 
-public class MessageHandler {
+import botnet_p2p.kademlia.MessageListener;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-    void handle(MessageOuterClass.Message message) {
+import java.nio.channels.SocketChannel;
+
+public class MessageHandler {
+    private static final Logger logger = LogManager.getLogger(MessageHandler.class);
+
+
+    private MessageListener messageListener;
+
+    void handle(MessageOuterClass.Message message, SocketChannel sender) {
         switch (message.getType()) {
             case PING:
-                // ask what to do
-                // return message to send
-                // respond
+                this.messageListener.pingMessageReceived(message, sender);
+                break;
+            case FOUND_NODES:
+                this.messageListener.foundNodesMessageReceived(message);
                 break;
             default:
-                throw new RuntimeException("message type unsupported");
+                logger.error("received message of unsupported type, type: " + message.getType());
         }
+    }
+
+    public void setFoundNodesListener(MessageListener foundNodeListener) {
+        this.messageListener = foundNodeListener;
     }
 }

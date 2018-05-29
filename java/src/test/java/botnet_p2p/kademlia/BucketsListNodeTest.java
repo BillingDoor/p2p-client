@@ -14,4 +14,6 @@ public class BucketsListNodeTest {
         assertEquals("127.0.0.1", kademliaPeer.getHost().getHostAddress());
         assertEquals(8080, kademliaPeer.getPort());
     }
+
+
 }
