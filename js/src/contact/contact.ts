@@ -14,9 +14,9 @@ export class Contact {
   }) {
     const { host, port, guid, isNAT } = config;
 
-    this.guid = guid || Contact.generateGUID();
     this.host = host;
     this.port = port;
+    this.guid = guid || Contact.generateGUID();
     this.isNAT = isNAT || false;
   }
 

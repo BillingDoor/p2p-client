@@ -36,7 +36,7 @@ export class RoutingTable {
 
   private selectBucket(guid: number): number {
     const xor = bigInt(guid).xor(bigInt(this.selfNode.guid));
-    console.log(xor)
+    console.log(xor);
     return xor.toArray(2).value.length;
   }
 }
