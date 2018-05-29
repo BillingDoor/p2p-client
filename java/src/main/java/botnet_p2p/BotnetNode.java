@@ -7,7 +7,6 @@ public class BotnetNode {
     SocketChannel socketChannel;
     InetSocketAddress address;
     NodeStatus status;
-    long uuid; // TODO
 
     public BotnetNode(InetSocketAddress address, NodeStatus status) {
         this.address = address;

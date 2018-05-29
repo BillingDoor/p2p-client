@@ -2,7 +2,6 @@ package botnet_p2p.kademlia;
 
 import botnet_p2p.*;
 import botnet_p2p.MessageOuterClass.Message;
-import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.BufferedInputStream;
@@ -11,6 +10,8 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.nio.ByteBuffer;
+
+import static org.junit.Assert.assertEquals;
 
 
 public class KademliaNodeTest {
@@ -24,8 +25,9 @@ public class KademliaNodeTest {
         MessageHandler messageHandler = new MessageHandler();
         MessageReceiver messageReceiver = new MessageReceiver(messageHandler);
         NodeManager nodeManager = new NodeManager();
+        KademliaNode kademliaNode = null;
         try {
-            KademliaNode kademliaNode = new KademliaNode(
+            kademliaNode = new KademliaNode(
                     new Server(KADEMLIA_SERVER_PORT, messageReceiver, nodeManager),
                     new Client(null, messageReceiver, nodeManager),
                     KADEMLIA_SERVER_UUID,
@@ -43,7 +45,7 @@ public class KademliaNodeTest {
 
         // initialize test peer and send message
         KademliaPeer mockedPeer = new KademliaPeer("127.0.0.1", 4000, 44);
-        Message message = Messages.getBase(mockedPeer)
+        Message message = MsgUtils.getBase(mockedPeer)
                 .setType(Message.MessageType.PING)
                 .build();
         message.writeTo(bufferedOutputStream);
@@ -56,9 +58,14 @@ public class KademliaNodeTest {
         Message receivedMessage = Message.parseFrom(messageBuffer);
         System.out.println(receivedMessage.toString());
 
-        Assert.assertEquals(Message.MessageType.RESPONSE, receivedMessage.getType());
-        Assert.assertEquals(KADEMLIA_SERVER_UUID, receivedMessage.getUuid());
-        Assert.assertEquals(KADEMLIA_SERVER_HOST, receivedMessage.getSender().split(":")[0]);
-        Assert.assertEquals(KADEMLIA_SERVER_PORT, Integer.parseInt(receivedMessage.getSender().split(":")[1]));
+        assertEquals(Message.MessageType.RESPONSE, receivedMessage.getType());
+        assertEquals(KADEMLIA_SERVER_UUID, receivedMessage.getUuid());
+        assertEquals(KADEMLIA_SERVER_HOST, receivedMessage.getSender().split(":")[0]);
+        assertEquals(KADEMLIA_SERVER_PORT, Integer.parseInt(receivedMessage.getSender().split(":")[1]));
+
+        assertEquals(1, kademliaNode.getPeers().size());
+        assertEquals(44, kademliaNode.getPeers().get(0).getId());
+        assertEquals("127.0.0.1", kademliaNode.getPeers().get(0).getAddress());
+        assertEquals(4000, kademliaNode.getPeers().get(0).getPort());
     }
 }

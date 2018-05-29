@@ -90,8 +90,10 @@ public class KademliaNode implements MessageListener {
     @Override
     public void pingMessageReceived(Message message, SocketChannel sender) {
         logger.info("ping received");
+        KademliaPeer kademliaPeer = MsgUtils.getSenderAsPeer(message);
+        routingTable.insert(kademliaPeer);
 
-        Message newMessage = Messages.getBase(this.me)
+        Message newMessage = MsgUtils.getBase(this.me)
                 .setType(Message.MessageType.RESPONSE)
                 .build();
 
@@ -102,5 +104,7 @@ public class KademliaNode implements MessageListener {
         }
     }
 
-
+    public List<KademliaPeer> getPeers() {
+        return routingTable.getPeers();
+    }
 }

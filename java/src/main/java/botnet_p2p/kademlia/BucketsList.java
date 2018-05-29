@@ -27,10 +27,7 @@ public class BucketsList {
 
 
     public synchronized List<KademliaPeer> getNearestPeers(long id, int limit) {
-        List<KademliaPeer> collected = this.buckets
-                .stream()
-                .flatMap(Collection::stream)
-                .collect(Collectors.toList());
+        List<KademliaPeer> collected = getPeers();
         PriorityQueue<KademliaPeer> heap = new PriorityQueue<>(collected.size(), (o1, o2) -> (
                 Long.compare((o1.getId() ^ id), (o2.getId() ^ id))));
         heap.addAll(collected);
@@ -43,6 +40,13 @@ public class BucketsList {
             i++;
         }
         return foundNodes;
+    }
+
+    public List<KademliaPeer> getPeers() {
+        return this.buckets
+                    .stream()
+                    .flatMap(Collection::stream)
+                    .collect(Collectors.toList());
     }
 
     public synchronized KademliaPeer getPeerById(long guid) {
