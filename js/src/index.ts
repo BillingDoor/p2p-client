@@ -1,28 +1,65 @@
-// import { MessageParser, encodeMessage } from './message-parser';
 import { Subject } from 'rxjs';
-// import { prepareFindNodeMessage } from './protobuf-utils';
-// import { Message } from '../protobuf/Message_pb';
 
 import { StringDecoder } from 'string_decoder';
 import { SocketLayer } from './socket-layer/socket-layer';
+import { Communication } from './models';
+import { MessageLayer } from './message-layer/message-layer';
+import { prepareFindNodeMessage } from './protobuf-utils';
+import { Message } from '../protobuf/Message_pb';
 
-const receivedMessages = new Subject<Buffer>();
+const receivedMessages$ = new Subject<Communication<Buffer>>();
+const messagesToSend$ = new Subject<Communication<Buffer>>();
 
-const peer = new SocketLayer(1337, receivedMessages);
+const socketLayer = new SocketLayer(
+  1337,
+  receivedMessages$,
+  messagesToSend$.asObservable()
+);
 
-peer.listen();
+const messageLayer = new MessageLayer(
+  receivedMessages$.asObservable(),
+  messagesToSend$
+);
 
-const node = new SocketLayer(2668, receivedMessages);
-node.connectTo({ host: '127.0.0.1', port: 1337 });
+const receivedMessages2$ = new Subject<Communication<Buffer>>();
+const messagesToSend2$ = new Subject<Communication<Buffer>>();
 
-// client.write('xD')
+const socketLayer2 = new SocketLayer(
+  3424,
+  receivedMessages2$,
+  messagesToSend2$.asObservable()
+);
+void socketLayer2;
+
+const messageLayer2 = new MessageLayer(
+  receivedMessages2$.asObservable(),
+  messagesToSend2$
+);
+
+messageLayer2
+  .on(Message.MessageType.FIND_NODE)
+  .subscribe(() => console.log('It works!'));
+
+messageLayer.send({
+  data: prepareFindNodeMessage({
+    sender: 1,
+    target: 2,
+    host: '123',
+    port: 23
+  }),
+  address: {
+    host: 'localhost',
+    port: 3424
+  }
+});
+
 const decoder = new StringDecoder('utf8');
 
 process.stdin.on('data', function(input: Buffer) {
   const text = decoder.write(input).trim();
 
   if (text == 'close') {
-    peer.stopListening();
+    socketLayer.close();
   }
 });
 
@@ -35,12 +72,12 @@ process.stdin.on('data', function(input: Buffer) {
 // parser.on(Message.MessageType.FOUND_NODES, () => console.log('Nie powinno wyswietlic'));
 
 // dane.next(
-//   encodeMessage(
-//     prepareFindNodeMessage({
-//       sender: 1,
-//       target: 2,
-//       host: '123',
-//       port: 23
-//     })
-//   )
+// encodeMessage(
+//   prepareFindNodeMessage({
+//     sender: 1,
+//     target: 2,
+//     host: '123',
+//     port: 23
+//   })
+// )
 // );

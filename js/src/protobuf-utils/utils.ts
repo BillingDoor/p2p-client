@@ -27,10 +27,4 @@ export function prepareFindNodeMessage(config: {
   return msg;
 }
 
-export function encodeMessage(msg: Message): Buffer {
-  return Buffer.from(msg.serializeBinary());
-}
 
-export function decodeMessage(buffer: Buffer): Message {
-  return Message.deserializeBinary(Uint8Array.from(buffer));
-}

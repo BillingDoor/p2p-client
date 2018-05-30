@@ -1,6 +1,6 @@
-import { Contact } from './contact/contact';
+import { Contact } from '../../contact/contact';
 
-export class P2P {
+export class P2PLayer {
   executeCommandOn(node: Contact) {}
   listPeers() {}
   listFileFrom(node: Contact) {}

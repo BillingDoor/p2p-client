@@ -1,18 +1,18 @@
 import { Subject } from 'rxjs';
 
 import { Message } from '../../protobuf/Message_pb';
-import { prepareFindNodeMessage } from '../protobuf-utils';
-import { MessageParser, encodeMessage } from './message-parser';
+import { Communication } from '../models';
+import { MessageLayer } from './message-layer';
 
-describe('Layer: MessageParser', function() {
-  let inputMessages: Subject<Buffer>;
-  let outputMessages: Subject<Buffer>;
-  let layer: MessageParser;
+describe('Layer: MessageLayer', function() {
+  let inputMessages: Subject<Communication<Buffer>>;
+  let outputMessages: Subject<Communication<Buffer>>;
+  let layer: MessageLayer;
 
   beforeEach(function() {
     inputMessages = new Subject();
     outputMessages = new Subject();
-    layer = new MessageParser(inputMessages, outputMessages);
+    layer = new MessageLayer(inputMessages.asObservable(), outputMessages);
   });
 
   describe('Method: "on"', function() {
@@ -33,8 +33,8 @@ describe('Layer: MessageParser', function() {
       });
 
       it('should invoke callbacks listening on that type', function() {
-        layer.on(Message.MessageType.FIND_NODE, firstCallback);
-        layer.on(Message.MessageType.FIND_NODE, secondCallback);
+        layer.on(Message.MessageType.FIND_NODE).subscribe(firstCallback);
+        layer.on(Message.MessageType.FIND_NODE).subscribe(secondCallback);
 
         sendMessage();
 
@@ -43,7 +43,7 @@ describe('Layer: MessageParser', function() {
       });
 
       it('should not invoke callback listening on other type', function() {
-        layer.on(Message.MessageType.PING, otherTypeCallback);
+        layer.on(Message.MessageType.PING).subscribe(otherTypeCallback);
 
         sendMessage();
 
@@ -53,15 +53,12 @@ describe('Layer: MessageParser', function() {
   });
 
   function sendMessage() {
-    inputMessages.next(
-      encodeMessage(
-        prepareFindNodeMessage({
-          sender: 1,
-          target: 2,
-          host: '123',
-          port: 23
-        })
-      )
-    );
+    inputMessages.next({
+      data: new Buffer('foo'),
+      address: {
+        host: 'foo',
+        port: 123
+      }
+    });
   }
 });
