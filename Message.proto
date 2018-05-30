@@ -14,15 +14,16 @@ message Message {
         FIND_NODE = 8;
         FOUND_NODES = 9;
     }
+
     enum Status {
         FAIL = 0;
         OK = 1;
     }
 
-    message NodeDescription {
-        uint64 guid = 1;
+    message Contact {
+        string guid = 1;
         string IP = 2;
-        string Port = 3;
+        uint32 port = 3;
         bool isNAT = 4;
     }
 
@@ -46,38 +47,37 @@ message Message {
     }
 
     message NATRequest {
-        uint64 target = 1;
+        string guid = 1;
     }
 
     message NATCheck {
-        uint64 source = 1;
+        string guid = 1;
     }
     
     message Leave {
-        uint64 guid = 1;
+        string guid = 1;
     }
     
     message FindNode {
-        uint64 guid = 1;
+        string guid = 1;
     }
     
     message FoundNodes {
-        repeated NodeDescription nodes = 1;
+        repeated Contact nodes = 1;
     }
     
-
-    uint64 uuid = 1;
+    string uuid = 1;
     MessageType type = 2;
     string sender = 3;
     string receiver = 4;
     bool propagation = 5;
     bytes signature = 6;
     oneof payload {
-        Command pCommand = 7;
-        Response pResponse = 8;
-        FileChunk pFile = 9;
-        NATRequest pNATRequest = 10;
-        NATCheck pNATCheck = 11;
+        Command command = 7;
+        Response response = 8;
+        FileChunk file = 9;
+        NATRequest NATRequest = 10;
+        NATCheck NATCheck = 11;
         Leave pLeave = 12;
         FindNode pFindMode = 13;
         FoundNodes pFoundNodes = 14;        
