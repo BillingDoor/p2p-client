@@ -13,6 +13,9 @@
 #include <string>
 #include <thread>
 #include <vector>
+#include <fcntl.h>
+#include <mutex>
+#include <algorithm>
 
 #include "ClientConnection.h"
 
@@ -20,9 +23,10 @@ class Server {
  public:
   Server(uint16_t port);
   ~Server();
-  Server(Server &&) = default;
+//  Server(Server &&) = default;
 
   void run();
+  void stop();
 
  protected:
   void setup_socket(uint16_t port);
@@ -34,9 +38,10 @@ class Server {
   bool send_response(ClientConnection client, std::string);
 
  private:
+  std::mutex mutex;
   int connection_socket;
   struct sockaddr_in server_address, client_address;
-  std::vector<std::thread> client_connections;
+  std::vector<pthread_t> client_connections;
 };
 
 #endif  // CPP_SERVER_H
