@@ -1,4 +1,5 @@
 from python.peer import Peer
+from python.BucketList import BucketList
 import python.Message_pb2
 import socket
 import socketserver
@@ -32,11 +33,28 @@ class KademliaNode(object):
         self.server_thread.daemon = True
         self.server_thread.start()
 
+        self.routing_table = BucketList(5, 64, self.peer.id)
         self.peers_connections = []
         self.bootstrap(seeds)
 
+    def find_nodes(self, key, boot_peer=None):
+        """
+        Send find_node message with id of this node to bootstrap node and every other node that is returned
+        """
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.connect(boot_peer.address())
+        found_nodes = boot_peer.find_node(key)
+
     # Boostrap the network with a list of bootstrap nodes
     def bootstrap(self, bootstrap_nodes = []):
+        for bnode in bootstrap_nodes:
+            boot_peer = Peer(bnode[0], bnode[1])
+            self.find_nodes(self.peer.id, boot_peer=boot_peer)
+
+        if len(bootstrap_nodes) == 0:
+            for bnode in self.buckets.to_list():
+                self.find_nodes(self.peer.id, boot_peer=Peer(bnode[0], bnode[1], bnode[2], bnode[3]))
+
         for bnode in bootstrap_nodes:
             print("Bootstraping")
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
