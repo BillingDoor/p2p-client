@@ -2,7 +2,6 @@ package botnet_p2p.kademlia;
 
 import botnet_p2p.Client;
 import botnet_p2p.MessageHandler;
-import botnet_p2p.MessageOuterClass.Message;
 import botnet_p2p.Server;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -12,6 +11,9 @@ import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Semaphore;
+
+import static botnet_p2p.MessageOuterClass.Message;
+import static botnet_p2p.kademlia.BucketsList.largestDifferingBit;
 
 public class KademliaNode implements MessageListener {
     private static final Logger logger = LogManager.getLogger(KademliaNode.class);
@@ -36,13 +38,64 @@ public class KademliaNode implements MessageListener {
 
         this.server.start();
         this.client.start();
-        //bootstrap(bootPeer);
+        if (bootPeer != null) {
+            bootstrap(bootPeer);
+        } else {
+            logger.error("No bootstrapPeer, boostrap will not be run");
+        }
     }
 
     private void bootstrap(KademliaPeer bootPeer) throws IOException {
         this.routingTable.insert(bootPeer);
         this.askedNodes.add(bootPeer);
         this.sendFindNode(bootPeer);
+
+
+        //
+        // wait for all messages
+        //
+
+
+        int bootstrapBucketIndex = largestDifferingBit(me.getId(), bootPeer.getId());
+
+        final int bucketsCount = routingTable.getBucketsCount();
+        for (int i = bootstrapBucketIndex + 1; i <= bucketsCount; i++) {
+            long id = me.getId();
+            int mask = 1 << (bucketsCount - i - 1);
+            id ^= mask;
+
+            lookupNode(id, 3);
+        }
+        /*
+                bootstrap_bucket_index = largest_differing_bit(key, boot_peer.id)
+
+        for i in range(bootstrap_bucket_index + 1, len(self.routing_table.buckets)):
+            id = key
+            # Change bit on i position (from the most significant bit, indexing from 0)
+            mask = 1 << (len(self.routing_table.buckets) - i - 1)
+            id ^= mask
+
+            _ = self.lookup_node(id)
+        */
+    }
+
+    /**
+     * @param destId the node we want to reach
+     * @param alpha  how many contacts to use
+     */
+    private KademliaPeer lookupNode(long destId, int alpha) {
+        // check if present in routing table
+        KademliaPeer peer = this.routingTable.getPeerById(destId);
+        if (peer != null) {
+            return peer;
+        }
+
+        int k = routingTable.getMaxBucketSize();
+        routingTable.getNearestPeers(destId, k);
+
+        // int smallestDistance =
+
+        return peer;
     }
 
     private void sendFindNode(KademliaPeer peer) throws IOException {
@@ -103,7 +156,6 @@ public class KademliaNode implements MessageListener {
         // add sender to our routing table
         KademliaPeer senderPeer = MsgUtils.getSenderAsPeer(message);
         this.routingTable.insert(senderPeer);
-
     }
 
     @Override

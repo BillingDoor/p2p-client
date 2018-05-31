@@ -1,7 +1,6 @@
 package botnet_p2p.test_node;
 
 import botnet_p2p.Client;
-import botnet_p2p.MessageOuterClass.Message;
 import botnet_p2p.MessageReceiver;
 import botnet_p2p.NodeManager;
 import org.apache.logging.log4j.LogManager;

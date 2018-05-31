@@ -1,7 +1,6 @@
 package botnet_p2p.kademlia;
 
 import botnet_p2p.*;
-import botnet_p2p.MessageOuterClass.Message;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -14,9 +13,9 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.List;
 
+import static botnet_p2p.MessageOuterClass.Message;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.junit.Assert.assertEquals;
-
 
 public class KademliaNodeTest {
 

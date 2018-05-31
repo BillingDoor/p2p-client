@@ -1,13 +1,13 @@
 package botnet_p2p.kademlia;
 
-import botnet_p2p.MessageOuterClass;
-
 import java.nio.channels.SocketChannel;
 
+import static botnet_p2p.MessageOuterClass.Message;
+
 public interface MessageListener {
-    void foundNodesMessageReceived(MessageOuterClass.Message message);
+    void foundNodesMessageReceived(Message message);
 
-    void pingMessageReceived(MessageOuterClass.Message message, SocketChannel sender);
+    void pingMessageReceived(Message message, SocketChannel sender);
 
-    void findNodeMessageReceived(MessageOuterClass.Message message, SocketChannel sender);
+    void findNodeMessageReceived(Message message, SocketChannel sender);
 }

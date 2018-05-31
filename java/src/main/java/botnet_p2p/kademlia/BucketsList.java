@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 
 public class BucketsList {
     private final int maxBucketSize;
-    private int k;
     private ArrayList<ArrayList<KademliaPeer>> buckets;
     private long selfId;
 
@@ -65,9 +64,7 @@ public class BucketsList {
             return;
         }
 
-        long distance = kademliaPeer.getId() ^ selfId;
-        int index = largestDifferingBit(distance);
-
+        int index = largestDifferingBit(kademliaPeer.getId(), selfId);
 
         ArrayList<KademliaPeer> bucket = buckets.get(index);
         if (bucket.size() >= this.maxBucketSize) {
@@ -82,7 +79,8 @@ public class BucketsList {
         return this.buckets.stream().map(ArrayList::size).reduce(0,(a, b) -> a + b);
     }
 
-    private int largestDifferingBit(long distance) {
+    public static int largestDifferingBit(long value1, long value2) {
+        long distance = value1 ^ value2;
         int length = -1;
         while (distance > 0) {
             distance >>= 1;
@@ -93,5 +91,9 @@ public class BucketsList {
 
     public int getMaxBucketSize() {
         return maxBucketSize;
+    }
+
+    public int getBucketsCount() {
+        return this.buckets.size();
     }
 }

@@ -1,6 +1,5 @@
 package botnet_p2p;
 
-import botnet_p2p.MessageOuterClass.Message;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

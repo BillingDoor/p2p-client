@@ -1,9 +1,10 @@
 package botnet_p2p.kademlia;
 
-import botnet_p2p.MessageOuterClass.Message;
-
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static botnet_p2p.MessageOuterClass.Message;
+
 
 public class MsgUtils {
 
