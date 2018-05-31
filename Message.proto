@@ -62,6 +62,10 @@ message Message {
         string guid = 1;
     }
     
+    message PingMsg {
+        string guid = 1;
+    }
+
     message FoundNodesMsg {
         repeated Contact nodes = 1;
     }
@@ -80,6 +84,7 @@ message Message {
         NATCheckMsg NATCheck = 11;
         LeaveMsg leave = 12;
         FindNodeMsg findNode = 13;
-        FoundNodesMsg FoundNodes = 14;        
+        FoundNodesMsg foundNodes = 14;        
+        PingMsg ping = 15;        
     }
 }
