@@ -106,7 +106,7 @@ proto.botnet_p2p.Message.toObject = function(includeInstance, msg) {
   var f, obj = {
     uuid: jspb.Message.getFieldWithDefault(msg, 1, ""),
     type: jspb.Message.getFieldWithDefault(msg, 2, 0),
-    sender: jspb.Message.getFieldWithDefault(msg, 3, ""),
+    sender: (f = msg.getSender()) && proto.botnet_p2p.Message.Contact.toObject(includeInstance, f),
     receiver: jspb.Message.getFieldWithDefault(msg, 4, ""),
     propagation: jspb.Message.getFieldWithDefault(msg, 5, false),
     signature: msg.getSignature_asB64(),
@@ -164,7 +164,8 @@ proto.botnet_p2p.Message.deserializeBinaryFromReader = function(msg, reader) {
       msg.setType(value);
       break;
     case 3:
-      var value = /** @type {string} */ (reader.readString());
+      var value = new proto.botnet_p2p.Message.Contact;
+      reader.readMessage(value,proto.botnet_p2p.Message.Contact.deserializeBinaryFromReader);
       msg.setSender(value);
       break;
     case 4:
@@ -268,10 +269,11 @@ proto.botnet_p2p.Message.serializeBinaryToWriter = function(message, writer) {
     );
   }
   f = message.getSender();
-  if (f.length > 0) {
-    writer.writeString(
+  if (f != null) {
+    writer.writeMessage(
       3,
-      f
+      f,
+      proto.botnet_p2p.Message.Contact.serializeBinaryToWriter
     );
   }
   f = message.getReceiver();
@@ -2171,17 +2173,32 @@ proto.botnet_p2p.Message.prototype.setType = function(value) {
 
 
 /**
- * optional string sender = 3;
- * @return {string}
+ * optional Contact sender = 3;
+ * @return {?proto.botnet_p2p.Message.Contact}
  */
 proto.botnet_p2p.Message.prototype.getSender = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
+  return /** @type{?proto.botnet_p2p.Message.Contact} */ (
+    jspb.Message.getWrapperField(this, proto.botnet_p2p.Message.Contact, 3));
 };
 
 
-/** @param {string} value */
+/** @param {?proto.botnet_p2p.Message.Contact|undefined} value */
 proto.botnet_p2p.Message.prototype.setSender = function(value) {
-  jspb.Message.setProto3StringField(this, 3, value);
+  jspb.Message.setWrapperField(this, 3, value);
+};
+
+
+proto.botnet_p2p.Message.prototype.clearSender = function() {
+  this.setSender(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {!boolean}
+ */
+proto.botnet_p2p.Message.prototype.hasSender = function() {
+  return jspb.Message.getField(this, 3) != null;
 };
 
 

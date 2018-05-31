@@ -10,8 +10,10 @@ export class Message extends jspb.Message {
   getType(): Message.MessageType;
   setType(value: Message.MessageType): void;
 
-  getSender(): string;
-  setSender(value: string): void;
+  hasSender(): boolean;
+  clearSender(): void;
+  getSender(): Message.Contact | undefined;
+  setSender(value?: Message.Contact): void;
 
   getReceiver(): string;
   setReceiver(value: string): void;
@@ -84,7 +86,7 @@ export namespace Message {
   export type AsObject = {
     uuid: string,
     type: Message.MessageType,
-    sender: string,
+    sender?: Message.Contact.AsObject,
     receiver: string,
     propagation: boolean,
     signature: Uint8Array | string,
