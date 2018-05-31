@@ -1,4 +1,3 @@
-import python.Message_pb2
 import random
 import socket
 import python.protobuf_utils as putils

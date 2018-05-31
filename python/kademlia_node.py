@@ -1,7 +1,6 @@
 from python.peer import Peer
-from python.BucketList import BucketList, largest_differing_bit
+from python.P2P.BucketList import BucketList, largest_differing_bit
 import python.protobuf_utils as putils
-import socket
 import socketserver
 import threading
 import heapq
