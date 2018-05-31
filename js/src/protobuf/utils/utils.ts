@@ -2,17 +2,15 @@ import { Contact } from '@models';
 import { Message } from '../Message_pb';
 
 export function prepareBaseMessage(config: {
-  sender: Contact;
   type: Message.MessageType;
+  sender: Contact;
+  receiver: Contact;
 }): Message {
-  const { sender, type } = config;
+  const { sender, receiver, type } = config;
   const msg = new Message();
-  const cnt = new Message.Contact();
-  cnt.setGuid(sender.guid);
-  cnt.setIsnat(sender.isNAT);
-  cnt.setIp(sender.address.host);
-  cnt.setPort(sender.address.port);
-  msg.setSender(cnt);
+
+  msg.setSender(sender.toMessageContact());
+  msg.setReceiver(sender.toMessageContact());
   msg.setType(type);
   return msg;
 }
@@ -20,15 +18,17 @@ export function prepareBaseMessage(config: {
 export function prepareFindNodeMessage(config: {
   node: string;
   sender: Contact;
+  receiver: Contact;
 }) {
-  const { node, sender } = config;
+  const { node, sender, receiver } = config;
 
   const findNodeMsg = new Message.FindNodeMsg();
   findNodeMsg.setGuid(node);
 
   const msg = prepareBaseMessage({
+    type: Message.MessageType.FIND_NODE,
     sender,
-    type: Message.MessageType.FIND_NODE
+    receiver
   });
   msg.setFindnode(findNodeMsg);
 
@@ -38,15 +38,17 @@ export function prepareFindNodeMessage(config: {
 export function prepareFoundNodesMessage(config: {
   nodes: Message.Contact[];
   sender: Contact;
+  receiver: Contact;
 }) {
-  const { nodes, sender } = config;
+  const { nodes, sender, receiver } = config;
 
   const foundNodesMsg = new Message.FoundNodesMsg();
   foundNodesMsg.setNodesList(nodes);
 
   const msg = prepareBaseMessage({
+    type: Message.MessageType.FOUND_NODES,
     sender,
-    type: Message.MessageType.FOUND_NODES
+    receiver
   });
   msg.setFoundnodes(foundNodesMsg);
 

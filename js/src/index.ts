@@ -14,7 +14,7 @@ void peer2;
 peer1.launchClient({
   host: 'localhost',
   port: 2345
-})
+});
 
 // const decoder = new StringDecoder('utf8');
 
@@ -27,7 +27,7 @@ peer1.launchClient({
 // });
 
 function spawnNode(port: number) {
-  const receivedMessages$ = new Subject<Communication<Buffer>>();
+  const receivedMessages$ = new Subject<Buffer>();
   const messagesToSend$ = new Subject<Communication<Buffer>>();
 
   const me = new Contact({

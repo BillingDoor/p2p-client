@@ -1,6 +1,6 @@
 import { Observable } from 'rxjs';
 
-import { Address, Communication, Contact } from '@models';
+import { Contact } from '@models';
 import { MessageLayer } from '@layers//message-layer/message-layer';
 import { Message } from '../../protobuf/Message_pb';
 import * as utils from '@protobuf/utils';
@@ -14,39 +14,39 @@ export class P2PLayer {
     this.routingTable = new RoutingTable(this.me);
   }
 
-  findNode(config: { to: Address; guid: string }) {
+  findNode(config: { to: Contact; guid: string }) {
     const { to, guid } = config;
-    this.worker.send({
-      data: utils.prepareFindNodeMessage({
+    this.worker.send(
+      utils.prepareFindNodeMessage({
         node: guid,
-        sender: this.me
-      }),
-      address: to
-    });
+        sender: this.me,
+        receiver: to
+      })
+    );
   }
 
-  foundNodes(config: { to: Address; nodes: Message.Contact[] }) {
+  foundNodes(config: { to: Contact; nodes: Message.Contact[] }) {
     const { to, nodes } = config;
-    this.worker.send({
-      data: utils.prepareFoundNodesMessage({
+    this.worker.send(
+      utils.prepareFoundNodesMessage({
         nodes,
-        sender: this.me
-      }),
-      address: to
-    });
+        sender: this.me,
+        receiver: to
+      })
+    );
   }
 
   ping(node: Contact) {
-    this.worker.send({
-      data: utils.prepareBaseMessage({
+    this.worker.send(
+      utils.prepareBaseMessage({
+        type: Message.MessageType.PING,
         sender: this.me,
-        type: Message.MessageType.PING
-      }),
-      address: node.address
-    });
+        receiver: node
+      })
+    );
   }
 
-  on(type: Message.MessageType): Observable<Communication<Message>> {
+  on(type: Message.MessageType): Observable<Message> {
     console.log(`on(${type})`);
     return this.worker.on(type);
   }

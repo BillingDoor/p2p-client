@@ -1,28 +1,31 @@
 import { Observable, Subject } from 'rxjs';
 import { map, filter } from 'rxjs/operators';
 
-import { Communication } from '@models';
+import { Communication, Contact } from '@models';
 import { Message } from '../../protobuf/Message_pb';
 
 export class MessageLayer {
-  private messages$: Observable<Communication<Message>>;
+  private messages$: Observable<Message>;
 
   constructor(
-    private inputMessages$: Observable<Communication<Buffer>>,
+    private inputMessages$: Observable<Buffer>,
     private outputMessages$: Subject<Communication<Buffer>>
   ) {
-    this.messages$ = this.inputMessages$.pipe(
-      map(({ data, address }) => ({ data: decodeMessage(data), address }))
-    );
+    this.messages$ = this.inputMessages$.pipe(map(decodeMessage));
   }
 
-  on(type: Message.MessageType): Observable<Communication<Message>> {
-    return this.messages$.pipe(filter((msg) => msg.data.getType() === type));
+  on(type: Message.MessageType): Observable<Message> {
+    return this.messages$.pipe(filter((msg) => msg.getType() === type));
   }
 
-  send(msg: Communication<Message>) {
-    const { data, address } = msg;
-    this.outputMessages$.next({ data: encodeMessage(data), address });
+  send(msg: Message) {
+    const receiver = msg.getReceiver();
+    if (receiver) {
+      const { address } = Contact.from(receiver);
+      this.outputMessages$.next({ data: encodeMessage(msg), address });
+    } else {
+      throw new Error('Message layer: Message receiver not set.');
+    }
   }
 }
 
