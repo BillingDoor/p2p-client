@@ -6,7 +6,7 @@
       "@models": ["models"],
       "@models*": ["models*"],
       "@layers*": ["layers*"],
-      "@utils*": ["utils*"]
+      "@protobuf*": ["protobuf*"]
     },
     "target": "es6",
     "module": "commonjs",
