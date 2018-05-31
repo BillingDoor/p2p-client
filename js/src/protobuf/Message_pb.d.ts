@@ -4,8 +4,8 @@
 import * as jspb from "google-protobuf";
 
 export class Message extends jspb.Message {
-  getUuid(): number;
-  setUuid(value: number): void;
+  getUuid(): string;
+  setUuid(value: string): void;
 
   getType(): Message.MessageType;
   setType(value: Message.MessageType): void;
@@ -24,50 +24,50 @@ export class Message extends jspb.Message {
   getSignature_asB64(): string;
   setSignature(value: Uint8Array | string): void;
 
-  hasPcommand(): boolean;
-  clearPcommand(): void;
-  getPcommand(): Message.Command | undefined;
-  setPcommand(value?: Message.Command): void;
+  hasCommand(): boolean;
+  clearCommand(): void;
+  getCommand(): Message.CommandMsg | undefined;
+  setCommand(value?: Message.CommandMsg): void;
 
-  hasPresponse(): boolean;
-  clearPresponse(): void;
-  getPresponse(): Message.Response | undefined;
-  setPresponse(value?: Message.Response): void;
+  hasResponse(): boolean;
+  clearResponse(): void;
+  getResponse(): Message.ResponseMsg | undefined;
+  setResponse(value?: Message.ResponseMsg): void;
 
-  hasPfile(): boolean;
-  clearPfile(): void;
-  getPfile(): Message.FileChunk | undefined;
-  setPfile(value?: Message.FileChunk): void;
+  hasFilechunk(): boolean;
+  clearFilechunk(): void;
+  getFilechunk(): Message.FileChunkMsg | undefined;
+  setFilechunk(value?: Message.FileChunkMsg): void;
 
-  hasPnatrequest(): boolean;
-  clearPnatrequest(): void;
-  getPnatrequest(): Message.NATRequest | undefined;
-  setPnatrequest(value?: Message.NATRequest): void;
+  hasNatrequest(): boolean;
+  clearNatrequest(): void;
+  getNatrequest(): Message.NATRequestMsg | undefined;
+  setNatrequest(value?: Message.NATRequestMsg): void;
 
-  hasPnatcheck(): boolean;
-  clearPnatcheck(): void;
-  getPnatcheck(): Message.NATCheck | undefined;
-  setPnatcheck(value?: Message.NATCheck): void;
+  hasNatcheck(): boolean;
+  clearNatcheck(): void;
+  getNatcheck(): Message.NATCheckMsg | undefined;
+  setNatcheck(value?: Message.NATCheckMsg): void;
 
-  hasPleave(): boolean;
-  clearPleave(): void;
-  getPleave(): Message.Leave | undefined;
-  setPleave(value?: Message.Leave): void;
+  hasLeave(): boolean;
+  clearLeave(): void;
+  getLeave(): Message.LeaveMsg | undefined;
+  setLeave(value?: Message.LeaveMsg): void;
 
-  hasPfindnode(): boolean;
-  clearPfindnode(): void;
-  getPfindnode(): Message.FindNode | undefined;
-  setPfindnode(value?: Message.FindNode): void;
+  hasFindnode(): boolean;
+  clearFindnode(): void;
+  getFindnode(): Message.FindNodeMsg | undefined;
+  setFindnode(value?: Message.FindNodeMsg): void;
 
-  hasPfoundnodes(): boolean;
-  clearPfoundnodes(): void;
-  getPfoundnodes(): Message.FoundNodes | undefined;
-  setPfoundnodes(value?: Message.FoundNodes): void;
+  hasFoundnodes(): boolean;
+  clearFoundnodes(): void;
+  getFoundnodes(): Message.FoundNodesMsg | undefined;
+  setFoundnodes(value?: Message.FoundNodesMsg): void;
 
-  hasPfindvalue(): boolean;
-  clearPfindvalue(): void;
-  getPfindvalue(): Message.FindValue | undefined;
-  setPfindvalue(value?: Message.FindValue): void;
+  hasPing(): boolean;
+  clearPing(): void;
+  getPing(): Message.PingMsg | undefined;
+  setPing(value?: Message.PingMsg): void;
 
   getPayloadCase(): Message.PayloadCase;
   serializeBinary(): Uint8Array;
@@ -82,56 +82,56 @@ export class Message extends jspb.Message {
 
 export namespace Message {
   export type AsObject = {
-    uuid: number,
+    uuid: string,
     type: Message.MessageType,
     sender: string,
     receiver: string,
     propagation: boolean,
     signature: Uint8Array | string,
-    pcommand?: Message.Command.AsObject,
-    presponse?: Message.Response.AsObject,
-    pfile?: Message.FileChunk.AsObject,
-    pnatrequest?: Message.NATRequest.AsObject,
-    pnatcheck?: Message.NATCheck.AsObject,
-    pleave?: Message.Leave.AsObject,
-    pfindnode?: Message.FindNode.AsObject,
-    pfoundnodes?: Message.FoundNodes.AsObject,
-    pfindvalue?: Message.FindValue.AsObject,
+    command?: Message.CommandMsg.AsObject,
+    response?: Message.ResponseMsg.AsObject,
+    filechunk?: Message.FileChunkMsg.AsObject,
+    natrequest?: Message.NATRequestMsg.AsObject,
+    natcheck?: Message.NATCheckMsg.AsObject,
+    leave?: Message.LeaveMsg.AsObject,
+    findnode?: Message.FindNodeMsg.AsObject,
+    foundnodes?: Message.FoundNodesMsg.AsObject,
+    ping?: Message.PingMsg.AsObject,
   }
 
-  export class NodeDescription extends jspb.Message {
-    getGuid(): number;
-    setGuid(value: number): void;
+  export class Contact extends jspb.Message {
+    getGuid(): string;
+    setGuid(value: string): void;
 
     getIp(): string;
     setIp(value: string): void;
 
-    getPort(): string;
-    setPort(value: string): void;
+    getPort(): number;
+    setPort(value: number): void;
 
     getIsnat(): boolean;
     setIsnat(value: boolean): void;
 
     serializeBinary(): Uint8Array;
-    toObject(includeInstance?: boolean): NodeDescription.AsObject;
-    static toObject(includeInstance: boolean, msg: NodeDescription): NodeDescription.AsObject;
+    toObject(includeInstance?: boolean): Contact.AsObject;
+    static toObject(includeInstance: boolean, msg: Contact): Contact.AsObject;
     static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
     static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
-    static serializeBinaryToWriter(message: NodeDescription, writer: jspb.BinaryWriter): void;
-    static deserializeBinary(bytes: Uint8Array): NodeDescription;
-    static deserializeBinaryFromReader(message: NodeDescription, reader: jspb.BinaryReader): NodeDescription;
+    static serializeBinaryToWriter(message: Contact, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): Contact;
+    static deserializeBinaryFromReader(message: Contact, reader: jspb.BinaryReader): Contact;
   }
 
-  export namespace NodeDescription {
+  export namespace Contact {
     export type AsObject = {
-      guid: number,
+      guid: string,
       ip: string,
-      port: string,
+      port: number,
       isnat: boolean,
     }
   }
 
-  export class Command extends jspb.Message {
+  export class CommandMsg extends jspb.Message {
     getCommandstring(): string;
     setCommandstring(value: string): void;
 
@@ -139,23 +139,23 @@ export namespace Message {
     setSendresponse(value: boolean): void;
 
     serializeBinary(): Uint8Array;
-    toObject(includeInstance?: boolean): Command.AsObject;
-    static toObject(includeInstance: boolean, msg: Command): Command.AsObject;
+    toObject(includeInstance?: boolean): CommandMsg.AsObject;
+    static toObject(includeInstance: boolean, msg: CommandMsg): CommandMsg.AsObject;
     static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
     static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
-    static serializeBinaryToWriter(message: Command, writer: jspb.BinaryWriter): void;
-    static deserializeBinary(bytes: Uint8Array): Command;
-    static deserializeBinaryFromReader(message: Command, reader: jspb.BinaryReader): Command;
+    static serializeBinaryToWriter(message: CommandMsg, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): CommandMsg;
+    static deserializeBinaryFromReader(message: CommandMsg, reader: jspb.BinaryReader): CommandMsg;
   }
 
-  export namespace Command {
+  export namespace CommandMsg {
     export type AsObject = {
       commandstring: string,
       sendresponse: boolean,
     }
   }
 
-  export class Response extends jspb.Message {
+  export class ResponseMsg extends jspb.Message {
     getValue(): string;
     setValue(value: string): void;
 
@@ -163,23 +163,23 @@ export namespace Message {
     setStatus(value: Message.Status): void;
 
     serializeBinary(): Uint8Array;
-    toObject(includeInstance?: boolean): Response.AsObject;
-    static toObject(includeInstance: boolean, msg: Response): Response.AsObject;
+    toObject(includeInstance?: boolean): ResponseMsg.AsObject;
+    static toObject(includeInstance: boolean, msg: ResponseMsg): ResponseMsg.AsObject;
     static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
     static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
-    static serializeBinaryToWriter(message: Response, writer: jspb.BinaryWriter): void;
-    static deserializeBinary(bytes: Uint8Array): Response;
-    static deserializeBinaryFromReader(message: Response, reader: jspb.BinaryReader): Response;
+    static serializeBinaryToWriter(message: ResponseMsg, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): ResponseMsg;
+    static deserializeBinaryFromReader(message: ResponseMsg, reader: jspb.BinaryReader): ResponseMsg;
   }
 
-  export namespace Response {
+  export namespace ResponseMsg {
     export type AsObject = {
       value: string,
       status: Message.Status,
     }
   }
 
-  export class FileChunk extends jspb.Message {
+  export class FileChunkMsg extends jspb.Message {
     getPath(): string;
     setPath(value: string): void;
 
@@ -201,16 +201,16 @@ export namespace Message {
     setData(value: Uint8Array | string): void;
 
     serializeBinary(): Uint8Array;
-    toObject(includeInstance?: boolean): FileChunk.AsObject;
-    static toObject(includeInstance: boolean, msg: FileChunk): FileChunk.AsObject;
+    toObject(includeInstance?: boolean): FileChunkMsg.AsObject;
+    static toObject(includeInstance: boolean, msg: FileChunkMsg): FileChunkMsg.AsObject;
     static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
     static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
-    static serializeBinaryToWriter(message: FileChunk, writer: jspb.BinaryWriter): void;
-    static deserializeBinary(bytes: Uint8Array): FileChunk;
-    static deserializeBinaryFromReader(message: FileChunk, reader: jspb.BinaryReader): FileChunk;
+    static serializeBinaryToWriter(message: FileChunkMsg, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): FileChunkMsg;
+    static deserializeBinaryFromReader(message: FileChunkMsg, reader: jspb.BinaryReader): FileChunkMsg;
   }
 
-  export namespace FileChunk {
+  export namespace FileChunkMsg {
     export type AsObject = {
       path: string,
       name: boolean,
@@ -221,125 +221,125 @@ export namespace Message {
     }
   }
 
-  export class NATRequest extends jspb.Message {
-    getTarget(): number;
-    setTarget(value: number): void;
+  export class NATRequestMsg extends jspb.Message {
+    getGuid(): string;
+    setGuid(value: string): void;
 
     serializeBinary(): Uint8Array;
-    toObject(includeInstance?: boolean): NATRequest.AsObject;
-    static toObject(includeInstance: boolean, msg: NATRequest): NATRequest.AsObject;
+    toObject(includeInstance?: boolean): NATRequestMsg.AsObject;
+    static toObject(includeInstance: boolean, msg: NATRequestMsg): NATRequestMsg.AsObject;
     static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
     static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
-    static serializeBinaryToWriter(message: NATRequest, writer: jspb.BinaryWriter): void;
-    static deserializeBinary(bytes: Uint8Array): NATRequest;
-    static deserializeBinaryFromReader(message: NATRequest, reader: jspb.BinaryReader): NATRequest;
+    static serializeBinaryToWriter(message: NATRequestMsg, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): NATRequestMsg;
+    static deserializeBinaryFromReader(message: NATRequestMsg, reader: jspb.BinaryReader): NATRequestMsg;
   }
 
-  export namespace NATRequest {
+  export namespace NATRequestMsg {
     export type AsObject = {
-      target: number,
+      guid: string,
     }
   }
 
-  export class NATCheck extends jspb.Message {
-    getSource(): number;
-    setSource(value: number): void;
+  export class NATCheckMsg extends jspb.Message {
+    getGuid(): string;
+    setGuid(value: string): void;
 
     serializeBinary(): Uint8Array;
-    toObject(includeInstance?: boolean): NATCheck.AsObject;
-    static toObject(includeInstance: boolean, msg: NATCheck): NATCheck.AsObject;
+    toObject(includeInstance?: boolean): NATCheckMsg.AsObject;
+    static toObject(includeInstance: boolean, msg: NATCheckMsg): NATCheckMsg.AsObject;
     static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
     static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
-    static serializeBinaryToWriter(message: NATCheck, writer: jspb.BinaryWriter): void;
-    static deserializeBinary(bytes: Uint8Array): NATCheck;
-    static deserializeBinaryFromReader(message: NATCheck, reader: jspb.BinaryReader): NATCheck;
+    static serializeBinaryToWriter(message: NATCheckMsg, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): NATCheckMsg;
+    static deserializeBinaryFromReader(message: NATCheckMsg, reader: jspb.BinaryReader): NATCheckMsg;
   }
 
-  export namespace NATCheck {
+  export namespace NATCheckMsg {
     export type AsObject = {
-      source: number,
+      guid: string,
     }
   }
 
-  export class FindValue extends jspb.Message {
-    getGuid(): number;
-    setGuid(value: number): void;
+  export class LeaveMsg extends jspb.Message {
+    getGuid(): string;
+    setGuid(value: string): void;
 
     serializeBinary(): Uint8Array;
-    toObject(includeInstance?: boolean): FindValue.AsObject;
-    static toObject(includeInstance: boolean, msg: FindValue): FindValue.AsObject;
+    toObject(includeInstance?: boolean): LeaveMsg.AsObject;
+    static toObject(includeInstance: boolean, msg: LeaveMsg): LeaveMsg.AsObject;
     static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
     static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
-    static serializeBinaryToWriter(message: FindValue, writer: jspb.BinaryWriter): void;
-    static deserializeBinary(bytes: Uint8Array): FindValue;
-    static deserializeBinaryFromReader(message: FindValue, reader: jspb.BinaryReader): FindValue;
+    static serializeBinaryToWriter(message: LeaveMsg, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): LeaveMsg;
+    static deserializeBinaryFromReader(message: LeaveMsg, reader: jspb.BinaryReader): LeaveMsg;
   }
 
-  export namespace FindValue {
+  export namespace LeaveMsg {
     export type AsObject = {
-      guid: number,
+      guid: string,
     }
   }
 
-  export class Leave extends jspb.Message {
-    getGuid(): number;
-    setGuid(value: number): void;
+  export class FindNodeMsg extends jspb.Message {
+    getGuid(): string;
+    setGuid(value: string): void;
 
     serializeBinary(): Uint8Array;
-    toObject(includeInstance?: boolean): Leave.AsObject;
-    static toObject(includeInstance: boolean, msg: Leave): Leave.AsObject;
+    toObject(includeInstance?: boolean): FindNodeMsg.AsObject;
+    static toObject(includeInstance: boolean, msg: FindNodeMsg): FindNodeMsg.AsObject;
     static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
     static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
-    static serializeBinaryToWriter(message: Leave, writer: jspb.BinaryWriter): void;
-    static deserializeBinary(bytes: Uint8Array): Leave;
-    static deserializeBinaryFromReader(message: Leave, reader: jspb.BinaryReader): Leave;
+    static serializeBinaryToWriter(message: FindNodeMsg, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): FindNodeMsg;
+    static deserializeBinaryFromReader(message: FindNodeMsg, reader: jspb.BinaryReader): FindNodeMsg;
   }
 
-  export namespace Leave {
+  export namespace FindNodeMsg {
     export type AsObject = {
-      guid: number,
+      guid: string,
     }
   }
 
-  export class FindNode extends jspb.Message {
-    getGuid(): number;
-    setGuid(value: number): void;
+  export class PingMsg extends jspb.Message {
+    getGuid(): string;
+    setGuid(value: string): void;
 
     serializeBinary(): Uint8Array;
-    toObject(includeInstance?: boolean): FindNode.AsObject;
-    static toObject(includeInstance: boolean, msg: FindNode): FindNode.AsObject;
+    toObject(includeInstance?: boolean): PingMsg.AsObject;
+    static toObject(includeInstance: boolean, msg: PingMsg): PingMsg.AsObject;
     static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
     static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
-    static serializeBinaryToWriter(message: FindNode, writer: jspb.BinaryWriter): void;
-    static deserializeBinary(bytes: Uint8Array): FindNode;
-    static deserializeBinaryFromReader(message: FindNode, reader: jspb.BinaryReader): FindNode;
+    static serializeBinaryToWriter(message: PingMsg, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): PingMsg;
+    static deserializeBinaryFromReader(message: PingMsg, reader: jspb.BinaryReader): PingMsg;
   }
 
-  export namespace FindNode {
+  export namespace PingMsg {
     export type AsObject = {
-      guid: number,
+      guid: string,
     }
   }
 
-  export class FoundNodes extends jspb.Message {
+  export class FoundNodesMsg extends jspb.Message {
     clearNodesList(): void;
-    getNodesList(): Array<Message.NodeDescription>;
-    setNodesList(value: Array<Message.NodeDescription>): void;
-    addNodes(value?: Message.NodeDescription, index?: number): Message.NodeDescription;
+    getNodesList(): Array<Message.Contact>;
+    setNodesList(value: Array<Message.Contact>): void;
+    addNodes(value?: Message.Contact, index?: number): Message.Contact;
 
     serializeBinary(): Uint8Array;
-    toObject(includeInstance?: boolean): FoundNodes.AsObject;
-    static toObject(includeInstance: boolean, msg: FoundNodes): FoundNodes.AsObject;
+    toObject(includeInstance?: boolean): FoundNodesMsg.AsObject;
+    static toObject(includeInstance: boolean, msg: FoundNodesMsg): FoundNodesMsg.AsObject;
     static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
     static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
-    static serializeBinaryToWriter(message: FoundNodes, writer: jspb.BinaryWriter): void;
-    static deserializeBinary(bytes: Uint8Array): FoundNodes;
-    static deserializeBinaryFromReader(message: FoundNodes, reader: jspb.BinaryReader): FoundNodes;
+    static serializeBinaryToWriter(message: FoundNodesMsg, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): FoundNodesMsg;
+    static deserializeBinaryFromReader(message: FoundNodesMsg, reader: jspb.BinaryReader): FoundNodesMsg;
   }
 
-  export namespace FoundNodes {
+  export namespace FoundNodesMsg {
     export type AsObject = {
-      nodesList: Array<Message.NodeDescription.AsObject>,
+      nodesList: Array<Message.Contact.AsObject>,
     }
   }
 
@@ -354,7 +354,6 @@ export namespace Message {
     LEAVE = 7,
     FIND_NODE = 8,
     FOUND_NODES = 9,
-    FIND_VALUE = 10,
   }
 
   export enum Status {
@@ -364,15 +363,15 @@ export namespace Message {
 
   export enum PayloadCase {
     PAYLOAD_NOT_SET = 0,
-    PCOMMAND = 7,
-    PRESPONSE = 8,
-    PFILE = 9,
-    PNATREQUEST = 10,
-    PNATCHECK = 11,
-    PLEAVE = 12,
-    PFINDNODE = 13,
-    PFOUNDNODES = 14,
-    PFINDVALUE = 15,
+    COMMAND = 7,
+    RESPONSE = 8,
+    FILECHUNK = 9,
+    NATREQUEST = 10,
+    NATCHECK = 11,
+    LEAVE = 12,
+    FINDNODE = 13,
+    FOUNDNODES = 14,
+    PING = 15,
   }
 }
 

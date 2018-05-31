@@ -12,17 +12,17 @@ var goog = jspb;
 var global = Function('return this')();
 
 goog.exportSymbol('proto.botnet_p2p.Message', null, global);
-goog.exportSymbol('proto.botnet_p2p.Message.Command', null, global);
-goog.exportSymbol('proto.botnet_p2p.Message.FileChunk', null, global);
-goog.exportSymbol('proto.botnet_p2p.Message.FindNode', null, global);
-goog.exportSymbol('proto.botnet_p2p.Message.FindValue', null, global);
-goog.exportSymbol('proto.botnet_p2p.Message.FoundNodes', null, global);
-goog.exportSymbol('proto.botnet_p2p.Message.Leave', null, global);
+goog.exportSymbol('proto.botnet_p2p.Message.CommandMsg', null, global);
+goog.exportSymbol('proto.botnet_p2p.Message.Contact', null, global);
+goog.exportSymbol('proto.botnet_p2p.Message.FileChunkMsg', null, global);
+goog.exportSymbol('proto.botnet_p2p.Message.FindNodeMsg', null, global);
+goog.exportSymbol('proto.botnet_p2p.Message.FoundNodesMsg', null, global);
+goog.exportSymbol('proto.botnet_p2p.Message.LeaveMsg', null, global);
 goog.exportSymbol('proto.botnet_p2p.Message.MessageType', null, global);
-goog.exportSymbol('proto.botnet_p2p.Message.NATCheck', null, global);
-goog.exportSymbol('proto.botnet_p2p.Message.NATRequest', null, global);
-goog.exportSymbol('proto.botnet_p2p.Message.NodeDescription', null, global);
-goog.exportSymbol('proto.botnet_p2p.Message.Response', null, global);
+goog.exportSymbol('proto.botnet_p2p.Message.NATCheckMsg', null, global);
+goog.exportSymbol('proto.botnet_p2p.Message.NATRequestMsg', null, global);
+goog.exportSymbol('proto.botnet_p2p.Message.PingMsg', null, global);
+goog.exportSymbol('proto.botnet_p2p.Message.ResponseMsg', null, global);
 goog.exportSymbol('proto.botnet_p2p.Message.Status', null, global);
 
 /**
@@ -57,15 +57,15 @@ proto.botnet_p2p.Message.oneofGroups_ = [[7,8,9,10,11,12,13,14,15]];
  */
 proto.botnet_p2p.Message.PayloadCase = {
   PAYLOAD_NOT_SET: 0,
-  PCOMMAND: 7,
-  PRESPONSE: 8,
-  PFILE: 9,
-  PNATREQUEST: 10,
-  PNATCHECK: 11,
-  PLEAVE: 12,
-  PFINDNODE: 13,
-  PFOUNDNODES: 14,
-  PFINDVALUE: 15
+  COMMAND: 7,
+  RESPONSE: 8,
+  FILECHUNK: 9,
+  NATREQUEST: 10,
+  NATCHECK: 11,
+  LEAVE: 12,
+  FINDNODE: 13,
+  FOUNDNODES: 14,
+  PING: 15
 };
 
 /**
@@ -104,21 +104,21 @@ proto.botnet_p2p.Message.prototype.toObject = function(opt_includeInstance) {
  */
 proto.botnet_p2p.Message.toObject = function(includeInstance, msg) {
   var f, obj = {
-    uuid: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    uuid: jspb.Message.getFieldWithDefault(msg, 1, ""),
     type: jspb.Message.getFieldWithDefault(msg, 2, 0),
     sender: jspb.Message.getFieldWithDefault(msg, 3, ""),
     receiver: jspb.Message.getFieldWithDefault(msg, 4, ""),
     propagation: jspb.Message.getFieldWithDefault(msg, 5, false),
     signature: msg.getSignature_asB64(),
-    pcommand: (f = msg.getPcommand()) && proto.botnet_p2p.Message.Command.toObject(includeInstance, f),
-    presponse: (f = msg.getPresponse()) && proto.botnet_p2p.Message.Response.toObject(includeInstance, f),
-    pfile: (f = msg.getPfile()) && proto.botnet_p2p.Message.FileChunk.toObject(includeInstance, f),
-    pnatrequest: (f = msg.getPnatrequest()) && proto.botnet_p2p.Message.NATRequest.toObject(includeInstance, f),
-    pnatcheck: (f = msg.getPnatcheck()) && proto.botnet_p2p.Message.NATCheck.toObject(includeInstance, f),
-    pleave: (f = msg.getPleave()) && proto.botnet_p2p.Message.Leave.toObject(includeInstance, f),
-    pfindnode: (f = msg.getPfindnode()) && proto.botnet_p2p.Message.FindNode.toObject(includeInstance, f),
-    pfoundnodes: (f = msg.getPfoundnodes()) && proto.botnet_p2p.Message.FoundNodes.toObject(includeInstance, f),
-    pfindvalue: (f = msg.getPfindvalue()) && proto.botnet_p2p.Message.FindValue.toObject(includeInstance, f)
+    command: (f = msg.getCommand()) && proto.botnet_p2p.Message.CommandMsg.toObject(includeInstance, f),
+    response: (f = msg.getResponse()) && proto.botnet_p2p.Message.ResponseMsg.toObject(includeInstance, f),
+    filechunk: (f = msg.getFilechunk()) && proto.botnet_p2p.Message.FileChunkMsg.toObject(includeInstance, f),
+    natrequest: (f = msg.getNatrequest()) && proto.botnet_p2p.Message.NATRequestMsg.toObject(includeInstance, f),
+    natcheck: (f = msg.getNatcheck()) && proto.botnet_p2p.Message.NATCheckMsg.toObject(includeInstance, f),
+    leave: (f = msg.getLeave()) && proto.botnet_p2p.Message.LeaveMsg.toObject(includeInstance, f),
+    findnode: (f = msg.getFindnode()) && proto.botnet_p2p.Message.FindNodeMsg.toObject(includeInstance, f),
+    foundnodes: (f = msg.getFoundnodes()) && proto.botnet_p2p.Message.FoundNodesMsg.toObject(includeInstance, f),
+    ping: (f = msg.getPing()) && proto.botnet_p2p.Message.PingMsg.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -156,7 +156,7 @@ proto.botnet_p2p.Message.deserializeBinaryFromReader = function(msg, reader) {
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {number} */ (reader.readUint64());
+      var value = /** @type {string} */ (reader.readString());
       msg.setUuid(value);
       break;
     case 2:
@@ -180,49 +180,49 @@ proto.botnet_p2p.Message.deserializeBinaryFromReader = function(msg, reader) {
       msg.setSignature(value);
       break;
     case 7:
-      var value = new proto.botnet_p2p.Message.Command;
-      reader.readMessage(value,proto.botnet_p2p.Message.Command.deserializeBinaryFromReader);
-      msg.setPcommand(value);
+      var value = new proto.botnet_p2p.Message.CommandMsg;
+      reader.readMessage(value,proto.botnet_p2p.Message.CommandMsg.deserializeBinaryFromReader);
+      msg.setCommand(value);
       break;
     case 8:
-      var value = new proto.botnet_p2p.Message.Response;
-      reader.readMessage(value,proto.botnet_p2p.Message.Response.deserializeBinaryFromReader);
-      msg.setPresponse(value);
+      var value = new proto.botnet_p2p.Message.ResponseMsg;
+      reader.readMessage(value,proto.botnet_p2p.Message.ResponseMsg.deserializeBinaryFromReader);
+      msg.setResponse(value);
       break;
     case 9:
-      var value = new proto.botnet_p2p.Message.FileChunk;
-      reader.readMessage(value,proto.botnet_p2p.Message.FileChunk.deserializeBinaryFromReader);
-      msg.setPfile(value);
+      var value = new proto.botnet_p2p.Message.FileChunkMsg;
+      reader.readMessage(value,proto.botnet_p2p.Message.FileChunkMsg.deserializeBinaryFromReader);
+      msg.setFilechunk(value);
       break;
     case 10:
-      var value = new proto.botnet_p2p.Message.NATRequest;
-      reader.readMessage(value,proto.botnet_p2p.Message.NATRequest.deserializeBinaryFromReader);
-      msg.setPnatrequest(value);
+      var value = new proto.botnet_p2p.Message.NATRequestMsg;
+      reader.readMessage(value,proto.botnet_p2p.Message.NATRequestMsg.deserializeBinaryFromReader);
+      msg.setNatrequest(value);
       break;
     case 11:
-      var value = new proto.botnet_p2p.Message.NATCheck;
-      reader.readMessage(value,proto.botnet_p2p.Message.NATCheck.deserializeBinaryFromReader);
-      msg.setPnatcheck(value);
+      var value = new proto.botnet_p2p.Message.NATCheckMsg;
+      reader.readMessage(value,proto.botnet_p2p.Message.NATCheckMsg.deserializeBinaryFromReader);
+      msg.setNatcheck(value);
       break;
     case 12:
-      var value = new proto.botnet_p2p.Message.Leave;
-      reader.readMessage(value,proto.botnet_p2p.Message.Leave.deserializeBinaryFromReader);
-      msg.setPleave(value);
+      var value = new proto.botnet_p2p.Message.LeaveMsg;
+      reader.readMessage(value,proto.botnet_p2p.Message.LeaveMsg.deserializeBinaryFromReader);
+      msg.setLeave(value);
       break;
     case 13:
-      var value = new proto.botnet_p2p.Message.FindNode;
-      reader.readMessage(value,proto.botnet_p2p.Message.FindNode.deserializeBinaryFromReader);
-      msg.setPfindnode(value);
+      var value = new proto.botnet_p2p.Message.FindNodeMsg;
+      reader.readMessage(value,proto.botnet_p2p.Message.FindNodeMsg.deserializeBinaryFromReader);
+      msg.setFindnode(value);
       break;
     case 14:
-      var value = new proto.botnet_p2p.Message.FoundNodes;
-      reader.readMessage(value,proto.botnet_p2p.Message.FoundNodes.deserializeBinaryFromReader);
-      msg.setPfoundnodes(value);
+      var value = new proto.botnet_p2p.Message.FoundNodesMsg;
+      reader.readMessage(value,proto.botnet_p2p.Message.FoundNodesMsg.deserializeBinaryFromReader);
+      msg.setFoundnodes(value);
       break;
     case 15:
-      var value = new proto.botnet_p2p.Message.FindValue;
-      reader.readMessage(value,proto.botnet_p2p.Message.FindValue.deserializeBinaryFromReader);
-      msg.setPfindvalue(value);
+      var value = new proto.botnet_p2p.Message.PingMsg;
+      reader.readMessage(value,proto.botnet_p2p.Message.PingMsg.deserializeBinaryFromReader);
+      msg.setPing(value);
       break;
     default:
       reader.skipField();
@@ -254,8 +254,8 @@ proto.botnet_p2p.Message.prototype.serializeBinary = function() {
 proto.botnet_p2p.Message.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
   f = message.getUuid();
-  if (f !== 0) {
-    writer.writeUint64(
+  if (f.length > 0) {
+    writer.writeString(
       1,
       f
     );
@@ -295,76 +295,76 @@ proto.botnet_p2p.Message.serializeBinaryToWriter = function(message, writer) {
       f
     );
   }
-  f = message.getPcommand();
+  f = message.getCommand();
   if (f != null) {
     writer.writeMessage(
       7,
       f,
-      proto.botnet_p2p.Message.Command.serializeBinaryToWriter
+      proto.botnet_p2p.Message.CommandMsg.serializeBinaryToWriter
     );
   }
-  f = message.getPresponse();
+  f = message.getResponse();
   if (f != null) {
     writer.writeMessage(
       8,
       f,
-      proto.botnet_p2p.Message.Response.serializeBinaryToWriter
+      proto.botnet_p2p.Message.ResponseMsg.serializeBinaryToWriter
     );
   }
-  f = message.getPfile();
+  f = message.getFilechunk();
   if (f != null) {
     writer.writeMessage(
       9,
       f,
-      proto.botnet_p2p.Message.FileChunk.serializeBinaryToWriter
+      proto.botnet_p2p.Message.FileChunkMsg.serializeBinaryToWriter
     );
   }
-  f = message.getPnatrequest();
+  f = message.getNatrequest();
   if (f != null) {
     writer.writeMessage(
       10,
       f,
-      proto.botnet_p2p.Message.NATRequest.serializeBinaryToWriter
+      proto.botnet_p2p.Message.NATRequestMsg.serializeBinaryToWriter
     );
   }
-  f = message.getPnatcheck();
+  f = message.getNatcheck();
   if (f != null) {
     writer.writeMessage(
       11,
       f,
-      proto.botnet_p2p.Message.NATCheck.serializeBinaryToWriter
+      proto.botnet_p2p.Message.NATCheckMsg.serializeBinaryToWriter
     );
   }
-  f = message.getPleave();
+  f = message.getLeave();
   if (f != null) {
     writer.writeMessage(
       12,
       f,
-      proto.botnet_p2p.Message.Leave.serializeBinaryToWriter
+      proto.botnet_p2p.Message.LeaveMsg.serializeBinaryToWriter
     );
   }
-  f = message.getPfindnode();
+  f = message.getFindnode();
   if (f != null) {
     writer.writeMessage(
       13,
       f,
-      proto.botnet_p2p.Message.FindNode.serializeBinaryToWriter
+      proto.botnet_p2p.Message.FindNodeMsg.serializeBinaryToWriter
     );
   }
-  f = message.getPfoundnodes();
+  f = message.getFoundnodes();
   if (f != null) {
     writer.writeMessage(
       14,
       f,
-      proto.botnet_p2p.Message.FoundNodes.serializeBinaryToWriter
+      proto.botnet_p2p.Message.FoundNodesMsg.serializeBinaryToWriter
     );
   }
-  f = message.getPfindvalue();
+  f = message.getPing();
   if (f != null) {
     writer.writeMessage(
       15,
       f,
-      proto.botnet_p2p.Message.FindValue.serializeBinaryToWriter
+      proto.botnet_p2p.Message.PingMsg.serializeBinaryToWriter
     );
   }
 };
@@ -383,8 +383,7 @@ proto.botnet_p2p.Message.MessageType = {
   PING: 6,
   LEAVE: 7,
   FIND_NODE: 8,
-  FOUND_NODES: 9,
-  FIND_VALUE: 10
+  FOUND_NODES: 9
 };
 
 /**
@@ -406,12 +405,12 @@ proto.botnet_p2p.Message.Status = {
  * @extends {jspb.Message}
  * @constructor
  */
-proto.botnet_p2p.Message.NodeDescription = function(opt_data) {
+proto.botnet_p2p.Message.Contact = function(opt_data) {
   jspb.Message.initialize(this, opt_data, 0, -1, null, null);
 };
-goog.inherits(proto.botnet_p2p.Message.NodeDescription, jspb.Message);
+goog.inherits(proto.botnet_p2p.Message.Contact, jspb.Message);
 if (goog.DEBUG && !COMPILED) {
-  proto.botnet_p2p.Message.NodeDescription.displayName = 'proto.botnet_p2p.Message.NodeDescription';
+  proto.botnet_p2p.Message.Contact.displayName = 'proto.botnet_p2p.Message.Contact';
 }
 
 
@@ -426,8 +425,8 @@ if (jspb.Message.GENERATE_TO_OBJECT) {
  *     for transitional soy proto support: http://goto/soy-param-migration
  * @return {!Object}
  */
-proto.botnet_p2p.Message.NodeDescription.prototype.toObject = function(opt_includeInstance) {
-  return proto.botnet_p2p.Message.NodeDescription.toObject(opt_includeInstance, this);
+proto.botnet_p2p.Message.Contact.prototype.toObject = function(opt_includeInstance) {
+  return proto.botnet_p2p.Message.Contact.toObject(opt_includeInstance, this);
 };
 
 
@@ -436,15 +435,15 @@ proto.botnet_p2p.Message.NodeDescription.prototype.toObject = function(opt_inclu
  * @param {boolean|undefined} includeInstance Whether to include the JSPB
  *     instance for transitional soy proto support:
  *     http://goto/soy-param-migration
- * @param {!proto.botnet_p2p.Message.NodeDescription} msg The msg instance to transform.
+ * @param {!proto.botnet_p2p.Message.Contact} msg The msg instance to transform.
  * @return {!Object}
  * @suppress {unusedLocalVariables} f is only used for nested messages
  */
-proto.botnet_p2p.Message.NodeDescription.toObject = function(includeInstance, msg) {
+proto.botnet_p2p.Message.Contact.toObject = function(includeInstance, msg) {
   var f, obj = {
-    guid: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    guid: jspb.Message.getFieldWithDefault(msg, 1, ""),
     ip: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    port: jspb.Message.getFieldWithDefault(msg, 3, ""),
+    port: jspb.Message.getFieldWithDefault(msg, 3, 0),
     isnat: jspb.Message.getFieldWithDefault(msg, 4, false)
   };
 
@@ -459,23 +458,23 @@ proto.botnet_p2p.Message.NodeDescription.toObject = function(includeInstance, ms
 /**
  * Deserializes binary data (in protobuf wire format).
  * @param {jspb.ByteSource} bytes The bytes to deserialize.
- * @return {!proto.botnet_p2p.Message.NodeDescription}
+ * @return {!proto.botnet_p2p.Message.Contact}
  */
-proto.botnet_p2p.Message.NodeDescription.deserializeBinary = function(bytes) {
+proto.botnet_p2p.Message.Contact.deserializeBinary = function(bytes) {
   var reader = new jspb.BinaryReader(bytes);
-  var msg = new proto.botnet_p2p.Message.NodeDescription;
-  return proto.botnet_p2p.Message.NodeDescription.deserializeBinaryFromReader(msg, reader);
+  var msg = new proto.botnet_p2p.Message.Contact;
+  return proto.botnet_p2p.Message.Contact.deserializeBinaryFromReader(msg, reader);
 };
 
 
 /**
  * Deserializes binary data (in protobuf wire format) from the
  * given reader into the given message object.
- * @param {!proto.botnet_p2p.Message.NodeDescription} msg The message object to deserialize into.
+ * @param {!proto.botnet_p2p.Message.Contact} msg The message object to deserialize into.
  * @param {!jspb.BinaryReader} reader The BinaryReader to use.
- * @return {!proto.botnet_p2p.Message.NodeDescription}
+ * @return {!proto.botnet_p2p.Message.Contact}
  */
-proto.botnet_p2p.Message.NodeDescription.deserializeBinaryFromReader = function(msg, reader) {
+proto.botnet_p2p.Message.Contact.deserializeBinaryFromReader = function(msg, reader) {
   while (reader.nextField()) {
     if (reader.isEndGroup()) {
       break;
@@ -483,7 +482,7 @@ proto.botnet_p2p.Message.NodeDescription.deserializeBinaryFromReader = function(
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {number} */ (reader.readUint64());
+      var value = /** @type {string} */ (reader.readString());
       msg.setGuid(value);
       break;
     case 2:
@@ -491,7 +490,7 @@ proto.botnet_p2p.Message.NodeDescription.deserializeBinaryFromReader = function(
       msg.setIp(value);
       break;
     case 3:
-      var value = /** @type {string} */ (reader.readString());
+      var value = /** @type {number} */ (reader.readUint32());
       msg.setPort(value);
       break;
     case 4:
@@ -511,9 +510,9 @@ proto.botnet_p2p.Message.NodeDescription.deserializeBinaryFromReader = function(
  * Serializes the message to binary data (in protobuf wire format).
  * @return {!Uint8Array}
  */
-proto.botnet_p2p.Message.NodeDescription.prototype.serializeBinary = function() {
+proto.botnet_p2p.Message.Contact.prototype.serializeBinary = function() {
   var writer = new jspb.BinaryWriter();
-  proto.botnet_p2p.Message.NodeDescription.serializeBinaryToWriter(this, writer);
+  proto.botnet_p2p.Message.Contact.serializeBinaryToWriter(this, writer);
   return writer.getResultBuffer();
 };
 
@@ -521,15 +520,15 @@ proto.botnet_p2p.Message.NodeDescription.prototype.serializeBinary = function() 
 /**
  * Serializes the given message to binary data (in protobuf wire
  * format), writing to the given BinaryWriter.
- * @param {!proto.botnet_p2p.Message.NodeDescription} message
+ * @param {!proto.botnet_p2p.Message.Contact} message
  * @param {!jspb.BinaryWriter} writer
  * @suppress {unusedLocalVariables} f is only used for nested messages
  */
-proto.botnet_p2p.Message.NodeDescription.serializeBinaryToWriter = function(message, writer) {
+proto.botnet_p2p.Message.Contact.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
   f = message.getGuid();
-  if (f !== 0) {
-    writer.writeUint64(
+  if (f.length > 0) {
+    writer.writeString(
       1,
       f
     );
@@ -542,8 +541,8 @@ proto.botnet_p2p.Message.NodeDescription.serializeBinaryToWriter = function(mess
     );
   }
   f = message.getPort();
-  if (f.length > 0) {
-    writer.writeString(
+  if (f !== 0) {
+    writer.writeUint32(
       3,
       f
     );
@@ -559,17 +558,17 @@ proto.botnet_p2p.Message.NodeDescription.serializeBinaryToWriter = function(mess
 
 
 /**
- * optional uint64 guid = 1;
- * @return {number}
+ * optional string guid = 1;
+ * @return {string}
  */
-proto.botnet_p2p.Message.NodeDescription.prototype.getGuid = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
+proto.botnet_p2p.Message.Contact.prototype.getGuid = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
 };
 
 
-/** @param {number} value */
-proto.botnet_p2p.Message.NodeDescription.prototype.setGuid = function(value) {
-  jspb.Message.setProto3IntField(this, 1, value);
+/** @param {string} value */
+proto.botnet_p2p.Message.Contact.prototype.setGuid = function(value) {
+  jspb.Message.setProto3StringField(this, 1, value);
 };
 
 
@@ -577,29 +576,29 @@ proto.botnet_p2p.Message.NodeDescription.prototype.setGuid = function(value) {
  * optional string IP = 2;
  * @return {string}
  */
-proto.botnet_p2p.Message.NodeDescription.prototype.getIp = function() {
+proto.botnet_p2p.Message.Contact.prototype.getIp = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
 };
 
 
 /** @param {string} value */
-proto.botnet_p2p.Message.NodeDescription.prototype.setIp = function(value) {
+proto.botnet_p2p.Message.Contact.prototype.setIp = function(value) {
   jspb.Message.setProto3StringField(this, 2, value);
 };
 
 
 /**
- * optional string Port = 3;
- * @return {string}
+ * optional uint32 port = 3;
+ * @return {number}
  */
-proto.botnet_p2p.Message.NodeDescription.prototype.getPort = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
+proto.botnet_p2p.Message.Contact.prototype.getPort = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 3, 0));
 };
 
 
-/** @param {string} value */
-proto.botnet_p2p.Message.NodeDescription.prototype.setPort = function(value) {
-  jspb.Message.setProto3StringField(this, 3, value);
+/** @param {number} value */
+proto.botnet_p2p.Message.Contact.prototype.setPort = function(value) {
+  jspb.Message.setProto3IntField(this, 3, value);
 };
 
 
@@ -609,13 +608,13 @@ proto.botnet_p2p.Message.NodeDescription.prototype.setPort = function(value) {
  * You should avoid comparisons like {@code val === true/false} in those cases.
  * @return {boolean}
  */
-proto.botnet_p2p.Message.NodeDescription.prototype.getIsnat = function() {
+proto.botnet_p2p.Message.Contact.prototype.getIsnat = function() {
   return /** @type {boolean} */ (jspb.Message.getFieldWithDefault(this, 4, false));
 };
 
 
 /** @param {boolean} value */
-proto.botnet_p2p.Message.NodeDescription.prototype.setIsnat = function(value) {
+proto.botnet_p2p.Message.Contact.prototype.setIsnat = function(value) {
   jspb.Message.setProto3BooleanField(this, 4, value);
 };
 
@@ -631,12 +630,12 @@ proto.botnet_p2p.Message.NodeDescription.prototype.setIsnat = function(value) {
  * @extends {jspb.Message}
  * @constructor
  */
-proto.botnet_p2p.Message.Command = function(opt_data) {
+proto.botnet_p2p.Message.CommandMsg = function(opt_data) {
   jspb.Message.initialize(this, opt_data, 0, -1, null, null);
 };
-goog.inherits(proto.botnet_p2p.Message.Command, jspb.Message);
+goog.inherits(proto.botnet_p2p.Message.CommandMsg, jspb.Message);
 if (goog.DEBUG && !COMPILED) {
-  proto.botnet_p2p.Message.Command.displayName = 'proto.botnet_p2p.Message.Command';
+  proto.botnet_p2p.Message.CommandMsg.displayName = 'proto.botnet_p2p.Message.CommandMsg';
 }
 
 
@@ -651,8 +650,8 @@ if (jspb.Message.GENERATE_TO_OBJECT) {
  *     for transitional soy proto support: http://goto/soy-param-migration
  * @return {!Object}
  */
-proto.botnet_p2p.Message.Command.prototype.toObject = function(opt_includeInstance) {
-  return proto.botnet_p2p.Message.Command.toObject(opt_includeInstance, this);
+proto.botnet_p2p.Message.CommandMsg.prototype.toObject = function(opt_includeInstance) {
+  return proto.botnet_p2p.Message.CommandMsg.toObject(opt_includeInstance, this);
 };
 
 
@@ -661,11 +660,11 @@ proto.botnet_p2p.Message.Command.prototype.toObject = function(opt_includeInstan
  * @param {boolean|undefined} includeInstance Whether to include the JSPB
  *     instance for transitional soy proto support:
  *     http://goto/soy-param-migration
- * @param {!proto.botnet_p2p.Message.Command} msg The msg instance to transform.
+ * @param {!proto.botnet_p2p.Message.CommandMsg} msg The msg instance to transform.
  * @return {!Object}
  * @suppress {unusedLocalVariables} f is only used for nested messages
  */
-proto.botnet_p2p.Message.Command.toObject = function(includeInstance, msg) {
+proto.botnet_p2p.Message.CommandMsg.toObject = function(includeInstance, msg) {
   var f, obj = {
     commandstring: jspb.Message.getFieldWithDefault(msg, 1, ""),
     sendresponse: jspb.Message.getFieldWithDefault(msg, 2, false)
@@ -682,23 +681,23 @@ proto.botnet_p2p.Message.Command.toObject = function(includeInstance, msg) {
 /**
  * Deserializes binary data (in protobuf wire format).
  * @param {jspb.ByteSource} bytes The bytes to deserialize.
- * @return {!proto.botnet_p2p.Message.Command}
+ * @return {!proto.botnet_p2p.Message.CommandMsg}
  */
-proto.botnet_p2p.Message.Command.deserializeBinary = function(bytes) {
+proto.botnet_p2p.Message.CommandMsg.deserializeBinary = function(bytes) {
   var reader = new jspb.BinaryReader(bytes);
-  var msg = new proto.botnet_p2p.Message.Command;
-  return proto.botnet_p2p.Message.Command.deserializeBinaryFromReader(msg, reader);
+  var msg = new proto.botnet_p2p.Message.CommandMsg;
+  return proto.botnet_p2p.Message.CommandMsg.deserializeBinaryFromReader(msg, reader);
 };
 
 
 /**
  * Deserializes binary data (in protobuf wire format) from the
  * given reader into the given message object.
- * @param {!proto.botnet_p2p.Message.Command} msg The message object to deserialize into.
+ * @param {!proto.botnet_p2p.Message.CommandMsg} msg The message object to deserialize into.
  * @param {!jspb.BinaryReader} reader The BinaryReader to use.
- * @return {!proto.botnet_p2p.Message.Command}
+ * @return {!proto.botnet_p2p.Message.CommandMsg}
  */
-proto.botnet_p2p.Message.Command.deserializeBinaryFromReader = function(msg, reader) {
+proto.botnet_p2p.Message.CommandMsg.deserializeBinaryFromReader = function(msg, reader) {
   while (reader.nextField()) {
     if (reader.isEndGroup()) {
       break;
@@ -726,9 +725,9 @@ proto.botnet_p2p.Message.Command.deserializeBinaryFromReader = function(msg, rea
  * Serializes the message to binary data (in protobuf wire format).
  * @return {!Uint8Array}
  */
-proto.botnet_p2p.Message.Command.prototype.serializeBinary = function() {
+proto.botnet_p2p.Message.CommandMsg.prototype.serializeBinary = function() {
   var writer = new jspb.BinaryWriter();
-  proto.botnet_p2p.Message.Command.serializeBinaryToWriter(this, writer);
+  proto.botnet_p2p.Message.CommandMsg.serializeBinaryToWriter(this, writer);
   return writer.getResultBuffer();
 };
 
@@ -736,11 +735,11 @@ proto.botnet_p2p.Message.Command.prototype.serializeBinary = function() {
 /**
  * Serializes the given message to binary data (in protobuf wire
  * format), writing to the given BinaryWriter.
- * @param {!proto.botnet_p2p.Message.Command} message
+ * @param {!proto.botnet_p2p.Message.CommandMsg} message
  * @param {!jspb.BinaryWriter} writer
  * @suppress {unusedLocalVariables} f is only used for nested messages
  */
-proto.botnet_p2p.Message.Command.serializeBinaryToWriter = function(message, writer) {
+proto.botnet_p2p.Message.CommandMsg.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
   f = message.getCommandstring();
   if (f.length > 0) {
@@ -763,13 +762,13 @@ proto.botnet_p2p.Message.Command.serializeBinaryToWriter = function(message, wri
  * optional string commandString = 1;
  * @return {string}
  */
-proto.botnet_p2p.Message.Command.prototype.getCommandstring = function() {
+proto.botnet_p2p.Message.CommandMsg.prototype.getCommandstring = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
 };
 
 
 /** @param {string} value */
-proto.botnet_p2p.Message.Command.prototype.setCommandstring = function(value) {
+proto.botnet_p2p.Message.CommandMsg.prototype.setCommandstring = function(value) {
   jspb.Message.setProto3StringField(this, 1, value);
 };
 
@@ -780,13 +779,13 @@ proto.botnet_p2p.Message.Command.prototype.setCommandstring = function(value) {
  * You should avoid comparisons like {@code val === true/false} in those cases.
  * @return {boolean}
  */
-proto.botnet_p2p.Message.Command.prototype.getSendresponse = function() {
+proto.botnet_p2p.Message.CommandMsg.prototype.getSendresponse = function() {
   return /** @type {boolean} */ (jspb.Message.getFieldWithDefault(this, 2, false));
 };
 
 
 /** @param {boolean} value */
-proto.botnet_p2p.Message.Command.prototype.setSendresponse = function(value) {
+proto.botnet_p2p.Message.CommandMsg.prototype.setSendresponse = function(value) {
   jspb.Message.setProto3BooleanField(this, 2, value);
 };
 
@@ -802,12 +801,12 @@ proto.botnet_p2p.Message.Command.prototype.setSendresponse = function(value) {
  * @extends {jspb.Message}
  * @constructor
  */
-proto.botnet_p2p.Message.Response = function(opt_data) {
+proto.botnet_p2p.Message.ResponseMsg = function(opt_data) {
   jspb.Message.initialize(this, opt_data, 0, -1, null, null);
 };
-goog.inherits(proto.botnet_p2p.Message.Response, jspb.Message);
+goog.inherits(proto.botnet_p2p.Message.ResponseMsg, jspb.Message);
 if (goog.DEBUG && !COMPILED) {
-  proto.botnet_p2p.Message.Response.displayName = 'proto.botnet_p2p.Message.Response';
+  proto.botnet_p2p.Message.ResponseMsg.displayName = 'proto.botnet_p2p.Message.ResponseMsg';
 }
 
 
@@ -822,8 +821,8 @@ if (jspb.Message.GENERATE_TO_OBJECT) {
  *     for transitional soy proto support: http://goto/soy-param-migration
  * @return {!Object}
  */
-proto.botnet_p2p.Message.Response.prototype.toObject = function(opt_includeInstance) {
-  return proto.botnet_p2p.Message.Response.toObject(opt_includeInstance, this);
+proto.botnet_p2p.Message.ResponseMsg.prototype.toObject = function(opt_includeInstance) {
+  return proto.botnet_p2p.Message.ResponseMsg.toObject(opt_includeInstance, this);
 };
 
 
@@ -832,11 +831,11 @@ proto.botnet_p2p.Message.Response.prototype.toObject = function(opt_includeInsta
  * @param {boolean|undefined} includeInstance Whether to include the JSPB
  *     instance for transitional soy proto support:
  *     http://goto/soy-param-migration
- * @param {!proto.botnet_p2p.Message.Response} msg The msg instance to transform.
+ * @param {!proto.botnet_p2p.Message.ResponseMsg} msg The msg instance to transform.
  * @return {!Object}
  * @suppress {unusedLocalVariables} f is only used for nested messages
  */
-proto.botnet_p2p.Message.Response.toObject = function(includeInstance, msg) {
+proto.botnet_p2p.Message.ResponseMsg.toObject = function(includeInstance, msg) {
   var f, obj = {
     value: jspb.Message.getFieldWithDefault(msg, 1, ""),
     status: jspb.Message.getFieldWithDefault(msg, 2, 0)
@@ -853,23 +852,23 @@ proto.botnet_p2p.Message.Response.toObject = function(includeInstance, msg) {
 /**
  * Deserializes binary data (in protobuf wire format).
  * @param {jspb.ByteSource} bytes The bytes to deserialize.
- * @return {!proto.botnet_p2p.Message.Response}
+ * @return {!proto.botnet_p2p.Message.ResponseMsg}
  */
-proto.botnet_p2p.Message.Response.deserializeBinary = function(bytes) {
+proto.botnet_p2p.Message.ResponseMsg.deserializeBinary = function(bytes) {
   var reader = new jspb.BinaryReader(bytes);
-  var msg = new proto.botnet_p2p.Message.Response;
-  return proto.botnet_p2p.Message.Response.deserializeBinaryFromReader(msg, reader);
+  var msg = new proto.botnet_p2p.Message.ResponseMsg;
+  return proto.botnet_p2p.Message.ResponseMsg.deserializeBinaryFromReader(msg, reader);
 };
 
 
 /**
  * Deserializes binary data (in protobuf wire format) from the
  * given reader into the given message object.
- * @param {!proto.botnet_p2p.Message.Response} msg The message object to deserialize into.
+ * @param {!proto.botnet_p2p.Message.ResponseMsg} msg The message object to deserialize into.
  * @param {!jspb.BinaryReader} reader The BinaryReader to use.
- * @return {!proto.botnet_p2p.Message.Response}
+ * @return {!proto.botnet_p2p.Message.ResponseMsg}
  */
-proto.botnet_p2p.Message.Response.deserializeBinaryFromReader = function(msg, reader) {
+proto.botnet_p2p.Message.ResponseMsg.deserializeBinaryFromReader = function(msg, reader) {
   while (reader.nextField()) {
     if (reader.isEndGroup()) {
       break;
@@ -897,9 +896,9 @@ proto.botnet_p2p.Message.Response.deserializeBinaryFromReader = function(msg, re
  * Serializes the message to binary data (in protobuf wire format).
  * @return {!Uint8Array}
  */
-proto.botnet_p2p.Message.Response.prototype.serializeBinary = function() {
+proto.botnet_p2p.Message.ResponseMsg.prototype.serializeBinary = function() {
   var writer = new jspb.BinaryWriter();
-  proto.botnet_p2p.Message.Response.serializeBinaryToWriter(this, writer);
+  proto.botnet_p2p.Message.ResponseMsg.serializeBinaryToWriter(this, writer);
   return writer.getResultBuffer();
 };
 
@@ -907,11 +906,11 @@ proto.botnet_p2p.Message.Response.prototype.serializeBinary = function() {
 /**
  * Serializes the given message to binary data (in protobuf wire
  * format), writing to the given BinaryWriter.
- * @param {!proto.botnet_p2p.Message.Response} message
+ * @param {!proto.botnet_p2p.Message.ResponseMsg} message
  * @param {!jspb.BinaryWriter} writer
  * @suppress {unusedLocalVariables} f is only used for nested messages
  */
-proto.botnet_p2p.Message.Response.serializeBinaryToWriter = function(message, writer) {
+proto.botnet_p2p.Message.ResponseMsg.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
   f = message.getValue();
   if (f.length > 0) {
@@ -934,13 +933,13 @@ proto.botnet_p2p.Message.Response.serializeBinaryToWriter = function(message, wr
  * optional string value = 1;
  * @return {string}
  */
-proto.botnet_p2p.Message.Response.prototype.getValue = function() {
+proto.botnet_p2p.Message.ResponseMsg.prototype.getValue = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
 };
 
 
 /** @param {string} value */
-proto.botnet_p2p.Message.Response.prototype.setValue = function(value) {
+proto.botnet_p2p.Message.ResponseMsg.prototype.setValue = function(value) {
   jspb.Message.setProto3StringField(this, 1, value);
 };
 
@@ -949,13 +948,13 @@ proto.botnet_p2p.Message.Response.prototype.setValue = function(value) {
  * optional Status status = 2;
  * @return {!proto.botnet_p2p.Message.Status}
  */
-proto.botnet_p2p.Message.Response.prototype.getStatus = function() {
+proto.botnet_p2p.Message.ResponseMsg.prototype.getStatus = function() {
   return /** @type {!proto.botnet_p2p.Message.Status} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
 };
 
 
 /** @param {!proto.botnet_p2p.Message.Status} value */
-proto.botnet_p2p.Message.Response.prototype.setStatus = function(value) {
+proto.botnet_p2p.Message.ResponseMsg.prototype.setStatus = function(value) {
   jspb.Message.setProto3EnumField(this, 2, value);
 };
 
@@ -971,12 +970,12 @@ proto.botnet_p2p.Message.Response.prototype.setStatus = function(value) {
  * @extends {jspb.Message}
  * @constructor
  */
-proto.botnet_p2p.Message.FileChunk = function(opt_data) {
+proto.botnet_p2p.Message.FileChunkMsg = function(opt_data) {
   jspb.Message.initialize(this, opt_data, 0, -1, null, null);
 };
-goog.inherits(proto.botnet_p2p.Message.FileChunk, jspb.Message);
+goog.inherits(proto.botnet_p2p.Message.FileChunkMsg, jspb.Message);
 if (goog.DEBUG && !COMPILED) {
-  proto.botnet_p2p.Message.FileChunk.displayName = 'proto.botnet_p2p.Message.FileChunk';
+  proto.botnet_p2p.Message.FileChunkMsg.displayName = 'proto.botnet_p2p.Message.FileChunkMsg';
 }
 
 
@@ -991,8 +990,8 @@ if (jspb.Message.GENERATE_TO_OBJECT) {
  *     for transitional soy proto support: http://goto/soy-param-migration
  * @return {!Object}
  */
-proto.botnet_p2p.Message.FileChunk.prototype.toObject = function(opt_includeInstance) {
-  return proto.botnet_p2p.Message.FileChunk.toObject(opt_includeInstance, this);
+proto.botnet_p2p.Message.FileChunkMsg.prototype.toObject = function(opt_includeInstance) {
+  return proto.botnet_p2p.Message.FileChunkMsg.toObject(opt_includeInstance, this);
 };
 
 
@@ -1001,11 +1000,11 @@ proto.botnet_p2p.Message.FileChunk.prototype.toObject = function(opt_includeInst
  * @param {boolean|undefined} includeInstance Whether to include the JSPB
  *     instance for transitional soy proto support:
  *     http://goto/soy-param-migration
- * @param {!proto.botnet_p2p.Message.FileChunk} msg The msg instance to transform.
+ * @param {!proto.botnet_p2p.Message.FileChunkMsg} msg The msg instance to transform.
  * @return {!Object}
  * @suppress {unusedLocalVariables} f is only used for nested messages
  */
-proto.botnet_p2p.Message.FileChunk.toObject = function(includeInstance, msg) {
+proto.botnet_p2p.Message.FileChunkMsg.toObject = function(includeInstance, msg) {
   var f, obj = {
     path: jspb.Message.getFieldWithDefault(msg, 1, ""),
     name: jspb.Message.getFieldWithDefault(msg, 2, false),
@@ -1026,23 +1025,23 @@ proto.botnet_p2p.Message.FileChunk.toObject = function(includeInstance, msg) {
 /**
  * Deserializes binary data (in protobuf wire format).
  * @param {jspb.ByteSource} bytes The bytes to deserialize.
- * @return {!proto.botnet_p2p.Message.FileChunk}
+ * @return {!proto.botnet_p2p.Message.FileChunkMsg}
  */
-proto.botnet_p2p.Message.FileChunk.deserializeBinary = function(bytes) {
+proto.botnet_p2p.Message.FileChunkMsg.deserializeBinary = function(bytes) {
   var reader = new jspb.BinaryReader(bytes);
-  var msg = new proto.botnet_p2p.Message.FileChunk;
-  return proto.botnet_p2p.Message.FileChunk.deserializeBinaryFromReader(msg, reader);
+  var msg = new proto.botnet_p2p.Message.FileChunkMsg;
+  return proto.botnet_p2p.Message.FileChunkMsg.deserializeBinaryFromReader(msg, reader);
 };
 
 
 /**
  * Deserializes binary data (in protobuf wire format) from the
  * given reader into the given message object.
- * @param {!proto.botnet_p2p.Message.FileChunk} msg The message object to deserialize into.
+ * @param {!proto.botnet_p2p.Message.FileChunkMsg} msg The message object to deserialize into.
  * @param {!jspb.BinaryReader} reader The BinaryReader to use.
- * @return {!proto.botnet_p2p.Message.FileChunk}
+ * @return {!proto.botnet_p2p.Message.FileChunkMsg}
  */
-proto.botnet_p2p.Message.FileChunk.deserializeBinaryFromReader = function(msg, reader) {
+proto.botnet_p2p.Message.FileChunkMsg.deserializeBinaryFromReader = function(msg, reader) {
   while (reader.nextField()) {
     if (reader.isEndGroup()) {
       break;
@@ -1086,9 +1085,9 @@ proto.botnet_p2p.Message.FileChunk.deserializeBinaryFromReader = function(msg, r
  * Serializes the message to binary data (in protobuf wire format).
  * @return {!Uint8Array}
  */
-proto.botnet_p2p.Message.FileChunk.prototype.serializeBinary = function() {
+proto.botnet_p2p.Message.FileChunkMsg.prototype.serializeBinary = function() {
   var writer = new jspb.BinaryWriter();
-  proto.botnet_p2p.Message.FileChunk.serializeBinaryToWriter(this, writer);
+  proto.botnet_p2p.Message.FileChunkMsg.serializeBinaryToWriter(this, writer);
   return writer.getResultBuffer();
 };
 
@@ -1096,11 +1095,11 @@ proto.botnet_p2p.Message.FileChunk.prototype.serializeBinary = function() {
 /**
  * Serializes the given message to binary data (in protobuf wire
  * format), writing to the given BinaryWriter.
- * @param {!proto.botnet_p2p.Message.FileChunk} message
+ * @param {!proto.botnet_p2p.Message.FileChunkMsg} message
  * @param {!jspb.BinaryWriter} writer
  * @suppress {unusedLocalVariables} f is only used for nested messages
  */
-proto.botnet_p2p.Message.FileChunk.serializeBinaryToWriter = function(message, writer) {
+proto.botnet_p2p.Message.FileChunkMsg.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
   f = message.getPath();
   if (f.length > 0) {
@@ -1151,13 +1150,13 @@ proto.botnet_p2p.Message.FileChunk.serializeBinaryToWriter = function(message, w
  * optional string path = 1;
  * @return {string}
  */
-proto.botnet_p2p.Message.FileChunk.prototype.getPath = function() {
+proto.botnet_p2p.Message.FileChunkMsg.prototype.getPath = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
 };
 
 
 /** @param {string} value */
-proto.botnet_p2p.Message.FileChunk.prototype.setPath = function(value) {
+proto.botnet_p2p.Message.FileChunkMsg.prototype.setPath = function(value) {
   jspb.Message.setProto3StringField(this, 1, value);
 };
 
@@ -1168,13 +1167,13 @@ proto.botnet_p2p.Message.FileChunk.prototype.setPath = function(value) {
  * You should avoid comparisons like {@code val === true/false} in those cases.
  * @return {boolean}
  */
-proto.botnet_p2p.Message.FileChunk.prototype.getName = function() {
+proto.botnet_p2p.Message.FileChunkMsg.prototype.getName = function() {
   return /** @type {boolean} */ (jspb.Message.getFieldWithDefault(this, 2, false));
 };
 
 
 /** @param {boolean} value */
-proto.botnet_p2p.Message.FileChunk.prototype.setName = function(value) {
+proto.botnet_p2p.Message.FileChunkMsg.prototype.setName = function(value) {
   jspb.Message.setProto3BooleanField(this, 2, value);
 };
 
@@ -1183,13 +1182,13 @@ proto.botnet_p2p.Message.FileChunk.prototype.setName = function(value) {
  * optional uint32 chunkNumber = 3;
  * @return {number}
  */
-proto.botnet_p2p.Message.FileChunk.prototype.getChunknumber = function() {
+proto.botnet_p2p.Message.FileChunkMsg.prototype.getChunknumber = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 3, 0));
 };
 
 
 /** @param {number} value */
-proto.botnet_p2p.Message.FileChunk.prototype.setChunknumber = function(value) {
+proto.botnet_p2p.Message.FileChunkMsg.prototype.setChunknumber = function(value) {
   jspb.Message.setProto3IntField(this, 3, value);
 };
 
@@ -1198,13 +1197,13 @@ proto.botnet_p2p.Message.FileChunk.prototype.setChunknumber = function(value) {
  * optional uint32 allChunks = 4;
  * @return {number}
  */
-proto.botnet_p2p.Message.FileChunk.prototype.getAllchunks = function() {
+proto.botnet_p2p.Message.FileChunkMsg.prototype.getAllchunks = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 4, 0));
 };
 
 
 /** @param {number} value */
-proto.botnet_p2p.Message.FileChunk.prototype.setAllchunks = function(value) {
+proto.botnet_p2p.Message.FileChunkMsg.prototype.setAllchunks = function(value) {
   jspb.Message.setProto3IntField(this, 4, value);
 };
 
@@ -1213,13 +1212,13 @@ proto.botnet_p2p.Message.FileChunk.prototype.setAllchunks = function(value) {
  * optional uint32 chunkSize = 5;
  * @return {number}
  */
-proto.botnet_p2p.Message.FileChunk.prototype.getChunksize = function() {
+proto.botnet_p2p.Message.FileChunkMsg.prototype.getChunksize = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 5, 0));
 };
 
 
 /** @param {number} value */
-proto.botnet_p2p.Message.FileChunk.prototype.setChunksize = function(value) {
+proto.botnet_p2p.Message.FileChunkMsg.prototype.setChunksize = function(value) {
   jspb.Message.setProto3IntField(this, 5, value);
 };
 
@@ -1228,7 +1227,7 @@ proto.botnet_p2p.Message.FileChunk.prototype.setChunksize = function(value) {
  * optional bytes data = 6;
  * @return {!(string|Uint8Array)}
  */
-proto.botnet_p2p.Message.FileChunk.prototype.getData = function() {
+proto.botnet_p2p.Message.FileChunkMsg.prototype.getData = function() {
   return /** @type {!(string|Uint8Array)} */ (jspb.Message.getFieldWithDefault(this, 6, ""));
 };
 
@@ -1238,7 +1237,7 @@ proto.botnet_p2p.Message.FileChunk.prototype.getData = function() {
  * This is a type-conversion wrapper around `getData()`
  * @return {string}
  */
-proto.botnet_p2p.Message.FileChunk.prototype.getData_asB64 = function() {
+proto.botnet_p2p.Message.FileChunkMsg.prototype.getData_asB64 = function() {
   return /** @type {string} */ (jspb.Message.bytesAsB64(
       this.getData()));
 };
@@ -1251,14 +1250,14 @@ proto.botnet_p2p.Message.FileChunk.prototype.getData_asB64 = function() {
  * This is a type-conversion wrapper around `getData()`
  * @return {!Uint8Array}
  */
-proto.botnet_p2p.Message.FileChunk.prototype.getData_asU8 = function() {
+proto.botnet_p2p.Message.FileChunkMsg.prototype.getData_asU8 = function() {
   return /** @type {!Uint8Array} */ (jspb.Message.bytesAsU8(
       this.getData()));
 };
 
 
 /** @param {!(string|Uint8Array)} value */
-proto.botnet_p2p.Message.FileChunk.prototype.setData = function(value) {
+proto.botnet_p2p.Message.FileChunkMsg.prototype.setData = function(value) {
   jspb.Message.setProto3BytesField(this, 6, value);
 };
 
@@ -1274,12 +1273,12 @@ proto.botnet_p2p.Message.FileChunk.prototype.setData = function(value) {
  * @extends {jspb.Message}
  * @constructor
  */
-proto.botnet_p2p.Message.NATRequest = function(opt_data) {
+proto.botnet_p2p.Message.NATRequestMsg = function(opt_data) {
   jspb.Message.initialize(this, opt_data, 0, -1, null, null);
 };
-goog.inherits(proto.botnet_p2p.Message.NATRequest, jspb.Message);
+goog.inherits(proto.botnet_p2p.Message.NATRequestMsg, jspb.Message);
 if (goog.DEBUG && !COMPILED) {
-  proto.botnet_p2p.Message.NATRequest.displayName = 'proto.botnet_p2p.Message.NATRequest';
+  proto.botnet_p2p.Message.NATRequestMsg.displayName = 'proto.botnet_p2p.Message.NATRequestMsg';
 }
 
 
@@ -1294,8 +1293,8 @@ if (jspb.Message.GENERATE_TO_OBJECT) {
  *     for transitional soy proto support: http://goto/soy-param-migration
  * @return {!Object}
  */
-proto.botnet_p2p.Message.NATRequest.prototype.toObject = function(opt_includeInstance) {
-  return proto.botnet_p2p.Message.NATRequest.toObject(opt_includeInstance, this);
+proto.botnet_p2p.Message.NATRequestMsg.prototype.toObject = function(opt_includeInstance) {
+  return proto.botnet_p2p.Message.NATRequestMsg.toObject(opt_includeInstance, this);
 };
 
 
@@ -1304,13 +1303,13 @@ proto.botnet_p2p.Message.NATRequest.prototype.toObject = function(opt_includeIns
  * @param {boolean|undefined} includeInstance Whether to include the JSPB
  *     instance for transitional soy proto support:
  *     http://goto/soy-param-migration
- * @param {!proto.botnet_p2p.Message.NATRequest} msg The msg instance to transform.
+ * @param {!proto.botnet_p2p.Message.NATRequestMsg} msg The msg instance to transform.
  * @return {!Object}
  * @suppress {unusedLocalVariables} f is only used for nested messages
  */
-proto.botnet_p2p.Message.NATRequest.toObject = function(includeInstance, msg) {
+proto.botnet_p2p.Message.NATRequestMsg.toObject = function(includeInstance, msg) {
   var f, obj = {
-    target: jspb.Message.getFieldWithDefault(msg, 1, 0)
+    guid: jspb.Message.getFieldWithDefault(msg, 1, "")
   };
 
   if (includeInstance) {
@@ -1324,23 +1323,23 @@ proto.botnet_p2p.Message.NATRequest.toObject = function(includeInstance, msg) {
 /**
  * Deserializes binary data (in protobuf wire format).
  * @param {jspb.ByteSource} bytes The bytes to deserialize.
- * @return {!proto.botnet_p2p.Message.NATRequest}
+ * @return {!proto.botnet_p2p.Message.NATRequestMsg}
  */
-proto.botnet_p2p.Message.NATRequest.deserializeBinary = function(bytes) {
+proto.botnet_p2p.Message.NATRequestMsg.deserializeBinary = function(bytes) {
   var reader = new jspb.BinaryReader(bytes);
-  var msg = new proto.botnet_p2p.Message.NATRequest;
-  return proto.botnet_p2p.Message.NATRequest.deserializeBinaryFromReader(msg, reader);
+  var msg = new proto.botnet_p2p.Message.NATRequestMsg;
+  return proto.botnet_p2p.Message.NATRequestMsg.deserializeBinaryFromReader(msg, reader);
 };
 
 
 /**
  * Deserializes binary data (in protobuf wire format) from the
  * given reader into the given message object.
- * @param {!proto.botnet_p2p.Message.NATRequest} msg The message object to deserialize into.
+ * @param {!proto.botnet_p2p.Message.NATRequestMsg} msg The message object to deserialize into.
  * @param {!jspb.BinaryReader} reader The BinaryReader to use.
- * @return {!proto.botnet_p2p.Message.NATRequest}
+ * @return {!proto.botnet_p2p.Message.NATRequestMsg}
  */
-proto.botnet_p2p.Message.NATRequest.deserializeBinaryFromReader = function(msg, reader) {
+proto.botnet_p2p.Message.NATRequestMsg.deserializeBinaryFromReader = function(msg, reader) {
   while (reader.nextField()) {
     if (reader.isEndGroup()) {
       break;
@@ -1348,291 +1347,7 @@ proto.botnet_p2p.Message.NATRequest.deserializeBinaryFromReader = function(msg, 
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {number} */ (reader.readUint64());
-      msg.setTarget(value);
-      break;
-    default:
-      reader.skipField();
-      break;
-    }
-  }
-  return msg;
-};
-
-
-/**
- * Serializes the message to binary data (in protobuf wire format).
- * @return {!Uint8Array}
- */
-proto.botnet_p2p.Message.NATRequest.prototype.serializeBinary = function() {
-  var writer = new jspb.BinaryWriter();
-  proto.botnet_p2p.Message.NATRequest.serializeBinaryToWriter(this, writer);
-  return writer.getResultBuffer();
-};
-
-
-/**
- * Serializes the given message to binary data (in protobuf wire
- * format), writing to the given BinaryWriter.
- * @param {!proto.botnet_p2p.Message.NATRequest} message
- * @param {!jspb.BinaryWriter} writer
- * @suppress {unusedLocalVariables} f is only used for nested messages
- */
-proto.botnet_p2p.Message.NATRequest.serializeBinaryToWriter = function(message, writer) {
-  var f = undefined;
-  f = message.getTarget();
-  if (f !== 0) {
-    writer.writeUint64(
-      1,
-      f
-    );
-  }
-};
-
-
-/**
- * optional uint64 target = 1;
- * @return {number}
- */
-proto.botnet_p2p.Message.NATRequest.prototype.getTarget = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
-};
-
-
-/** @param {number} value */
-proto.botnet_p2p.Message.NATRequest.prototype.setTarget = function(value) {
-  jspb.Message.setProto3IntField(this, 1, value);
-};
-
-
-
-/**
- * Generated by JsPbCodeGenerator.
- * @param {Array=} opt_data Optional initial data array, typically from a
- * server response, or constructed directly in Javascript. The array is used
- * in place and becomes part of the constructed object. It is not cloned.
- * If no data is provided, the constructed object will be empty, but still
- * valid.
- * @extends {jspb.Message}
- * @constructor
- */
-proto.botnet_p2p.Message.NATCheck = function(opt_data) {
-  jspb.Message.initialize(this, opt_data, 0, -1, null, null);
-};
-goog.inherits(proto.botnet_p2p.Message.NATCheck, jspb.Message);
-if (goog.DEBUG && !COMPILED) {
-  proto.botnet_p2p.Message.NATCheck.displayName = 'proto.botnet_p2p.Message.NATCheck';
-}
-
-
-if (jspb.Message.GENERATE_TO_OBJECT) {
-/**
- * Creates an object representation of this proto suitable for use in Soy templates.
- * Field names that are reserved in JavaScript and will be renamed to pb_name.
- * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
- * For the list of reserved names please see:
- *     com.google.apps.jspb.JsClassTemplate.JS_RESERVED_WORDS.
- * @param {boolean=} opt_includeInstance Whether to include the JSPB instance
- *     for transitional soy proto support: http://goto/soy-param-migration
- * @return {!Object}
- */
-proto.botnet_p2p.Message.NATCheck.prototype.toObject = function(opt_includeInstance) {
-  return proto.botnet_p2p.Message.NATCheck.toObject(opt_includeInstance, this);
-};
-
-
-/**
- * Static version of the {@see toObject} method.
- * @param {boolean|undefined} includeInstance Whether to include the JSPB
- *     instance for transitional soy proto support:
- *     http://goto/soy-param-migration
- * @param {!proto.botnet_p2p.Message.NATCheck} msg The msg instance to transform.
- * @return {!Object}
- * @suppress {unusedLocalVariables} f is only used for nested messages
- */
-proto.botnet_p2p.Message.NATCheck.toObject = function(includeInstance, msg) {
-  var f, obj = {
-    source: jspb.Message.getFieldWithDefault(msg, 1, 0)
-  };
-
-  if (includeInstance) {
-    obj.$jspbMessageInstance = msg;
-  }
-  return obj;
-};
-}
-
-
-/**
- * Deserializes binary data (in protobuf wire format).
- * @param {jspb.ByteSource} bytes The bytes to deserialize.
- * @return {!proto.botnet_p2p.Message.NATCheck}
- */
-proto.botnet_p2p.Message.NATCheck.deserializeBinary = function(bytes) {
-  var reader = new jspb.BinaryReader(bytes);
-  var msg = new proto.botnet_p2p.Message.NATCheck;
-  return proto.botnet_p2p.Message.NATCheck.deserializeBinaryFromReader(msg, reader);
-};
-
-
-/**
- * Deserializes binary data (in protobuf wire format) from the
- * given reader into the given message object.
- * @param {!proto.botnet_p2p.Message.NATCheck} msg The message object to deserialize into.
- * @param {!jspb.BinaryReader} reader The BinaryReader to use.
- * @return {!proto.botnet_p2p.Message.NATCheck}
- */
-proto.botnet_p2p.Message.NATCheck.deserializeBinaryFromReader = function(msg, reader) {
-  while (reader.nextField()) {
-    if (reader.isEndGroup()) {
-      break;
-    }
-    var field = reader.getFieldNumber();
-    switch (field) {
-    case 1:
-      var value = /** @type {number} */ (reader.readUint64());
-      msg.setSource(value);
-      break;
-    default:
-      reader.skipField();
-      break;
-    }
-  }
-  return msg;
-};
-
-
-/**
- * Serializes the message to binary data (in protobuf wire format).
- * @return {!Uint8Array}
- */
-proto.botnet_p2p.Message.NATCheck.prototype.serializeBinary = function() {
-  var writer = new jspb.BinaryWriter();
-  proto.botnet_p2p.Message.NATCheck.serializeBinaryToWriter(this, writer);
-  return writer.getResultBuffer();
-};
-
-
-/**
- * Serializes the given message to binary data (in protobuf wire
- * format), writing to the given BinaryWriter.
- * @param {!proto.botnet_p2p.Message.NATCheck} message
- * @param {!jspb.BinaryWriter} writer
- * @suppress {unusedLocalVariables} f is only used for nested messages
- */
-proto.botnet_p2p.Message.NATCheck.serializeBinaryToWriter = function(message, writer) {
-  var f = undefined;
-  f = message.getSource();
-  if (f !== 0) {
-    writer.writeUint64(
-      1,
-      f
-    );
-  }
-};
-
-
-/**
- * optional uint64 source = 1;
- * @return {number}
- */
-proto.botnet_p2p.Message.NATCheck.prototype.getSource = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
-};
-
-
-/** @param {number} value */
-proto.botnet_p2p.Message.NATCheck.prototype.setSource = function(value) {
-  jspb.Message.setProto3IntField(this, 1, value);
-};
-
-
-
-/**
- * Generated by JsPbCodeGenerator.
- * @param {Array=} opt_data Optional initial data array, typically from a
- * server response, or constructed directly in Javascript. The array is used
- * in place and becomes part of the constructed object. It is not cloned.
- * If no data is provided, the constructed object will be empty, but still
- * valid.
- * @extends {jspb.Message}
- * @constructor
- */
-proto.botnet_p2p.Message.FindValue = function(opt_data) {
-  jspb.Message.initialize(this, opt_data, 0, -1, null, null);
-};
-goog.inherits(proto.botnet_p2p.Message.FindValue, jspb.Message);
-if (goog.DEBUG && !COMPILED) {
-  proto.botnet_p2p.Message.FindValue.displayName = 'proto.botnet_p2p.Message.FindValue';
-}
-
-
-if (jspb.Message.GENERATE_TO_OBJECT) {
-/**
- * Creates an object representation of this proto suitable for use in Soy templates.
- * Field names that are reserved in JavaScript and will be renamed to pb_name.
- * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
- * For the list of reserved names please see:
- *     com.google.apps.jspb.JsClassTemplate.JS_RESERVED_WORDS.
- * @param {boolean=} opt_includeInstance Whether to include the JSPB instance
- *     for transitional soy proto support: http://goto/soy-param-migration
- * @return {!Object}
- */
-proto.botnet_p2p.Message.FindValue.prototype.toObject = function(opt_includeInstance) {
-  return proto.botnet_p2p.Message.FindValue.toObject(opt_includeInstance, this);
-};
-
-
-/**
- * Static version of the {@see toObject} method.
- * @param {boolean|undefined} includeInstance Whether to include the JSPB
- *     instance for transitional soy proto support:
- *     http://goto/soy-param-migration
- * @param {!proto.botnet_p2p.Message.FindValue} msg The msg instance to transform.
- * @return {!Object}
- * @suppress {unusedLocalVariables} f is only used for nested messages
- */
-proto.botnet_p2p.Message.FindValue.toObject = function(includeInstance, msg) {
-  var f, obj = {
-    guid: jspb.Message.getFieldWithDefault(msg, 1, 0)
-  };
-
-  if (includeInstance) {
-    obj.$jspbMessageInstance = msg;
-  }
-  return obj;
-};
-}
-
-
-/**
- * Deserializes binary data (in protobuf wire format).
- * @param {jspb.ByteSource} bytes The bytes to deserialize.
- * @return {!proto.botnet_p2p.Message.FindValue}
- */
-proto.botnet_p2p.Message.FindValue.deserializeBinary = function(bytes) {
-  var reader = new jspb.BinaryReader(bytes);
-  var msg = new proto.botnet_p2p.Message.FindValue;
-  return proto.botnet_p2p.Message.FindValue.deserializeBinaryFromReader(msg, reader);
-};
-
-
-/**
- * Deserializes binary data (in protobuf wire format) from the
- * given reader into the given message object.
- * @param {!proto.botnet_p2p.Message.FindValue} msg The message object to deserialize into.
- * @param {!jspb.BinaryReader} reader The BinaryReader to use.
- * @return {!proto.botnet_p2p.Message.FindValue}
- */
-proto.botnet_p2p.Message.FindValue.deserializeBinaryFromReader = function(msg, reader) {
-  while (reader.nextField()) {
-    if (reader.isEndGroup()) {
-      break;
-    }
-    var field = reader.getFieldNumber();
-    switch (field) {
-    case 1:
-      var value = /** @type {number} */ (reader.readUint64());
+      var value = /** @type {string} */ (reader.readString());
       msg.setGuid(value);
       break;
     default:
@@ -1648,9 +1363,9 @@ proto.botnet_p2p.Message.FindValue.deserializeBinaryFromReader = function(msg, r
  * Serializes the message to binary data (in protobuf wire format).
  * @return {!Uint8Array}
  */
-proto.botnet_p2p.Message.FindValue.prototype.serializeBinary = function() {
+proto.botnet_p2p.Message.NATRequestMsg.prototype.serializeBinary = function() {
   var writer = new jspb.BinaryWriter();
-  proto.botnet_p2p.Message.FindValue.serializeBinaryToWriter(this, writer);
+  proto.botnet_p2p.Message.NATRequestMsg.serializeBinaryToWriter(this, writer);
   return writer.getResultBuffer();
 };
 
@@ -1658,15 +1373,15 @@ proto.botnet_p2p.Message.FindValue.prototype.serializeBinary = function() {
 /**
  * Serializes the given message to binary data (in protobuf wire
  * format), writing to the given BinaryWriter.
- * @param {!proto.botnet_p2p.Message.FindValue} message
+ * @param {!proto.botnet_p2p.Message.NATRequestMsg} message
  * @param {!jspb.BinaryWriter} writer
  * @suppress {unusedLocalVariables} f is only used for nested messages
  */
-proto.botnet_p2p.Message.FindValue.serializeBinaryToWriter = function(message, writer) {
+proto.botnet_p2p.Message.NATRequestMsg.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
   f = message.getGuid();
-  if (f !== 0) {
-    writer.writeUint64(
+  if (f.length > 0) {
+    writer.writeString(
       1,
       f
     );
@@ -1675,17 +1390,17 @@ proto.botnet_p2p.Message.FindValue.serializeBinaryToWriter = function(message, w
 
 
 /**
- * optional uint64 guid = 1;
- * @return {number}
+ * optional string guid = 1;
+ * @return {string}
  */
-proto.botnet_p2p.Message.FindValue.prototype.getGuid = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
+proto.botnet_p2p.Message.NATRequestMsg.prototype.getGuid = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
 };
 
 
-/** @param {number} value */
-proto.botnet_p2p.Message.FindValue.prototype.setGuid = function(value) {
-  jspb.Message.setProto3IntField(this, 1, value);
+/** @param {string} value */
+proto.botnet_p2p.Message.NATRequestMsg.prototype.setGuid = function(value) {
+  jspb.Message.setProto3StringField(this, 1, value);
 };
 
 
@@ -1700,12 +1415,12 @@ proto.botnet_p2p.Message.FindValue.prototype.setGuid = function(value) {
  * @extends {jspb.Message}
  * @constructor
  */
-proto.botnet_p2p.Message.Leave = function(opt_data) {
+proto.botnet_p2p.Message.NATCheckMsg = function(opt_data) {
   jspb.Message.initialize(this, opt_data, 0, -1, null, null);
 };
-goog.inherits(proto.botnet_p2p.Message.Leave, jspb.Message);
+goog.inherits(proto.botnet_p2p.Message.NATCheckMsg, jspb.Message);
 if (goog.DEBUG && !COMPILED) {
-  proto.botnet_p2p.Message.Leave.displayName = 'proto.botnet_p2p.Message.Leave';
+  proto.botnet_p2p.Message.NATCheckMsg.displayName = 'proto.botnet_p2p.Message.NATCheckMsg';
 }
 
 
@@ -1720,8 +1435,8 @@ if (jspb.Message.GENERATE_TO_OBJECT) {
  *     for transitional soy proto support: http://goto/soy-param-migration
  * @return {!Object}
  */
-proto.botnet_p2p.Message.Leave.prototype.toObject = function(opt_includeInstance) {
-  return proto.botnet_p2p.Message.Leave.toObject(opt_includeInstance, this);
+proto.botnet_p2p.Message.NATCheckMsg.prototype.toObject = function(opt_includeInstance) {
+  return proto.botnet_p2p.Message.NATCheckMsg.toObject(opt_includeInstance, this);
 };
 
 
@@ -1730,13 +1445,13 @@ proto.botnet_p2p.Message.Leave.prototype.toObject = function(opt_includeInstance
  * @param {boolean|undefined} includeInstance Whether to include the JSPB
  *     instance for transitional soy proto support:
  *     http://goto/soy-param-migration
- * @param {!proto.botnet_p2p.Message.Leave} msg The msg instance to transform.
+ * @param {!proto.botnet_p2p.Message.NATCheckMsg} msg The msg instance to transform.
  * @return {!Object}
  * @suppress {unusedLocalVariables} f is only used for nested messages
  */
-proto.botnet_p2p.Message.Leave.toObject = function(includeInstance, msg) {
+proto.botnet_p2p.Message.NATCheckMsg.toObject = function(includeInstance, msg) {
   var f, obj = {
-    guid: jspb.Message.getFieldWithDefault(msg, 1, 0)
+    guid: jspb.Message.getFieldWithDefault(msg, 1, "")
   };
 
   if (includeInstance) {
@@ -1750,23 +1465,23 @@ proto.botnet_p2p.Message.Leave.toObject = function(includeInstance, msg) {
 /**
  * Deserializes binary data (in protobuf wire format).
  * @param {jspb.ByteSource} bytes The bytes to deserialize.
- * @return {!proto.botnet_p2p.Message.Leave}
+ * @return {!proto.botnet_p2p.Message.NATCheckMsg}
  */
-proto.botnet_p2p.Message.Leave.deserializeBinary = function(bytes) {
+proto.botnet_p2p.Message.NATCheckMsg.deserializeBinary = function(bytes) {
   var reader = new jspb.BinaryReader(bytes);
-  var msg = new proto.botnet_p2p.Message.Leave;
-  return proto.botnet_p2p.Message.Leave.deserializeBinaryFromReader(msg, reader);
+  var msg = new proto.botnet_p2p.Message.NATCheckMsg;
+  return proto.botnet_p2p.Message.NATCheckMsg.deserializeBinaryFromReader(msg, reader);
 };
 
 
 /**
  * Deserializes binary data (in protobuf wire format) from the
  * given reader into the given message object.
- * @param {!proto.botnet_p2p.Message.Leave} msg The message object to deserialize into.
+ * @param {!proto.botnet_p2p.Message.NATCheckMsg} msg The message object to deserialize into.
  * @param {!jspb.BinaryReader} reader The BinaryReader to use.
- * @return {!proto.botnet_p2p.Message.Leave}
+ * @return {!proto.botnet_p2p.Message.NATCheckMsg}
  */
-proto.botnet_p2p.Message.Leave.deserializeBinaryFromReader = function(msg, reader) {
+proto.botnet_p2p.Message.NATCheckMsg.deserializeBinaryFromReader = function(msg, reader) {
   while (reader.nextField()) {
     if (reader.isEndGroup()) {
       break;
@@ -1774,7 +1489,7 @@ proto.botnet_p2p.Message.Leave.deserializeBinaryFromReader = function(msg, reade
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {number} */ (reader.readUint64());
+      var value = /** @type {string} */ (reader.readString());
       msg.setGuid(value);
       break;
     default:
@@ -1790,9 +1505,9 @@ proto.botnet_p2p.Message.Leave.deserializeBinaryFromReader = function(msg, reade
  * Serializes the message to binary data (in protobuf wire format).
  * @return {!Uint8Array}
  */
-proto.botnet_p2p.Message.Leave.prototype.serializeBinary = function() {
+proto.botnet_p2p.Message.NATCheckMsg.prototype.serializeBinary = function() {
   var writer = new jspb.BinaryWriter();
-  proto.botnet_p2p.Message.Leave.serializeBinaryToWriter(this, writer);
+  proto.botnet_p2p.Message.NATCheckMsg.serializeBinaryToWriter(this, writer);
   return writer.getResultBuffer();
 };
 
@@ -1800,15 +1515,15 @@ proto.botnet_p2p.Message.Leave.prototype.serializeBinary = function() {
 /**
  * Serializes the given message to binary data (in protobuf wire
  * format), writing to the given BinaryWriter.
- * @param {!proto.botnet_p2p.Message.Leave} message
+ * @param {!proto.botnet_p2p.Message.NATCheckMsg} message
  * @param {!jspb.BinaryWriter} writer
  * @suppress {unusedLocalVariables} f is only used for nested messages
  */
-proto.botnet_p2p.Message.Leave.serializeBinaryToWriter = function(message, writer) {
+proto.botnet_p2p.Message.NATCheckMsg.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
   f = message.getGuid();
-  if (f !== 0) {
-    writer.writeUint64(
+  if (f.length > 0) {
+    writer.writeString(
       1,
       f
     );
@@ -1817,17 +1532,17 @@ proto.botnet_p2p.Message.Leave.serializeBinaryToWriter = function(message, write
 
 
 /**
- * optional uint64 guid = 1;
- * @return {number}
+ * optional string guid = 1;
+ * @return {string}
  */
-proto.botnet_p2p.Message.Leave.prototype.getGuid = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
+proto.botnet_p2p.Message.NATCheckMsg.prototype.getGuid = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
 };
 
 
-/** @param {number} value */
-proto.botnet_p2p.Message.Leave.prototype.setGuid = function(value) {
-  jspb.Message.setProto3IntField(this, 1, value);
+/** @param {string} value */
+proto.botnet_p2p.Message.NATCheckMsg.prototype.setGuid = function(value) {
+  jspb.Message.setProto3StringField(this, 1, value);
 };
 
 
@@ -1842,12 +1557,12 @@ proto.botnet_p2p.Message.Leave.prototype.setGuid = function(value) {
  * @extends {jspb.Message}
  * @constructor
  */
-proto.botnet_p2p.Message.FindNode = function(opt_data) {
+proto.botnet_p2p.Message.LeaveMsg = function(opt_data) {
   jspb.Message.initialize(this, opt_data, 0, -1, null, null);
 };
-goog.inherits(proto.botnet_p2p.Message.FindNode, jspb.Message);
+goog.inherits(proto.botnet_p2p.Message.LeaveMsg, jspb.Message);
 if (goog.DEBUG && !COMPILED) {
-  proto.botnet_p2p.Message.FindNode.displayName = 'proto.botnet_p2p.Message.FindNode';
+  proto.botnet_p2p.Message.LeaveMsg.displayName = 'proto.botnet_p2p.Message.LeaveMsg';
 }
 
 
@@ -1862,8 +1577,8 @@ if (jspb.Message.GENERATE_TO_OBJECT) {
  *     for transitional soy proto support: http://goto/soy-param-migration
  * @return {!Object}
  */
-proto.botnet_p2p.Message.FindNode.prototype.toObject = function(opt_includeInstance) {
-  return proto.botnet_p2p.Message.FindNode.toObject(opt_includeInstance, this);
+proto.botnet_p2p.Message.LeaveMsg.prototype.toObject = function(opt_includeInstance) {
+  return proto.botnet_p2p.Message.LeaveMsg.toObject(opt_includeInstance, this);
 };
 
 
@@ -1872,13 +1587,13 @@ proto.botnet_p2p.Message.FindNode.prototype.toObject = function(opt_includeInsta
  * @param {boolean|undefined} includeInstance Whether to include the JSPB
  *     instance for transitional soy proto support:
  *     http://goto/soy-param-migration
- * @param {!proto.botnet_p2p.Message.FindNode} msg The msg instance to transform.
+ * @param {!proto.botnet_p2p.Message.LeaveMsg} msg The msg instance to transform.
  * @return {!Object}
  * @suppress {unusedLocalVariables} f is only used for nested messages
  */
-proto.botnet_p2p.Message.FindNode.toObject = function(includeInstance, msg) {
+proto.botnet_p2p.Message.LeaveMsg.toObject = function(includeInstance, msg) {
   var f, obj = {
-    guid: jspb.Message.getFieldWithDefault(msg, 1, 0)
+    guid: jspb.Message.getFieldWithDefault(msg, 1, "")
   };
 
   if (includeInstance) {
@@ -1892,23 +1607,23 @@ proto.botnet_p2p.Message.FindNode.toObject = function(includeInstance, msg) {
 /**
  * Deserializes binary data (in protobuf wire format).
  * @param {jspb.ByteSource} bytes The bytes to deserialize.
- * @return {!proto.botnet_p2p.Message.FindNode}
+ * @return {!proto.botnet_p2p.Message.LeaveMsg}
  */
-proto.botnet_p2p.Message.FindNode.deserializeBinary = function(bytes) {
+proto.botnet_p2p.Message.LeaveMsg.deserializeBinary = function(bytes) {
   var reader = new jspb.BinaryReader(bytes);
-  var msg = new proto.botnet_p2p.Message.FindNode;
-  return proto.botnet_p2p.Message.FindNode.deserializeBinaryFromReader(msg, reader);
+  var msg = new proto.botnet_p2p.Message.LeaveMsg;
+  return proto.botnet_p2p.Message.LeaveMsg.deserializeBinaryFromReader(msg, reader);
 };
 
 
 /**
  * Deserializes binary data (in protobuf wire format) from the
  * given reader into the given message object.
- * @param {!proto.botnet_p2p.Message.FindNode} msg The message object to deserialize into.
+ * @param {!proto.botnet_p2p.Message.LeaveMsg} msg The message object to deserialize into.
  * @param {!jspb.BinaryReader} reader The BinaryReader to use.
- * @return {!proto.botnet_p2p.Message.FindNode}
+ * @return {!proto.botnet_p2p.Message.LeaveMsg}
  */
-proto.botnet_p2p.Message.FindNode.deserializeBinaryFromReader = function(msg, reader) {
+proto.botnet_p2p.Message.LeaveMsg.deserializeBinaryFromReader = function(msg, reader) {
   while (reader.nextField()) {
     if (reader.isEndGroup()) {
       break;
@@ -1916,7 +1631,7 @@ proto.botnet_p2p.Message.FindNode.deserializeBinaryFromReader = function(msg, re
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {number} */ (reader.readUint64());
+      var value = /** @type {string} */ (reader.readString());
       msg.setGuid(value);
       break;
     default:
@@ -1932,9 +1647,9 @@ proto.botnet_p2p.Message.FindNode.deserializeBinaryFromReader = function(msg, re
  * Serializes the message to binary data (in protobuf wire format).
  * @return {!Uint8Array}
  */
-proto.botnet_p2p.Message.FindNode.prototype.serializeBinary = function() {
+proto.botnet_p2p.Message.LeaveMsg.prototype.serializeBinary = function() {
   var writer = new jspb.BinaryWriter();
-  proto.botnet_p2p.Message.FindNode.serializeBinaryToWriter(this, writer);
+  proto.botnet_p2p.Message.LeaveMsg.serializeBinaryToWriter(this, writer);
   return writer.getResultBuffer();
 };
 
@@ -1942,15 +1657,15 @@ proto.botnet_p2p.Message.FindNode.prototype.serializeBinary = function() {
 /**
  * Serializes the given message to binary data (in protobuf wire
  * format), writing to the given BinaryWriter.
- * @param {!proto.botnet_p2p.Message.FindNode} message
+ * @param {!proto.botnet_p2p.Message.LeaveMsg} message
  * @param {!jspb.BinaryWriter} writer
  * @suppress {unusedLocalVariables} f is only used for nested messages
  */
-proto.botnet_p2p.Message.FindNode.serializeBinaryToWriter = function(message, writer) {
+proto.botnet_p2p.Message.LeaveMsg.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
   f = message.getGuid();
-  if (f !== 0) {
-    writer.writeUint64(
+  if (f.length > 0) {
+    writer.writeString(
       1,
       f
     );
@@ -1959,17 +1674,17 @@ proto.botnet_p2p.Message.FindNode.serializeBinaryToWriter = function(message, wr
 
 
 /**
- * optional uint64 guid = 1;
- * @return {number}
+ * optional string guid = 1;
+ * @return {string}
  */
-proto.botnet_p2p.Message.FindNode.prototype.getGuid = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
+proto.botnet_p2p.Message.LeaveMsg.prototype.getGuid = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
 };
 
 
-/** @param {number} value */
-proto.botnet_p2p.Message.FindNode.prototype.setGuid = function(value) {
-  jspb.Message.setProto3IntField(this, 1, value);
+/** @param {string} value */
+proto.botnet_p2p.Message.LeaveMsg.prototype.setGuid = function(value) {
+  jspb.Message.setProto3StringField(this, 1, value);
 };
 
 
@@ -1984,19 +1699,303 @@ proto.botnet_p2p.Message.FindNode.prototype.setGuid = function(value) {
  * @extends {jspb.Message}
  * @constructor
  */
-proto.botnet_p2p.Message.FoundNodes = function(opt_data) {
-  jspb.Message.initialize(this, opt_data, 0, -1, proto.botnet_p2p.Message.FoundNodes.repeatedFields_, null);
+proto.botnet_p2p.Message.FindNodeMsg = function(opt_data) {
+  jspb.Message.initialize(this, opt_data, 0, -1, null, null);
 };
-goog.inherits(proto.botnet_p2p.Message.FoundNodes, jspb.Message);
+goog.inherits(proto.botnet_p2p.Message.FindNodeMsg, jspb.Message);
 if (goog.DEBUG && !COMPILED) {
-  proto.botnet_p2p.Message.FoundNodes.displayName = 'proto.botnet_p2p.Message.FoundNodes';
+  proto.botnet_p2p.Message.FindNodeMsg.displayName = 'proto.botnet_p2p.Message.FindNodeMsg';
+}
+
+
+if (jspb.Message.GENERATE_TO_OBJECT) {
+/**
+ * Creates an object representation of this proto suitable for use in Soy templates.
+ * Field names that are reserved in JavaScript and will be renamed to pb_name.
+ * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
+ * For the list of reserved names please see:
+ *     com.google.apps.jspb.JsClassTemplate.JS_RESERVED_WORDS.
+ * @param {boolean=} opt_includeInstance Whether to include the JSPB instance
+ *     for transitional soy proto support: http://goto/soy-param-migration
+ * @return {!Object}
+ */
+proto.botnet_p2p.Message.FindNodeMsg.prototype.toObject = function(opt_includeInstance) {
+  return proto.botnet_p2p.Message.FindNodeMsg.toObject(opt_includeInstance, this);
+};
+
+
+/**
+ * Static version of the {@see toObject} method.
+ * @param {boolean|undefined} includeInstance Whether to include the JSPB
+ *     instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
+ * @param {!proto.botnet_p2p.Message.FindNodeMsg} msg The msg instance to transform.
+ * @return {!Object}
+ * @suppress {unusedLocalVariables} f is only used for nested messages
+ */
+proto.botnet_p2p.Message.FindNodeMsg.toObject = function(includeInstance, msg) {
+  var f, obj = {
+    guid: jspb.Message.getFieldWithDefault(msg, 1, "")
+  };
+
+  if (includeInstance) {
+    obj.$jspbMessageInstance = msg;
+  }
+  return obj;
+};
+}
+
+
+/**
+ * Deserializes binary data (in protobuf wire format).
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @return {!proto.botnet_p2p.Message.FindNodeMsg}
+ */
+proto.botnet_p2p.Message.FindNodeMsg.deserializeBinary = function(bytes) {
+  var reader = new jspb.BinaryReader(bytes);
+  var msg = new proto.botnet_p2p.Message.FindNodeMsg;
+  return proto.botnet_p2p.Message.FindNodeMsg.deserializeBinaryFromReader(msg, reader);
+};
+
+
+/**
+ * Deserializes binary data (in protobuf wire format) from the
+ * given reader into the given message object.
+ * @param {!proto.botnet_p2p.Message.FindNodeMsg} msg The message object to deserialize into.
+ * @param {!jspb.BinaryReader} reader The BinaryReader to use.
+ * @return {!proto.botnet_p2p.Message.FindNodeMsg}
+ */
+proto.botnet_p2p.Message.FindNodeMsg.deserializeBinaryFromReader = function(msg, reader) {
+  while (reader.nextField()) {
+    if (reader.isEndGroup()) {
+      break;
+    }
+    var field = reader.getFieldNumber();
+    switch (field) {
+    case 1:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setGuid(value);
+      break;
+    default:
+      reader.skipField();
+      break;
+    }
+  }
+  return msg;
+};
+
+
+/**
+ * Serializes the message to binary data (in protobuf wire format).
+ * @return {!Uint8Array}
+ */
+proto.botnet_p2p.Message.FindNodeMsg.prototype.serializeBinary = function() {
+  var writer = new jspb.BinaryWriter();
+  proto.botnet_p2p.Message.FindNodeMsg.serializeBinaryToWriter(this, writer);
+  return writer.getResultBuffer();
+};
+
+
+/**
+ * Serializes the given message to binary data (in protobuf wire
+ * format), writing to the given BinaryWriter.
+ * @param {!proto.botnet_p2p.Message.FindNodeMsg} message
+ * @param {!jspb.BinaryWriter} writer
+ * @suppress {unusedLocalVariables} f is only used for nested messages
+ */
+proto.botnet_p2p.Message.FindNodeMsg.serializeBinaryToWriter = function(message, writer) {
+  var f = undefined;
+  f = message.getGuid();
+  if (f.length > 0) {
+    writer.writeString(
+      1,
+      f
+    );
+  }
+};
+
+
+/**
+ * optional string guid = 1;
+ * @return {string}
+ */
+proto.botnet_p2p.Message.FindNodeMsg.prototype.getGuid = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
+};
+
+
+/** @param {string} value */
+proto.botnet_p2p.Message.FindNodeMsg.prototype.setGuid = function(value) {
+  jspb.Message.setProto3StringField(this, 1, value);
+};
+
+
+
+/**
+ * Generated by JsPbCodeGenerator.
+ * @param {Array=} opt_data Optional initial data array, typically from a
+ * server response, or constructed directly in Javascript. The array is used
+ * in place and becomes part of the constructed object. It is not cloned.
+ * If no data is provided, the constructed object will be empty, but still
+ * valid.
+ * @extends {jspb.Message}
+ * @constructor
+ */
+proto.botnet_p2p.Message.PingMsg = function(opt_data) {
+  jspb.Message.initialize(this, opt_data, 0, -1, null, null);
+};
+goog.inherits(proto.botnet_p2p.Message.PingMsg, jspb.Message);
+if (goog.DEBUG && !COMPILED) {
+  proto.botnet_p2p.Message.PingMsg.displayName = 'proto.botnet_p2p.Message.PingMsg';
+}
+
+
+if (jspb.Message.GENERATE_TO_OBJECT) {
+/**
+ * Creates an object representation of this proto suitable for use in Soy templates.
+ * Field names that are reserved in JavaScript and will be renamed to pb_name.
+ * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
+ * For the list of reserved names please see:
+ *     com.google.apps.jspb.JsClassTemplate.JS_RESERVED_WORDS.
+ * @param {boolean=} opt_includeInstance Whether to include the JSPB instance
+ *     for transitional soy proto support: http://goto/soy-param-migration
+ * @return {!Object}
+ */
+proto.botnet_p2p.Message.PingMsg.prototype.toObject = function(opt_includeInstance) {
+  return proto.botnet_p2p.Message.PingMsg.toObject(opt_includeInstance, this);
+};
+
+
+/**
+ * Static version of the {@see toObject} method.
+ * @param {boolean|undefined} includeInstance Whether to include the JSPB
+ *     instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
+ * @param {!proto.botnet_p2p.Message.PingMsg} msg The msg instance to transform.
+ * @return {!Object}
+ * @suppress {unusedLocalVariables} f is only used for nested messages
+ */
+proto.botnet_p2p.Message.PingMsg.toObject = function(includeInstance, msg) {
+  var f, obj = {
+    guid: jspb.Message.getFieldWithDefault(msg, 1, "")
+  };
+
+  if (includeInstance) {
+    obj.$jspbMessageInstance = msg;
+  }
+  return obj;
+};
+}
+
+
+/**
+ * Deserializes binary data (in protobuf wire format).
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @return {!proto.botnet_p2p.Message.PingMsg}
+ */
+proto.botnet_p2p.Message.PingMsg.deserializeBinary = function(bytes) {
+  var reader = new jspb.BinaryReader(bytes);
+  var msg = new proto.botnet_p2p.Message.PingMsg;
+  return proto.botnet_p2p.Message.PingMsg.deserializeBinaryFromReader(msg, reader);
+};
+
+
+/**
+ * Deserializes binary data (in protobuf wire format) from the
+ * given reader into the given message object.
+ * @param {!proto.botnet_p2p.Message.PingMsg} msg The message object to deserialize into.
+ * @param {!jspb.BinaryReader} reader The BinaryReader to use.
+ * @return {!proto.botnet_p2p.Message.PingMsg}
+ */
+proto.botnet_p2p.Message.PingMsg.deserializeBinaryFromReader = function(msg, reader) {
+  while (reader.nextField()) {
+    if (reader.isEndGroup()) {
+      break;
+    }
+    var field = reader.getFieldNumber();
+    switch (field) {
+    case 1:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setGuid(value);
+      break;
+    default:
+      reader.skipField();
+      break;
+    }
+  }
+  return msg;
+};
+
+
+/**
+ * Serializes the message to binary data (in protobuf wire format).
+ * @return {!Uint8Array}
+ */
+proto.botnet_p2p.Message.PingMsg.prototype.serializeBinary = function() {
+  var writer = new jspb.BinaryWriter();
+  proto.botnet_p2p.Message.PingMsg.serializeBinaryToWriter(this, writer);
+  return writer.getResultBuffer();
+};
+
+
+/**
+ * Serializes the given message to binary data (in protobuf wire
+ * format), writing to the given BinaryWriter.
+ * @param {!proto.botnet_p2p.Message.PingMsg} message
+ * @param {!jspb.BinaryWriter} writer
+ * @suppress {unusedLocalVariables} f is only used for nested messages
+ */
+proto.botnet_p2p.Message.PingMsg.serializeBinaryToWriter = function(message, writer) {
+  var f = undefined;
+  f = message.getGuid();
+  if (f.length > 0) {
+    writer.writeString(
+      1,
+      f
+    );
+  }
+};
+
+
+/**
+ * optional string guid = 1;
+ * @return {string}
+ */
+proto.botnet_p2p.Message.PingMsg.prototype.getGuid = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
+};
+
+
+/** @param {string} value */
+proto.botnet_p2p.Message.PingMsg.prototype.setGuid = function(value) {
+  jspb.Message.setProto3StringField(this, 1, value);
+};
+
+
+
+/**
+ * Generated by JsPbCodeGenerator.
+ * @param {Array=} opt_data Optional initial data array, typically from a
+ * server response, or constructed directly in Javascript. The array is used
+ * in place and becomes part of the constructed object. It is not cloned.
+ * If no data is provided, the constructed object will be empty, but still
+ * valid.
+ * @extends {jspb.Message}
+ * @constructor
+ */
+proto.botnet_p2p.Message.FoundNodesMsg = function(opt_data) {
+  jspb.Message.initialize(this, opt_data, 0, -1, proto.botnet_p2p.Message.FoundNodesMsg.repeatedFields_, null);
+};
+goog.inherits(proto.botnet_p2p.Message.FoundNodesMsg, jspb.Message);
+if (goog.DEBUG && !COMPILED) {
+  proto.botnet_p2p.Message.FoundNodesMsg.displayName = 'proto.botnet_p2p.Message.FoundNodesMsg';
 }
 /**
  * List of repeated fields within this message type.
  * @private {!Array<number>}
  * @const
  */
-proto.botnet_p2p.Message.FoundNodes.repeatedFields_ = [1];
+proto.botnet_p2p.Message.FoundNodesMsg.repeatedFields_ = [1];
 
 
 
@@ -2011,8 +2010,8 @@ if (jspb.Message.GENERATE_TO_OBJECT) {
  *     for transitional soy proto support: http://goto/soy-param-migration
  * @return {!Object}
  */
-proto.botnet_p2p.Message.FoundNodes.prototype.toObject = function(opt_includeInstance) {
-  return proto.botnet_p2p.Message.FoundNodes.toObject(opt_includeInstance, this);
+proto.botnet_p2p.Message.FoundNodesMsg.prototype.toObject = function(opt_includeInstance) {
+  return proto.botnet_p2p.Message.FoundNodesMsg.toObject(opt_includeInstance, this);
 };
 
 
@@ -2021,14 +2020,14 @@ proto.botnet_p2p.Message.FoundNodes.prototype.toObject = function(opt_includeIns
  * @param {boolean|undefined} includeInstance Whether to include the JSPB
  *     instance for transitional soy proto support:
  *     http://goto/soy-param-migration
- * @param {!proto.botnet_p2p.Message.FoundNodes} msg The msg instance to transform.
+ * @param {!proto.botnet_p2p.Message.FoundNodesMsg} msg The msg instance to transform.
  * @return {!Object}
  * @suppress {unusedLocalVariables} f is only used for nested messages
  */
-proto.botnet_p2p.Message.FoundNodes.toObject = function(includeInstance, msg) {
+proto.botnet_p2p.Message.FoundNodesMsg.toObject = function(includeInstance, msg) {
   var f, obj = {
     nodesList: jspb.Message.toObjectList(msg.getNodesList(),
-    proto.botnet_p2p.Message.NodeDescription.toObject, includeInstance)
+    proto.botnet_p2p.Message.Contact.toObject, includeInstance)
   };
 
   if (includeInstance) {
@@ -2042,23 +2041,23 @@ proto.botnet_p2p.Message.FoundNodes.toObject = function(includeInstance, msg) {
 /**
  * Deserializes binary data (in protobuf wire format).
  * @param {jspb.ByteSource} bytes The bytes to deserialize.
- * @return {!proto.botnet_p2p.Message.FoundNodes}
+ * @return {!proto.botnet_p2p.Message.FoundNodesMsg}
  */
-proto.botnet_p2p.Message.FoundNodes.deserializeBinary = function(bytes) {
+proto.botnet_p2p.Message.FoundNodesMsg.deserializeBinary = function(bytes) {
   var reader = new jspb.BinaryReader(bytes);
-  var msg = new proto.botnet_p2p.Message.FoundNodes;
-  return proto.botnet_p2p.Message.FoundNodes.deserializeBinaryFromReader(msg, reader);
+  var msg = new proto.botnet_p2p.Message.FoundNodesMsg;
+  return proto.botnet_p2p.Message.FoundNodesMsg.deserializeBinaryFromReader(msg, reader);
 };
 
 
 /**
  * Deserializes binary data (in protobuf wire format) from the
  * given reader into the given message object.
- * @param {!proto.botnet_p2p.Message.FoundNodes} msg The message object to deserialize into.
+ * @param {!proto.botnet_p2p.Message.FoundNodesMsg} msg The message object to deserialize into.
  * @param {!jspb.BinaryReader} reader The BinaryReader to use.
- * @return {!proto.botnet_p2p.Message.FoundNodes}
+ * @return {!proto.botnet_p2p.Message.FoundNodesMsg}
  */
-proto.botnet_p2p.Message.FoundNodes.deserializeBinaryFromReader = function(msg, reader) {
+proto.botnet_p2p.Message.FoundNodesMsg.deserializeBinaryFromReader = function(msg, reader) {
   while (reader.nextField()) {
     if (reader.isEndGroup()) {
       break;
@@ -2066,8 +2065,8 @@ proto.botnet_p2p.Message.FoundNodes.deserializeBinaryFromReader = function(msg, 
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = new proto.botnet_p2p.Message.NodeDescription;
-      reader.readMessage(value,proto.botnet_p2p.Message.NodeDescription.deserializeBinaryFromReader);
+      var value = new proto.botnet_p2p.Message.Contact;
+      reader.readMessage(value,proto.botnet_p2p.Message.Contact.deserializeBinaryFromReader);
       msg.addNodes(value);
       break;
     default:
@@ -2083,9 +2082,9 @@ proto.botnet_p2p.Message.FoundNodes.deserializeBinaryFromReader = function(msg, 
  * Serializes the message to binary data (in protobuf wire format).
  * @return {!Uint8Array}
  */
-proto.botnet_p2p.Message.FoundNodes.prototype.serializeBinary = function() {
+proto.botnet_p2p.Message.FoundNodesMsg.prototype.serializeBinary = function() {
   var writer = new jspb.BinaryWriter();
-  proto.botnet_p2p.Message.FoundNodes.serializeBinaryToWriter(this, writer);
+  proto.botnet_p2p.Message.FoundNodesMsg.serializeBinaryToWriter(this, writer);
   return writer.getResultBuffer();
 };
 
@@ -2093,66 +2092,66 @@ proto.botnet_p2p.Message.FoundNodes.prototype.serializeBinary = function() {
 /**
  * Serializes the given message to binary data (in protobuf wire
  * format), writing to the given BinaryWriter.
- * @param {!proto.botnet_p2p.Message.FoundNodes} message
+ * @param {!proto.botnet_p2p.Message.FoundNodesMsg} message
  * @param {!jspb.BinaryWriter} writer
  * @suppress {unusedLocalVariables} f is only used for nested messages
  */
-proto.botnet_p2p.Message.FoundNodes.serializeBinaryToWriter = function(message, writer) {
+proto.botnet_p2p.Message.FoundNodesMsg.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
   f = message.getNodesList();
   if (f.length > 0) {
     writer.writeRepeatedMessage(
       1,
       f,
-      proto.botnet_p2p.Message.NodeDescription.serializeBinaryToWriter
+      proto.botnet_p2p.Message.Contact.serializeBinaryToWriter
     );
   }
 };
 
 
 /**
- * repeated NodeDescription nodes = 1;
- * @return {!Array.<!proto.botnet_p2p.Message.NodeDescription>}
+ * repeated Contact nodes = 1;
+ * @return {!Array.<!proto.botnet_p2p.Message.Contact>}
  */
-proto.botnet_p2p.Message.FoundNodes.prototype.getNodesList = function() {
-  return /** @type{!Array.<!proto.botnet_p2p.Message.NodeDescription>} */ (
-    jspb.Message.getRepeatedWrapperField(this, proto.botnet_p2p.Message.NodeDescription, 1));
+proto.botnet_p2p.Message.FoundNodesMsg.prototype.getNodesList = function() {
+  return /** @type{!Array.<!proto.botnet_p2p.Message.Contact>} */ (
+    jspb.Message.getRepeatedWrapperField(this, proto.botnet_p2p.Message.Contact, 1));
 };
 
 
-/** @param {!Array.<!proto.botnet_p2p.Message.NodeDescription>} value */
-proto.botnet_p2p.Message.FoundNodes.prototype.setNodesList = function(value) {
+/** @param {!Array.<!proto.botnet_p2p.Message.Contact>} value */
+proto.botnet_p2p.Message.FoundNodesMsg.prototype.setNodesList = function(value) {
   jspb.Message.setRepeatedWrapperField(this, 1, value);
 };
 
 
 /**
- * @param {!proto.botnet_p2p.Message.NodeDescription=} opt_value
+ * @param {!proto.botnet_p2p.Message.Contact=} opt_value
  * @param {number=} opt_index
- * @return {!proto.botnet_p2p.Message.NodeDescription}
+ * @return {!proto.botnet_p2p.Message.Contact}
  */
-proto.botnet_p2p.Message.FoundNodes.prototype.addNodes = function(opt_value, opt_index) {
-  return jspb.Message.addToRepeatedWrapperField(this, 1, opt_value, proto.botnet_p2p.Message.NodeDescription, opt_index);
+proto.botnet_p2p.Message.FoundNodesMsg.prototype.addNodes = function(opt_value, opt_index) {
+  return jspb.Message.addToRepeatedWrapperField(this, 1, opt_value, proto.botnet_p2p.Message.Contact, opt_index);
 };
 
 
-proto.botnet_p2p.Message.FoundNodes.prototype.clearNodesList = function() {
+proto.botnet_p2p.Message.FoundNodesMsg.prototype.clearNodesList = function() {
   this.setNodesList([]);
 };
 
 
 /**
- * optional uint64 uuid = 1;
- * @return {number}
+ * optional string uuid = 1;
+ * @return {string}
  */
 proto.botnet_p2p.Message.prototype.getUuid = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
 };
 
 
-/** @param {number} value */
+/** @param {string} value */
 proto.botnet_p2p.Message.prototype.setUuid = function(value) {
-  jspb.Message.setProto3IntField(this, 1, value);
+  jspb.Message.setProto3StringField(this, 1, value);
 };
 
 
@@ -2258,23 +2257,23 @@ proto.botnet_p2p.Message.prototype.setSignature = function(value) {
 
 
 /**
- * optional Command pCommand = 7;
- * @return {?proto.botnet_p2p.Message.Command}
+ * optional CommandMsg command = 7;
+ * @return {?proto.botnet_p2p.Message.CommandMsg}
  */
-proto.botnet_p2p.Message.prototype.getPcommand = function() {
-  return /** @type{?proto.botnet_p2p.Message.Command} */ (
-    jspb.Message.getWrapperField(this, proto.botnet_p2p.Message.Command, 7));
+proto.botnet_p2p.Message.prototype.getCommand = function() {
+  return /** @type{?proto.botnet_p2p.Message.CommandMsg} */ (
+    jspb.Message.getWrapperField(this, proto.botnet_p2p.Message.CommandMsg, 7));
 };
 
 
-/** @param {?proto.botnet_p2p.Message.Command|undefined} value */
-proto.botnet_p2p.Message.prototype.setPcommand = function(value) {
+/** @param {?proto.botnet_p2p.Message.CommandMsg|undefined} value */
+proto.botnet_p2p.Message.prototype.setCommand = function(value) {
   jspb.Message.setOneofWrapperField(this, 7, proto.botnet_p2p.Message.oneofGroups_[0], value);
 };
 
 
-proto.botnet_p2p.Message.prototype.clearPcommand = function() {
-  this.setPcommand(undefined);
+proto.botnet_p2p.Message.prototype.clearCommand = function() {
+  this.setCommand(undefined);
 };
 
 
@@ -2282,29 +2281,29 @@ proto.botnet_p2p.Message.prototype.clearPcommand = function() {
  * Returns whether this field is set.
  * @return {!boolean}
  */
-proto.botnet_p2p.Message.prototype.hasPcommand = function() {
+proto.botnet_p2p.Message.prototype.hasCommand = function() {
   return jspb.Message.getField(this, 7) != null;
 };
 
 
 /**
- * optional Response pResponse = 8;
- * @return {?proto.botnet_p2p.Message.Response}
+ * optional ResponseMsg response = 8;
+ * @return {?proto.botnet_p2p.Message.ResponseMsg}
  */
-proto.botnet_p2p.Message.prototype.getPresponse = function() {
-  return /** @type{?proto.botnet_p2p.Message.Response} */ (
-    jspb.Message.getWrapperField(this, proto.botnet_p2p.Message.Response, 8));
+proto.botnet_p2p.Message.prototype.getResponse = function() {
+  return /** @type{?proto.botnet_p2p.Message.ResponseMsg} */ (
+    jspb.Message.getWrapperField(this, proto.botnet_p2p.Message.ResponseMsg, 8));
 };
 
 
-/** @param {?proto.botnet_p2p.Message.Response|undefined} value */
-proto.botnet_p2p.Message.prototype.setPresponse = function(value) {
+/** @param {?proto.botnet_p2p.Message.ResponseMsg|undefined} value */
+proto.botnet_p2p.Message.prototype.setResponse = function(value) {
   jspb.Message.setOneofWrapperField(this, 8, proto.botnet_p2p.Message.oneofGroups_[0], value);
 };
 
 
-proto.botnet_p2p.Message.prototype.clearPresponse = function() {
-  this.setPresponse(undefined);
+proto.botnet_p2p.Message.prototype.clearResponse = function() {
+  this.setResponse(undefined);
 };
 
 
@@ -2312,29 +2311,29 @@ proto.botnet_p2p.Message.prototype.clearPresponse = function() {
  * Returns whether this field is set.
  * @return {!boolean}
  */
-proto.botnet_p2p.Message.prototype.hasPresponse = function() {
+proto.botnet_p2p.Message.prototype.hasResponse = function() {
   return jspb.Message.getField(this, 8) != null;
 };
 
 
 /**
- * optional FileChunk pFile = 9;
- * @return {?proto.botnet_p2p.Message.FileChunk}
+ * optional FileChunkMsg fileChunk = 9;
+ * @return {?proto.botnet_p2p.Message.FileChunkMsg}
  */
-proto.botnet_p2p.Message.prototype.getPfile = function() {
-  return /** @type{?proto.botnet_p2p.Message.FileChunk} */ (
-    jspb.Message.getWrapperField(this, proto.botnet_p2p.Message.FileChunk, 9));
+proto.botnet_p2p.Message.prototype.getFilechunk = function() {
+  return /** @type{?proto.botnet_p2p.Message.FileChunkMsg} */ (
+    jspb.Message.getWrapperField(this, proto.botnet_p2p.Message.FileChunkMsg, 9));
 };
 
 
-/** @param {?proto.botnet_p2p.Message.FileChunk|undefined} value */
-proto.botnet_p2p.Message.prototype.setPfile = function(value) {
+/** @param {?proto.botnet_p2p.Message.FileChunkMsg|undefined} value */
+proto.botnet_p2p.Message.prototype.setFilechunk = function(value) {
   jspb.Message.setOneofWrapperField(this, 9, proto.botnet_p2p.Message.oneofGroups_[0], value);
 };
 
 
-proto.botnet_p2p.Message.prototype.clearPfile = function() {
-  this.setPfile(undefined);
+proto.botnet_p2p.Message.prototype.clearFilechunk = function() {
+  this.setFilechunk(undefined);
 };
 
 
@@ -2342,29 +2341,29 @@ proto.botnet_p2p.Message.prototype.clearPfile = function() {
  * Returns whether this field is set.
  * @return {!boolean}
  */
-proto.botnet_p2p.Message.prototype.hasPfile = function() {
+proto.botnet_p2p.Message.prototype.hasFilechunk = function() {
   return jspb.Message.getField(this, 9) != null;
 };
 
 
 /**
- * optional NATRequest pNATRequest = 10;
- * @return {?proto.botnet_p2p.Message.NATRequest}
+ * optional NATRequestMsg NATRequest = 10;
+ * @return {?proto.botnet_p2p.Message.NATRequestMsg}
  */
-proto.botnet_p2p.Message.prototype.getPnatrequest = function() {
-  return /** @type{?proto.botnet_p2p.Message.NATRequest} */ (
-    jspb.Message.getWrapperField(this, proto.botnet_p2p.Message.NATRequest, 10));
+proto.botnet_p2p.Message.prototype.getNatrequest = function() {
+  return /** @type{?proto.botnet_p2p.Message.NATRequestMsg} */ (
+    jspb.Message.getWrapperField(this, proto.botnet_p2p.Message.NATRequestMsg, 10));
 };
 
 
-/** @param {?proto.botnet_p2p.Message.NATRequest|undefined} value */
-proto.botnet_p2p.Message.prototype.setPnatrequest = function(value) {
+/** @param {?proto.botnet_p2p.Message.NATRequestMsg|undefined} value */
+proto.botnet_p2p.Message.prototype.setNatrequest = function(value) {
   jspb.Message.setOneofWrapperField(this, 10, proto.botnet_p2p.Message.oneofGroups_[0], value);
 };
 
 
-proto.botnet_p2p.Message.prototype.clearPnatrequest = function() {
-  this.setPnatrequest(undefined);
+proto.botnet_p2p.Message.prototype.clearNatrequest = function() {
+  this.setNatrequest(undefined);
 };
 
 
@@ -2372,29 +2371,29 @@ proto.botnet_p2p.Message.prototype.clearPnatrequest = function() {
  * Returns whether this field is set.
  * @return {!boolean}
  */
-proto.botnet_p2p.Message.prototype.hasPnatrequest = function() {
+proto.botnet_p2p.Message.prototype.hasNatrequest = function() {
   return jspb.Message.getField(this, 10) != null;
 };
 
 
 /**
- * optional NATCheck pNATCheck = 11;
- * @return {?proto.botnet_p2p.Message.NATCheck}
+ * optional NATCheckMsg NATCheck = 11;
+ * @return {?proto.botnet_p2p.Message.NATCheckMsg}
  */
-proto.botnet_p2p.Message.prototype.getPnatcheck = function() {
-  return /** @type{?proto.botnet_p2p.Message.NATCheck} */ (
-    jspb.Message.getWrapperField(this, proto.botnet_p2p.Message.NATCheck, 11));
+proto.botnet_p2p.Message.prototype.getNatcheck = function() {
+  return /** @type{?proto.botnet_p2p.Message.NATCheckMsg} */ (
+    jspb.Message.getWrapperField(this, proto.botnet_p2p.Message.NATCheckMsg, 11));
 };
 
 
-/** @param {?proto.botnet_p2p.Message.NATCheck|undefined} value */
-proto.botnet_p2p.Message.prototype.setPnatcheck = function(value) {
+/** @param {?proto.botnet_p2p.Message.NATCheckMsg|undefined} value */
+proto.botnet_p2p.Message.prototype.setNatcheck = function(value) {
   jspb.Message.setOneofWrapperField(this, 11, proto.botnet_p2p.Message.oneofGroups_[0], value);
 };
 
 
-proto.botnet_p2p.Message.prototype.clearPnatcheck = function() {
-  this.setPnatcheck(undefined);
+proto.botnet_p2p.Message.prototype.clearNatcheck = function() {
+  this.setNatcheck(undefined);
 };
 
 
@@ -2402,29 +2401,29 @@ proto.botnet_p2p.Message.prototype.clearPnatcheck = function() {
  * Returns whether this field is set.
  * @return {!boolean}
  */
-proto.botnet_p2p.Message.prototype.hasPnatcheck = function() {
+proto.botnet_p2p.Message.prototype.hasNatcheck = function() {
   return jspb.Message.getField(this, 11) != null;
 };
 
 
 /**
- * optional Leave pLeave = 12;
- * @return {?proto.botnet_p2p.Message.Leave}
+ * optional LeaveMsg leave = 12;
+ * @return {?proto.botnet_p2p.Message.LeaveMsg}
  */
-proto.botnet_p2p.Message.prototype.getPleave = function() {
-  return /** @type{?proto.botnet_p2p.Message.Leave} */ (
-    jspb.Message.getWrapperField(this, proto.botnet_p2p.Message.Leave, 12));
+proto.botnet_p2p.Message.prototype.getLeave = function() {
+  return /** @type{?proto.botnet_p2p.Message.LeaveMsg} */ (
+    jspb.Message.getWrapperField(this, proto.botnet_p2p.Message.LeaveMsg, 12));
 };
 
 
-/** @param {?proto.botnet_p2p.Message.Leave|undefined} value */
-proto.botnet_p2p.Message.prototype.setPleave = function(value) {
+/** @param {?proto.botnet_p2p.Message.LeaveMsg|undefined} value */
+proto.botnet_p2p.Message.prototype.setLeave = function(value) {
   jspb.Message.setOneofWrapperField(this, 12, proto.botnet_p2p.Message.oneofGroups_[0], value);
 };
 
 
-proto.botnet_p2p.Message.prototype.clearPleave = function() {
-  this.setPleave(undefined);
+proto.botnet_p2p.Message.prototype.clearLeave = function() {
+  this.setLeave(undefined);
 };
 
 
@@ -2432,29 +2431,29 @@ proto.botnet_p2p.Message.prototype.clearPleave = function() {
  * Returns whether this field is set.
  * @return {!boolean}
  */
-proto.botnet_p2p.Message.prototype.hasPleave = function() {
+proto.botnet_p2p.Message.prototype.hasLeave = function() {
   return jspb.Message.getField(this, 12) != null;
 };
 
 
 /**
- * optional FindNode pFindNode = 13;
- * @return {?proto.botnet_p2p.Message.FindNode}
+ * optional FindNodeMsg findNode = 13;
+ * @return {?proto.botnet_p2p.Message.FindNodeMsg}
  */
-proto.botnet_p2p.Message.prototype.getPfindnode = function() {
-  return /** @type{?proto.botnet_p2p.Message.FindNode} */ (
-    jspb.Message.getWrapperField(this, proto.botnet_p2p.Message.FindNode, 13));
+proto.botnet_p2p.Message.prototype.getFindnode = function() {
+  return /** @type{?proto.botnet_p2p.Message.FindNodeMsg} */ (
+    jspb.Message.getWrapperField(this, proto.botnet_p2p.Message.FindNodeMsg, 13));
 };
 
 
-/** @param {?proto.botnet_p2p.Message.FindNode|undefined} value */
-proto.botnet_p2p.Message.prototype.setPfindnode = function(value) {
+/** @param {?proto.botnet_p2p.Message.FindNodeMsg|undefined} value */
+proto.botnet_p2p.Message.prototype.setFindnode = function(value) {
   jspb.Message.setOneofWrapperField(this, 13, proto.botnet_p2p.Message.oneofGroups_[0], value);
 };
 
 
-proto.botnet_p2p.Message.prototype.clearPfindnode = function() {
-  this.setPfindnode(undefined);
+proto.botnet_p2p.Message.prototype.clearFindnode = function() {
+  this.setFindnode(undefined);
 };
 
 
@@ -2462,29 +2461,29 @@ proto.botnet_p2p.Message.prototype.clearPfindnode = function() {
  * Returns whether this field is set.
  * @return {!boolean}
  */
-proto.botnet_p2p.Message.prototype.hasPfindnode = function() {
+proto.botnet_p2p.Message.prototype.hasFindnode = function() {
   return jspb.Message.getField(this, 13) != null;
 };
 
 
 /**
- * optional FoundNodes pFoundNodes = 14;
- * @return {?proto.botnet_p2p.Message.FoundNodes}
+ * optional FoundNodesMsg foundNodes = 14;
+ * @return {?proto.botnet_p2p.Message.FoundNodesMsg}
  */
-proto.botnet_p2p.Message.prototype.getPfoundnodes = function() {
-  return /** @type{?proto.botnet_p2p.Message.FoundNodes} */ (
-    jspb.Message.getWrapperField(this, proto.botnet_p2p.Message.FoundNodes, 14));
+proto.botnet_p2p.Message.prototype.getFoundnodes = function() {
+  return /** @type{?proto.botnet_p2p.Message.FoundNodesMsg} */ (
+    jspb.Message.getWrapperField(this, proto.botnet_p2p.Message.FoundNodesMsg, 14));
 };
 
 
-/** @param {?proto.botnet_p2p.Message.FoundNodes|undefined} value */
-proto.botnet_p2p.Message.prototype.setPfoundnodes = function(value) {
+/** @param {?proto.botnet_p2p.Message.FoundNodesMsg|undefined} value */
+proto.botnet_p2p.Message.prototype.setFoundnodes = function(value) {
   jspb.Message.setOneofWrapperField(this, 14, proto.botnet_p2p.Message.oneofGroups_[0], value);
 };
 
 
-proto.botnet_p2p.Message.prototype.clearPfoundnodes = function() {
-  this.setPfoundnodes(undefined);
+proto.botnet_p2p.Message.prototype.clearFoundnodes = function() {
+  this.setFoundnodes(undefined);
 };
 
 
@@ -2492,29 +2491,29 @@ proto.botnet_p2p.Message.prototype.clearPfoundnodes = function() {
  * Returns whether this field is set.
  * @return {!boolean}
  */
-proto.botnet_p2p.Message.prototype.hasPfoundnodes = function() {
+proto.botnet_p2p.Message.prototype.hasFoundnodes = function() {
   return jspb.Message.getField(this, 14) != null;
 };
 
 
 /**
- * optional FindValue pFindValue = 15;
- * @return {?proto.botnet_p2p.Message.FindValue}
+ * optional PingMsg ping = 15;
+ * @return {?proto.botnet_p2p.Message.PingMsg}
  */
-proto.botnet_p2p.Message.prototype.getPfindvalue = function() {
-  return /** @type{?proto.botnet_p2p.Message.FindValue} */ (
-    jspb.Message.getWrapperField(this, proto.botnet_p2p.Message.FindValue, 15));
+proto.botnet_p2p.Message.prototype.getPing = function() {
+  return /** @type{?proto.botnet_p2p.Message.PingMsg} */ (
+    jspb.Message.getWrapperField(this, proto.botnet_p2p.Message.PingMsg, 15));
 };
 
 
-/** @param {?proto.botnet_p2p.Message.FindValue|undefined} value */
-proto.botnet_p2p.Message.prototype.setPfindvalue = function(value) {
+/** @param {?proto.botnet_p2p.Message.PingMsg|undefined} value */
+proto.botnet_p2p.Message.prototype.setPing = function(value) {
   jspb.Message.setOneofWrapperField(this, 15, proto.botnet_p2p.Message.oneofGroups_[0], value);
 };
 
 
-proto.botnet_p2p.Message.prototype.clearPfindvalue = function() {
-  this.setPfindvalue(undefined);
+proto.botnet_p2p.Message.prototype.clearPing = function() {
+  this.setPing(undefined);
 };
 
 
@@ -2522,7 +2521,7 @@ proto.botnet_p2p.Message.prototype.clearPfindvalue = function() {
  * Returns whether this field is set.
  * @return {!boolean}
  */
-proto.botnet_p2p.Message.prototype.hasPfindvalue = function() {
+proto.botnet_p2p.Message.prototype.hasPing = function() {
   return jspb.Message.getField(this, 15) != null;
 };
 
