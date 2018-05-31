@@ -10,9 +10,10 @@ message Message {
         NAT_REQUEST = 4;
         NAT_CHECK = 5;
         PING = 6;
-        LEAVE = 7;
-        FIND_NODE = 8;
-        FOUND_NODES = 9;
+        PING_RESPONSE = 7;
+        LEAVE = 8;
+        FIND_NODE = 9;
+        FOUND_NODES = 10;
     }
 
     enum Status {
@@ -54,15 +55,7 @@ message Message {
         string guid = 1;
     }
     
-    message LeaveMsg {
-        string guid = 1;
-    }
-    
     message FindNodeMsg {
-        string guid = 1;
-    }
-    
-    message PingMsg {
         string guid = 1;
     }
 
@@ -72,8 +65,8 @@ message Message {
     
     string uuid = 1;
     MessageType type = 2;
-    string sender = 3;
-    string receiver = 4;
+    Contact sender = 3;
+    Contact receiver = 4;
     bool propagation = 5;
     bytes signature = 6;
     oneof payload {
@@ -82,9 +75,7 @@ message Message {
         FileChunkMsg fileChunk = 9;
         NATRequestMsg NATRequest = 10;
         NATCheckMsg NATCheck = 11;
-        LeaveMsg leave = 12;
         FindNodeMsg findNode = 13;
-        FoundNodesMsg foundNodes = 14;        
-        PingMsg ping = 15;        
+        FoundNodesMsg foundNodes = 14;          
     }
 }
