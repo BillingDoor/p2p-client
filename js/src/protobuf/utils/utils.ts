@@ -1,9 +1,14 @@
 import { Contact, Address } from '@models';
-import { Message } from '../protobuf/Message_pb';
+import { Message } from '../Message_pb';
 
 export function prepareBaseMessage(contact: Contact): Message {
   const msg = new Message();
-  msg.setSender(`${contact.address.host}:${contact.address.port}`);
+  const cnt = new Message.Contact();
+  cnt.setGuid(contact.guid);
+  cnt.setIsnat(contact.isNAT);
+  cnt.setIp(contact.address.host);
+  cnt.setPort(contact.address.port);
+  msg.setSender(cnt);
   msg.setUuid(contact.guid);
   return msg;
 }

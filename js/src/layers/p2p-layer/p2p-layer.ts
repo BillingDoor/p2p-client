@@ -2,10 +2,10 @@ import { Observable } from 'rxjs';
 
 import { Address, Communication, Contact } from '@models';
 import { MessageLayer } from '@layers//message-layer/message-layer';
-import { Message } from '../../protobuf/Message_pb';
+import { Message } from '@protobuf/Message_pb';
+import * as utils from '@protobuf/utils';
 
 import { RoutingTable } from './routing-table/routing-table';
-import { preparePingMessage, prepareFindNodeMessage, prepareFoundNodesMessage } from 'protobuf-utils';
 
 export class P2PLayer {
   routingTable: RoutingTable;
@@ -18,7 +18,7 @@ export class P2PLayer {
     console.log('.findNode');
     const { node, guid } = config;
     this.worker.send({
-      data: prepareFindNodeMessage({
+      data: utils.prepareFindNodeMessage({
         senderGUID: '1',
         targetGUID: guid,
         address: this.me.address
@@ -31,7 +31,7 @@ export class P2PLayer {
     console.log('.foundNodes');
     const { node, guid } = config;
     this.worker.send({
-      data: prepareFoundNodesMessage({
+      data: utils.prepareFoundNodesMessage({
         senderGUID: '1',
         targetGUID: guid,
         address: this.me.address
@@ -43,7 +43,7 @@ export class P2PLayer {
   ping(node: Contact) {
     console.log('.ping');
     this.worker.send({
-      data: preparePingMessage({
+      data: utils.preparePingMessage({
         senderGUID: '1',
         targetGUID: '2',
         address: this.me.address
