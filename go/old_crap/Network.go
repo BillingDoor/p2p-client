@@ -1,4 +1,4 @@
-package main
+package old_crap
 
 import (
 	"net"
@@ -147,7 +147,7 @@ func handleMessages(in chan Message, out chan Message, kill chan struct{}) {
 				}
 				break
 			case Message_PING:
-				in <- Message{Type: Message_PING}
+				in <- Message{Type: Message_UNDEFINED}
 				break
 			case Message_NAT_REQUEST:
 					//find if requested node is already waiting, if not add to queue
