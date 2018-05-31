@@ -1,4 +1,5 @@
 import { prop } from 'ramda';
+import { throwError } from 'rxjs';
 import { first, tap, map, filter } from 'rxjs/operators';
 
 import { Address, Contact } from '@models';
@@ -6,58 +7,63 @@ import { P2PLayer } from '@layers/p2p-layer/p2p-layer';
 import { Message } from '../../protobuf/Message_pb';
 
 export class BusinessLayer {
-  // private pingedNodes: Contact[] = [];
+  private pingedNodes: Contact[] = [];
 
   constructor(private worker: P2PLayer, private me: Contact) {
-    this.worker
-      .on(Message.MessageType.FIND_NODE)
-      .pipe(
-        // map(prop('data')),
-        // map((x) => x.getFindnode()),
-        filter(Boolean)
-        // map((x) => x.getGuid())
-      )
-      .subscribe((com) => {
-        this.worker.foundNodes({
-          node: com.address,
-          guid: 'bla'
-        });
-        console.log(
-          'FIND_NODES',
-          com.address,
-          com.data.getFindnode().getGuid()
-        );
+    this.worker.on(Message.MessageType.FIND_NODE).subscribe((com) => {
+      this.worker.foundNodes({
+        nodes: [],
+        to: com.address
       });
+    });
+
+    this.worker.on(Message.MessageType.PING).pipe();
   }
 
-  joinNetwork(node: Address) {
-    console.log('.joinNetwork');
+  joinNetwork(bootstrapNode: Address) {
     this.worker.findNode({
-      node,
+      to: bootstrapNode,
       guid: this.me.guid
     });
 
-    const nodes$ = this.worker
+    this.worker
       .on(Message.MessageType.FOUND_NODES)
       .pipe(
-        tap(()=>console.log('works')),
         first(),
         map(prop('data')),
+        this.addNodeToRoutingTable(bootstrapNode),
         map((x) => x.getFoundnodes()),
         filter(Boolean),
-        map((x) => x.getNodesList())
-      );
+        map((x) => x.getNodesList()),
+        this.pingNodes()
+      )
+      .subscribe();
 
-    nodes$.subscribe();
-      // .pipe(
-      //   mergeAll(),
-      //   tap((node: Contact) => this.worker.routingTable.addNode(node)),
-      //   tap((node) => this.worker.ping(node)),
-      //   tap((node) => this.pingedNodes.push(node))
-      //   // tap(() => console.log('It all worked!'))
-      // )
-      // .subscribe();
+    return true;
+  }
 
-    return nodes$;
+  private addNodeToRoutingTable(node: Address) {
+    return tap((msg: Message) => {
+      const sender = msg.getSender();
+      if (sender) {
+        this.worker.routingTable.addNode(
+          new Contact({
+            address: node,
+            guid: sender.getGuid()
+          })
+        );
+      } else {
+        throwError('Sender is not defined!');
+      }
+    });
+  }
+
+  private pingNodes() {
+    return tap((nodes: Message.Contact[]) => {
+      nodes.map(Contact.from).forEach((node) => {
+        this.worker.ping(node);
+        this.pingedNodes = [...this.pingedNodes, node];
+      });
+    });
   }
 }

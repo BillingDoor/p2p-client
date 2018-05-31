@@ -2,7 +2,7 @@ import { Observable } from 'rxjs';
 
 import { Address, Communication, Contact } from '@models';
 import { MessageLayer } from '@layers//message-layer/message-layer';
-import { Message } from '@protobuf/Message_pb';
+import { Message } from '../../protobuf/Message_pb';
 import * as utils from '@protobuf/utils';
 
 import { RoutingTable } from './routing-table/routing-table';
@@ -14,39 +14,33 @@ export class P2PLayer {
     this.routingTable = new RoutingTable(this.me);
   }
 
-  findNode(config: { node: Address; guid: string }) {
-    console.log('.findNode');
-    const { node, guid } = config;
+  findNode(config: { to: Address; guid: string }) {
+    const { to, guid } = config;
     this.worker.send({
       data: utils.prepareFindNodeMessage({
-        senderGUID: '1',
-        targetGUID: guid,
-        address: this.me.address
+        node: guid,
+        sender: this.me
       }),
-      address: node
+      address: to
     });
   }
 
-  foundNodes(config: { node: Address; guid: string }) {
-    console.log('.foundNodes');
-    const { node, guid } = config;
+  foundNodes(config: { to: Address; nodes: Message.Contact[] }) {
+    const { to, nodes } = config;
     this.worker.send({
       data: utils.prepareFoundNodesMessage({
-        senderGUID: '1',
-        targetGUID: guid,
-        address: this.me.address
+        nodes,
+        sender: this.me
       }),
-      address: node
+      address: to
     });
   }
 
   ping(node: Contact) {
-    console.log('.ping');
     this.worker.send({
-      data: utils.preparePingMessage({
-        senderGUID: '1',
-        targetGUID: '2',
-        address: this.me.address
+      data: utils.prepareBaseMessage({
+        sender: this.me,
+        type: Message.MessageType.PING
       }),
       address: node.address
     });

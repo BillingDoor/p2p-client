@@ -1,65 +1,54 @@
-import { Contact, Address } from '@models';
+import { Contact } from '@models';
 import { Message } from '../Message_pb';
 
-export function prepareBaseMessage(contact: Contact): Message {
+export function prepareBaseMessage(config: {
+  sender: Contact;
+  type: Message.MessageType;
+}): Message {
+  const { sender, type } = config;
   const msg = new Message();
   const cnt = new Message.Contact();
-  cnt.setGuid(contact.guid);
-  cnt.setIsnat(contact.isNAT);
-  cnt.setIp(contact.address.host);
-  cnt.setPort(contact.address.port);
+  cnt.setGuid(sender.guid);
+  cnt.setIsnat(sender.isNAT);
+  cnt.setIp(sender.address.host);
+  cnt.setPort(sender.address.port);
   msg.setSender(cnt);
-  msg.setUuid(contact.guid);
+  msg.setType(type);
   return msg;
 }
 
 export function prepareFindNodeMessage(config: {
-  senderGUID: string;
-  targetGUID: string;
-  address: Address;
+  node: string;
+  sender: Contact;
 }) {
-  const { senderGUID, targetGUID, address } = config;
+  const { node, sender } = config;
 
   const findNodeMsg = new Message.FindNodeMsg();
-  findNodeMsg.setGuid(targetGUID);
+  findNodeMsg.setGuid(node);
 
-  const msg = prepareBaseMessage(new Contact({ address, guid: senderGUID }));
-  msg.setType(Message.MessageType.FIND_NODE);
+  const msg = prepareBaseMessage({
+    sender,
+    type: Message.MessageType.FIND_NODE
+  });
   msg.setFindnode(findNodeMsg);
 
   return msg;
 }
 
 export function prepareFoundNodesMessage(config: {
-  senderGUID: string;
-  targetGUID: string;
-  address: Address;
+  nodes: Message.Contact[];
+  sender: Contact;
 }) {
-  const { senderGUID, address } = config;
+  const { nodes, sender } = config;
 
   const foundNodesMsg = new Message.FoundNodesMsg();
-  foundNodesMsg.setNodesList([]);
+  foundNodesMsg.setNodesList(nodes);
 
-  const msg = prepareBaseMessage(new Contact({ address, guid: senderGUID }));
-  msg.setType(Message.MessageType.FOUND_NODES);
+  const msg = prepareBaseMessage({
+    sender,
+    type: Message.MessageType.FOUND_NODES
+  });
   msg.setFoundnodes(foundNodesMsg);
-
-  return msg;
-}
-
-export function preparePingMessage(config: {
-  senderGUID: string;
-  targetGUID: string;
-  address: Address;
-}) {
-  const { senderGUID, targetGUID, address } = config;
-
-  const pingMsg = new Message.PingMsg();
-  pingMsg.setGuid(targetGUID);
-
-  const msg = prepareBaseMessage(new Contact({ address, guid: senderGUID }));
-  msg.setType(Message.MessageType.PING);
-  msg.setPing(pingMsg);
 
   return msg;
 }
