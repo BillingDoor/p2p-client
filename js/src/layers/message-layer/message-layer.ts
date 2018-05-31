@@ -19,13 +19,22 @@ export class MessageLayer {
   }
 
   send(msg: Message) {
+    const sender = msg.getSender();
     const receiver = msg.getReceiver();
-    if (receiver) {
-      const { address } = Contact.from(receiver);
-      this.outputMessages$.next({ data: encodeMessage(msg), address });
-    } else {
-      throw new Error('Message layer: Message receiver not set.');
+
+    if (!sender || !receiver) {
+      throw new Error('Message layer: Invalid message sender/receiver.');
     }
+    const { address: senderAddress } = Contact.from(sender);
+    const { address } = Contact.from(receiver);
+
+    const msgToSelf =
+      senderAddress.host == address.host && senderAddress.port == address.port;
+    if (msgToSelf) {
+      throw new Error('Message layer: Cannot send message to self.');
+    }
+    
+    this.outputMessages$.next({ data: encodeMessage(msg), address });
   }
 }
 

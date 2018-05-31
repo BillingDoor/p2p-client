@@ -6,7 +6,7 @@ import { Message } from '../../protobuf/Message_pb';
 import { MessageLayer } from './message-layer';
 
 describe('Layer: MessageLayer', function() {
-  let inputMessages: Subject<Communication<Buffer>>;
+  let inputMessages: Subject<Buffer>;
   let outputMessages: Subject<Communication<Buffer>>;
   let layer: MessageLayer;
 
@@ -54,12 +54,6 @@ describe('Layer: MessageLayer', function() {
   });
 
   function sendMessage() {
-    inputMessages.next({
-      data: new Buffer('foo'),
-      address: {
-        host: 'foo',
-        port: 123
-      }
-    });
+    inputMessages.next(new Buffer('foo'));
   }
 });

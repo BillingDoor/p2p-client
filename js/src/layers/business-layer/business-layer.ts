@@ -1,4 +1,3 @@
-import { prop } from 'ramda';
 import { throwError } from 'rxjs';
 import { first, tap, map, filter } from 'rxjs/operators';
 
@@ -10,11 +9,16 @@ export class BusinessLayer {
   private pingedNodes: Contact[] = [];
 
   constructor(private worker: P2PLayer, private me: Contact) {
-    this.worker.on(Message.MessageType.FIND_NODE).subscribe((com) => {
-      this.worker.foundNodes({
-        nodes: [],
-        to: com.address
-      });
+    this.worker.on(Message.MessageType.FIND_NODE).subscribe((msg) => {
+      const sender = msg.getSender();
+      if (sender) {
+        this.worker.foundNodes({
+          nodes: [],
+          to: Contact.from(sender)
+        });
+      } else {
+        throw new Error('Business layer: Message receiver not set.');
+      }
     });
 
     this.worker.on(Message.MessageType.PING).pipe();
@@ -30,7 +34,6 @@ export class BusinessLayer {
       .on(Message.MessageType.FOUND_NODES)
       .pipe(
         first(),
-        map(prop('data')),
         this.addNodeToRoutingTable(bootstrapNode),
         map((x) => x.getFoundnodes()),
         filter(Boolean),
@@ -53,7 +56,7 @@ export class BusinessLayer {
           })
         );
       } else {
-        throwError('Sender is not defined!');
+        throwError('Business layer: Sender is not defined!');
       }
     });
   }
@@ -61,6 +64,7 @@ export class BusinessLayer {
   private pingNodes() {
     return tap((nodes: Message.Contact[]) => {
       nodes.map(Contact.from).forEach((node) => {
+        console.log(`Business layer: Pinging node: ${node.guid}`);
         this.worker.ping(node);
         this.pingedNodes = [...this.pingedNodes, node];
       });

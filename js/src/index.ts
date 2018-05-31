@@ -54,3 +54,5 @@ function spawnNode(port: number) {
   const businessLayer = new BusinessLayer(p2pLayer, me);
   return new ApplicationLayer(businessLayer);
 }
+
+// TODO: pretty debug logs

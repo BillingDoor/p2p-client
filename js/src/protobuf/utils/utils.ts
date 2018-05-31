@@ -10,7 +10,7 @@ export function prepareBaseMessage(config: {
   const msg = new Message();
 
   msg.setSender(sender.toMessageContact());
-  msg.setReceiver(sender.toMessageContact());
+  msg.setReceiver(receiver.toMessageContact());
   msg.setType(type);
   return msg;
 }

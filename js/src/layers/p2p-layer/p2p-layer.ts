@@ -1,6 +1,6 @@
 import { Observable } from 'rxjs';
 
-import { Contact } from '@models';
+import { Address, Contact } from '@models';
 import { MessageLayer } from '@layers//message-layer/message-layer';
 import { Message } from '../../protobuf/Message_pb';
 import * as utils from '@protobuf/utils';
@@ -14,19 +14,21 @@ export class P2PLayer {
     this.routingTable = new RoutingTable(this.me);
   }
 
-  findNode(config: { to: Contact; guid: string }) {
+  findNode(config: { to: Address; guid: string }) {
     const { to, guid } = config;
+    console.log('P2P layer: Creating findNode message');
     this.worker.send(
       utils.prepareFindNodeMessage({
         node: guid,
         sender: this.me,
-        receiver: to
+        receiver: new Contact({ address: to, guid: 'not_set' })
       })
     );
   }
 
   foundNodes(config: { to: Contact; nodes: Message.Contact[] }) {
     const { to, nodes } = config;
+    console.log('P2P layer: Creating foundNodes message');
     this.worker.send(
       utils.prepareFoundNodesMessage({
         nodes,
@@ -37,6 +39,7 @@ export class P2PLayer {
   }
 
   ping(node: Contact) {
+    console.log('P2P layer: Creating ping message');
     this.worker.send(
       utils.prepareBaseMessage({
         type: Message.MessageType.PING,
@@ -47,7 +50,6 @@ export class P2PLayer {
   }
 
   on(type: Message.MessageType): Observable<Message> {
-    console.log(`on(${type})`);
     return this.worker.on(type);
   }
 }

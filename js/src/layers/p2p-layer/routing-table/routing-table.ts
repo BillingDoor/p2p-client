@@ -20,6 +20,7 @@ export class RoutingTable {
     const bucketNotFull = bucket.length < RoutingTable.bucketSize;
 
     if (notSelf && bucketNotFull) {
+      console.log(`P2P layer: Adding node: ${node.guid} to routing table`)
       bucket = [...bucket, node];
     }
   }
