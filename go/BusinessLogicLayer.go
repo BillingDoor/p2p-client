@@ -27,6 +27,6 @@ func joinNetwork(bootstrapNode Node) (bool, error) {
 		return false, err
 	}
 	selfNode = node
-	findNode(bootstrapNode, selfNode)
+	findNode(bootstrapNode, selfNode, selfNode.guid)
 	return true, nil
 }

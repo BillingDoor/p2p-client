@@ -4,7 +4,7 @@ import (
 	"fmt"
 )
 
-var defaultPort = 6666
+var defaultPort uint32 = 6666
 
 var bootstrapNode = Node {
 	host: "77.55.235.125",

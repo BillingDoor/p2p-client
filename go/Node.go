@@ -9,7 +9,7 @@ type UUID uint64
 
 type Node struct {
 	host string
-	port int
+	port uint32
 	guid  UUID
 	isNAT bool
 }
