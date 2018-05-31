@@ -3,42 +3,58 @@ import { Message } from '../protobuf/Message_pb';
 
 export function prepareBaseMessage(contact: Contact): Message {
   const msg = new Message();
-  msg.setSender(`${contact.host}:${contact.port}`);
-  msg.setUuid(Number(contact.guid));
+  msg.setSender(`${contact.address.host}:${contact.address.port}`);
+  msg.setUuid(contact.guid);
   return msg;
 }
 
 export function prepareFindNodeMessage(config: {
-  sender: string;
-  target: string;
+  senderGUID: string;
+  targetGUID: string;
   address: Address;
 }) {
-  const { sender, target, address: {host, port} } = config;
+  const { senderGUID, targetGUID, address } = config;
 
-  const targetGUID = new Message.FindNode();
-  targetGUID.setGuid(Number(target));
+  const findNodeMsg = new Message.FindNodeMsg();
+  findNodeMsg.setGuid(targetGUID);
 
-  const msg = prepareBaseMessage(new Contact({ guid: sender, host, port }));
+  const msg = prepareBaseMessage(new Contact({ address, guid: senderGUID }));
   msg.setType(Message.MessageType.FIND_NODE);
-  msg.setPfindnode(targetGUID);
+  msg.setFindnode(findNodeMsg);
+
+  return msg;
+}
+
+export function prepareFoundNodesMessage(config: {
+  senderGUID: string;
+  targetGUID: string;
+  address: Address;
+}) {
+  const { senderGUID, address } = config;
+
+  const foundNodesMsg = new Message.FoundNodesMsg();
+  foundNodesMsg.setNodesList([]);
+
+  const msg = prepareBaseMessage(new Contact({ address, guid: senderGUID }));
+  msg.setType(Message.MessageType.FOUND_NODES);
+  msg.setFoundnodes(foundNodesMsg);
 
   return msg;
 }
 
 export function preparePingMessage(config: {
-  sender: string;
-  target: string;
-  host: string;
-  port: number;
+  senderGUID: string;
+  targetGUID: string;
+  address: Address;
 }) {
-  const { sender, target, host, port } = config;
+  const { senderGUID, targetGUID, address } = config;
 
-  const targetGUID = new Message.FindNode();
-  targetGUID.setGuid(Number(target));
+  const pingMsg = new Message.PingMsg();
+  pingMsg.setGuid(targetGUID);
 
-  const msg = prepareBaseMessage(new Contact({ guid: sender, host, port }));
-  msg.setType(Message.MessageType.FIND_NODE);
-  msg.setPfindnode(targetGUID);
+  const msg = prepareBaseMessage(new Contact({ address, guid: senderGUID }));
+  msg.setType(Message.MessageType.PING);
+  msg.setPing(pingMsg);
 
   return msg;
 }

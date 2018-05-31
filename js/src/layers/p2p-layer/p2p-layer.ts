@@ -5,7 +5,7 @@ import { MessageLayer } from '@layers//message-layer/message-layer';
 import { Message } from '../../protobuf/Message_pb';
 
 import { RoutingTable } from './routing-table/routing-table';
-import { preparePingMessage, prepareFindNodeMessage } from 'protobuf-utils';
+import { preparePingMessage, prepareFindNodeMessage, prepareFoundNodesMessage } from 'protobuf-utils';
 
 export class P2PLayer {
   routingTable: RoutingTable;
@@ -15,28 +15,45 @@ export class P2PLayer {
   }
 
   findNode(config: { node: Address; guid: string }) {
+    console.log('.findNode');
+    const { node, guid } = config;
     this.worker.send({
       data: prepareFindNodeMessage({
-        
-      })
-    })
+        senderGUID: '1',
+        targetGUID: guid,
+        address: this.me.address
+      }),
+      address: node
+    });
   }
+
+  foundNodes(config: { node: Address; guid: string }) {
+    console.log('.foundNodes');
+    const { node, guid } = config;
+    this.worker.send({
+      data: prepareFoundNodesMessage({
+        senderGUID: '1',
+        targetGUID: guid,
+        address: this.me.address
+      }),
+      address: node
+    });
+  }
+
   ping(node: Contact) {
+    console.log('.ping');
     this.worker.send({
       data: preparePingMessage({
-        sender: '1',
-        target: '2',
-        host: 'localhost',
-        port: 2345
+        senderGUID: '1',
+        targetGUID: '2',
+        address: this.me.address
       }),
-      address: {
-        host: node.host,
-        port: node.port
-      }
+      address: node.address
     });
   }
 
   on(type: Message.MessageType): Observable<Communication<Message>> {
+    console.log(`on(${type})`);
     return this.worker.on(type);
   }
 }

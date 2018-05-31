@@ -1,21 +1,16 @@
 import * as bigInt from 'big-integer';
 
+import { Address } from '@models';
+
 export class Contact {
-  host: string;
-  port: number;
+  address: Address;
   guid: string;
   isNAT: boolean;
 
-  constructor(config: {
-    host: string;
-    port: number;
-    guid?: string;
-    isNAT?: boolean;
-  }) {
-    const { host, port, guid, isNAT } = config;
+  constructor(config: { address: Address; guid?: string; isNAT?: boolean }) {
+    const { address, guid, isNAT } = config;
 
-    this.host = host;
-    this.port = port;
+    this.address = address;
     this.guid = guid || Contact.generateGUID();
     this.isNAT = isNAT || false;
   }

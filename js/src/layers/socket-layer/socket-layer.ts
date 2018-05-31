@@ -48,26 +48,35 @@ export class SocketLayer {
     const { data, address } = config;
     const { host, port } = address;
 
-    const client = new net.Socket();
-    client.connect(port, host, () => {
-      console.log('Connected');
-      client.write(data);
-    });
+    const clientToRespond = this.clients.find(
+      (client) => client.remoteAddress == host && client.remotePort == port
+    );
+    if (clientToRespond) {
+      clientToRespond.end(data);
+    } else {
+      const client = new net.Socket();
+      client.connect(port, host);
 
-    client.on('data', (data) => {
-      this.messages$.next({
-        data,
-        address: {
-          host,
-          port
-        }
+      client.on('connect', () => {
+        console.log('Connected');
+        client.write(data);
       });
-      client.destroy();
-    });
 
-    client.on('close', function() {
-      console.log('Connection closed');
-    });
+      client.on('data', (data) => {
+        this.messages$.next({
+          data,
+          address: {
+            host,
+            port
+          }
+        });
+        client.destroy();
+      });
+
+      client.on('close', function() {
+        console.log('Connection closed');
+      });
+    }
   }
 
   close(): void {
