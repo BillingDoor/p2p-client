@@ -1,7 +1,7 @@
-import { flatten, slice, find, propEq } from 'ramda';
 import * as bigInt from 'big-integer';
+import { flatten, slice, find, propEq } from 'ramda';
 
-import { Contact } from '../contact/contact';
+import { Contact } from '@models/contact';
 
 export class RoutingTable {
   private buckets: Contact[][];
@@ -24,7 +24,7 @@ export class RoutingTable {
     }
   }
 
-  getNodeByGUID(guid: number): Contact | undefined {
+  getNodeByGUID(guid: string): Contact | undefined {
     return find(propEq('guid', guid), this.buckets[this.selectBucket(guid)]);
   }
 
@@ -34,7 +34,7 @@ export class RoutingTable {
     return slice(-limit, Infinity)(flatten(this.buckets));
   }
 
-  private selectBucket(guid: number): number {
+  private selectBucket(guid: string): number {
     const xor = bigInt(guid).xor(bigInt(this.selfNode.guid));
     console.log(xor);
     return xor.toArray(2).value.length;

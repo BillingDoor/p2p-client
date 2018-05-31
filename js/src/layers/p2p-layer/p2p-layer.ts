@@ -1,21 +1,42 @@
-import { Contact } from '../../contact/contact';
+import { Observable } from 'rxjs';
+
+import { Address, Communication, Contact } from '@models';
+import { MessageLayer } from '@layers//message-layer/message-layer';
+import { Message } from '../../protobuf/Message_pb';
+
+import { RoutingTable } from './routing-table/routing-table';
+import { preparePingMessage, prepareFindNodeMessage } from 'protobuf-utils';
 
 export class P2PLayer {
-  executeCommandOn(node: Contact) {}
-  listPeers() {}
-  listFileFrom(node: Contact) {}
-  sendFileTo(file: string, node: Contact) {}
-  sendFileToAll(file: string) {}
-  on(type: string, cb: Function): void {
-    switch (type) {
-      case 'file':
-        this.onFile(cb);
-        break;
-      case 'command':
-        this.onCommand(cb);
-        break;
-    }
+  routingTable: RoutingTable;
+
+  constructor(private worker: MessageLayer, private me: Contact) {
+    this.routingTable = new RoutingTable(this.me);
   }
-  private onFile(cb: Function): void {}
-  private onCommand(cb: Function): void {}
+
+  findNode(config: { node: Address; guid: string }) {
+    this.worker.send({
+      data: prepareFindNodeMessage({
+        
+      })
+    })
+  }
+  ping(node: Contact) {
+    this.worker.send({
+      data: preparePingMessage({
+        sender: '1',
+        target: '2',
+        host: 'localhost',
+        port: 2345
+      }),
+      address: {
+        host: node.host,
+        port: node.port
+      }
+    });
+  }
+
+  on(type: Message.MessageType): Observable<Communication<Message>> {
+    return this.worker.on(type);
+  }
 }

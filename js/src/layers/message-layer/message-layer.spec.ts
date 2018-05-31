@@ -1,7 +1,8 @@
 import { Subject } from 'rxjs';
 
+import { Communication } from '@models';
 import { Message } from '../../protobuf/Message_pb';
-import { Communication } from '../models';
+
 import { MessageLayer } from './message-layer';
 
 describe('Layer: MessageLayer', function() {

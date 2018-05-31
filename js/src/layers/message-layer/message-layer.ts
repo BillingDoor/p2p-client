@@ -1,8 +1,8 @@
-import { Message } from '../../protobuf/Message_pb';
 import { Observable, Subject } from 'rxjs';
 import { map, filter } from 'rxjs/operators';
 
-import { Communication } from '../models';
+import { Communication } from '@models';
+import { Message } from '../../protobuf/Message_pb';
 
 export class MessageLayer {
   private messages$: Observable<Communication<Message>>;

@@ -1,5 +1,12 @@
 {
   "compilerOptions": {
+    "baseUrl": "src",
+    "paths": {
+      "@models": ["models"],
+      "@models*": ["models*"],
+      "@layers*": ["layers*"],
+      "@utils*": ["utils*"]
+    },
     "target": "es6",
     "module": "commonjs",
     "outDir": "dist",
@@ -12,5 +19,6 @@
     "./node_modules/@types/node/index.d.ts",
     "./node_modules/@types/ramda/index.d.ts"
   ],
-  "include": ["src/**/*.ts"]
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules"]
 }

@@ -1,11 +1,11 @@
 import { Subject } from 'rxjs';
 
 import { StringDecoder } from 'string_decoder';
-import { SocketLayer } from './socket-layer/socket-layer';
+import { SocketLayer } from './layers/socket-layer/socket-layer';
 import { Communication } from './models';
-import { MessageLayer } from './message-layer/message-layer';
+import { MessageLayer } from './layers/message-layer/message-layer';
 import { prepareFindNodeMessage } from './protobuf-utils';
-import { Message } from '../protobuf/Message_pb';
+import { Message } from './protobuf/Message_pb';
 
 const receivedMessages$ = new Subject<Communication<Buffer>>();
 const messagesToSend$ = new Subject<Communication<Buffer>>();
@@ -42,8 +42,8 @@ messageLayer2
 
 messageLayer.send({
   data: prepareFindNodeMessage({
-    sender: 1,
-    target: 2,
+    sender: '1',
+    target: '2',
     host: '123',
     port: 23
   }),
@@ -62,22 +62,3 @@ process.stdin.on('data', function(input: Buffer) {
     socketLayer.close();
   }
 });
-
-// const dane = new Subject<Buffer>();
-
-// const parser = new MessageParser(dane);
-
-// parser.on(Message.MessageType.FIND_NODE, () => console.log('It works!'));
-// parser.on(Message.MessageType.FIND_NODE, () => console.log('Hejka :D'));
-// parser.on(Message.MessageType.FOUND_NODES, () => console.log('Nie powinno wyswietlic'));
-
-// dane.next(
-// encodeMessage(
-//   prepareFindNodeMessage({
-//     sender: 1,
-//     target: 2,
-//     host: '123',
-//     port: 23
-//   })
-// )
-// );

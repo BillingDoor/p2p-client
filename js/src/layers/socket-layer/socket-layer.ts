@@ -1,7 +1,7 @@
 import * as net from 'net';
 import { reject, equals } from 'ramda';
 import { Subject, Observable } from 'rxjs';
-import { Communication } from '../models';
+import { Communication } from '../../models';
 import { takeUntil, tap } from 'rxjs/operators';
 
 export class SocketLayer {
