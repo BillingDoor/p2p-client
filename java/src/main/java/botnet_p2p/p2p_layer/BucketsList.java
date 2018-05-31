@@ -1,7 +1,7 @@
-package botnet.p2p_layer;
+package botnet_p2p.p2p_layer;
 
 
-import botnet.model.KademliaPeer;
+import botnet_p2p.model.KademliaPeer;
 
 import java.math.BigInteger;
 import java.util.ArrayList;

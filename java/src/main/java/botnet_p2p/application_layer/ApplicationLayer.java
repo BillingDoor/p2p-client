@@ -1,8 +1,8 @@
-package botnet.application_layer;
+package botnet_p2p.application_layer;
 
-import botnet.business_logic_layer.BusinessLogicLayer;
-import botnet.model.Peer;
-import botnet.p2p_layer.P2pLayer;
+import botnet_p2p.business_logic_layer.BusinessLogicLayer;
+import botnet_p2p.model.Peer;
+import botnet_p2p.p2p_layer.P2pLayer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

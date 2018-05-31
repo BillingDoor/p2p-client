@@ -1,4 +1,4 @@
-package botnet.model;
+package botnet_p2p.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

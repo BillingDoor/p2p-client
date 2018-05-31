@@ -1,7 +1,7 @@
-package botnet.message_layer;
+package botnet_p2p.message_layer;
 
-import botnet.model.Communication;
-import botnet.socket_layer.SocketLayer;
+import botnet_p2p.model.Communication;
+import botnet_p2p.socket_layer.SocketLayer;
 import com.google.protobuf.InvalidProtocolBufferException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

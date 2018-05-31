@@ -1,7 +1,7 @@
-package botnet.protobuf_layer;
+package botnet_p2p.protobuf_layer;
 
-import botnet.model.KademliaPeer;
-import botnet.model.Peer;
+import botnet_p2p.model.KademliaPeer;
+import botnet_p2p.model.Peer;
 
 import static botnet_p2p.MessageOuterClass.Message;
 

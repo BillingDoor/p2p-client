@@ -1,4 +1,4 @@
-package botnet.application_layer;
+package botnet_p2p.application_layer;
 
 import org.junit.Test;
 

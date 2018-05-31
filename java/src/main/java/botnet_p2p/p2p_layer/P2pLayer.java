@@ -1,10 +1,10 @@
-package botnet.p2p_layer;
+package botnet_p2p.p2p_layer;
 
-import botnet.message_layer.MessageLayer;
-import botnet.model.Communication;
-import botnet.model.KademliaPeer;
-import botnet.model.Peer;
-import botnet.protobuf_layer.Protobuf;
+import botnet_p2p.message_layer.MessageLayer;
+import botnet_p2p.model.Communication;
+import botnet_p2p.model.KademliaPeer;
+import botnet_p2p.model.Peer;
+import botnet_p2p.protobuf_layer.Protobuf;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
