@@ -3,16 +3,22 @@ import { Observable, Subject } from 'rxjs';
 import { map, filter } from 'rxjs/operators';
 
 import { Communication, Contact } from '@models';
+import { SocketLayer } from '@layers/socket-layer/socket-layer';
 import { Message } from '@protobuf/Message_pb';
 
 export class MessageLayer {
   private messages$: Observable<Message>;
+  private messagesToSend$: Subject<Communication<Buffer>>;
 
-  constructor(
-    private receivedMessages$: Observable<Buffer>,
-    private messagesToSend$: Subject<Communication<Buffer>>
-  ) {
-    this.messages$ = this.receivedMessages$.pipe(map(decodeMessage));
+  constructor(private worker: SocketLayer) {
+    this.messagesToSend$ = new Subject();
+    this.messages$ = this.handleReceivedMessages();
+    this.worker.setMessagesToSendStream(this.messagesToSend$.asObservable());
+  }
+
+  close() {
+    this.messagesToSend$.complete();
+    this.worker.close();
   }
 
   on(type: Message.MessageType): Observable<Message> {
@@ -38,9 +44,8 @@ export class MessageLayer {
     this.messagesToSend$.next({ data: encodeMessage(msg), address });
   }
 
-  close() {
-    this.messagesToSend$.complete();
-    this.worker.close();
+  private handleReceivedMessages() {
+    return this.worker.getReceivedMessagesStream().pipe(map(decodeMessage));
   }
 }
 

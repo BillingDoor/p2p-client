@@ -14,6 +14,14 @@ export class P2PLayer {
     this.routingTable = new RoutingTable(this.me);
   }
 
+  on(type: Message.MessageType): Observable<Message> {
+    return this.worker.on(type);
+  }
+
+  close() {
+    this.worker.close();
+  }
+
   findNode(config: { to: Address; guid: string }) {
     const { to, guid } = config;
     console.log('P2P layer: Creating findNode message');
@@ -61,7 +69,5 @@ export class P2PLayer {
     );
   }
 
-  on(type: Message.MessageType): Observable<Message> {
-    return this.worker.on(type);
-  }
+  
 }

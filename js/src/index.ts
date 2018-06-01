@@ -1,7 +1,6 @@
-import { Subject } from 'rxjs';
 import { StringDecoder } from 'string_decoder';
 
-import { Communication, Contact } from '@models';
+import { Contact } from '@models';
 import { SocketLayer } from '@layers/socket-layer/socket-layer';
 import { MessageLayer } from '@layers/message-layer/message-layer';
 import { P2PLayer } from '@layers/p2p-layer/p2p-layer';
@@ -31,9 +30,6 @@ process.stdin.on('data', function(input: Buffer) {
 });
 
 function spawnNode(port: number) {
-  const receivedMessages$ = new Subject<Buffer>();
-  const messagesToSend$ = new Subject<Communication<Buffer>>();
-
   const me = new Contact({
     address: {
       host: 'localhost',
@@ -41,25 +37,12 @@ function spawnNode(port: number) {
     }
   });
 
-  const socketLayer = new SocketLayer(
-    me.address.port,
-    receivedMessages$,
-    messagesToSend$.asObservable()
-  );
-
-  void socketLayer;
-
-  const messageLayer = new MessageLayer(
-    receivedMessages$.asObservable(),
-    messagesToSend$
-  );
-
+  const socketLayer = new SocketLayer(me.address.port);
+  const messageLayer = new MessageLayer(socketLayer);
   const p2pLayer = new P2PLayer(messageLayer, me);
   const businessLayer = new BusinessLayer(p2pLayer, me);
   return new ApplicationLayer(businessLayer);
 }
 
 // TODO: pretty debug logs
-// TODO: keep TCP connections open
-// TODO: handle user close request
 // TODO: divide protobuf/utils into separate files

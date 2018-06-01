@@ -1,14 +1,16 @@
-import { Subject } from 'rxjs';
+import { Subject, Observable } from 'rxjs';
 
 import { Communication, Contact, Address } from '@models';
+import { SocketLayer } from '@layers/socket-layer/socket-layer';
 import { Message } from '@protobuf/Message_pb';
+import { prepareFindNodeMessage } from '@protobuf/utils';
 
 import { MessageLayer, encodeMessage } from './message-layer';
-import { prepareFindNodeMessage } from '@protobuf/utils';
 
 describe('Layer: MessageLayer', function() {
   let inputMessages$: Subject<Buffer>;
   let outputMessages$: Subject<Communication<Buffer>>;
+  let socketLayer: SocketLayer;
   let layer: MessageLayer;
 
   let senderAddress: Address;
@@ -17,8 +19,14 @@ describe('Layer: MessageLayer', function() {
 
   beforeEach(function() {
     inputMessages$ = new Subject();
-    outputMessages$ = fakeSubject<Communication<Buffer>>('outputMessages');
-    layer = new MessageLayer(inputMessages$.asObservable(), outputMessages$);
+    outputMessages$ = fakeObserver<Communication<Buffer>>('outputMessages');
+    socketLayer = ({
+      getReceivedMessagesStream: () => inputMessages$.asObservable(),
+      setMessagesToSendStream: (msgs$: Observable<Communication<Buffer>>) => {
+        msgs$.subscribe(outputMessages$);
+      }
+    } as any) as SocketLayer;
+    layer = new MessageLayer(socketLayer);
 
     senderAddress = { host: 'foo', port: 123 };
     receiverAddress = { host: 'bar', port: 234 };
@@ -90,7 +98,7 @@ describe('Layer: MessageLayer', function() {
   });
 });
 
-function fakeSubject<T>(name: string): Subject<T> {
+function fakeObserver<T>(name: string): Subject<T> {
   return {
     next: jasmine.createSpy(`${name}NextSpy`) as Function,
     error: jasmine.createSpy(`${name}ErrorSpy`) as Function,
