@@ -8,9 +8,11 @@ import org.apache.logging.log4j.Logger;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
+import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.*;
 import java.util.concurrent.BlockingQueue;
@@ -22,29 +24,43 @@ public class SocketLayer extends Thread {
     private final MessageReceiver messageReceiver;
     private final NodeManager nodeManager;
     private Selector selector;
+    private ServerSocketChannel serverSocketChannel;
+
     private Queue<PendingMessage> waitingForWrite;
 
     private CountDownLatch initLatch;
+    private int port;
 
 
-    public SocketLayer(BlockingQueue<ByteBuffer> receivedMessages, CountDownLatch initLatch) {
+    public SocketLayer(BlockingQueue<ByteBuffer> receivedMessages,
+                       CountDownLatch initLatch,
+                       int port) {
         this.initLatch = initLatch;
+        this.port = port;
         this.messageReceiver = new MessageReceiver(receivedMessages);
         this.nodeManager = new NodeManager();
+
 
         this.waitingForWrite = new LinkedList<>();
     }
 
     public void send(Communication<ByteBuffer> communication) throws IOException {
-        logger.info("sending message to " + communication.getPeer().getAddress());
+        logger.info("sending message to "
+                + communication.getPeer().getAddress()
+                + ":"
+                + communication.getPeer().getPort()
+        );
         this._send(communication.getData(), communication.getPeer());
     }
 
     @Override
     public void run() {
-        logger.info("starting client");
         try {
             selector = Selector.open();
+            serverSocketChannel = ServerSocketChannel.open();
+            serverSocketChannel.configureBlocking(false);
+            serverSocketChannel.bind(new InetSocketAddress("localhost", port));
+            serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
 
             if (initLatch != null) {
                 this.initLatch.countDown();
@@ -59,10 +75,17 @@ public class SocketLayer extends Thread {
                 while (it.hasNext()) {
                     SelectionKey key = it.next();
 
+                    if (key.isAcceptable()) {
+                        logger.info("server: new connection is possible");
+                        handleNewIncomingConnection(selector);
+                    }
+
+                    SocketAddress remoteAddress = null;
                     try {
                         if (key.isValid() && key.isConnectable()) {
                             logger.info("finishing connect");
                             SocketChannel channel = (SocketChannel) key.channel();
+                            remoteAddress = channel.getRemoteAddress();
                             if (!channel.finishConnect()) {
                                 logger.error("connect did not finish");
                             } else {
@@ -76,9 +99,21 @@ public class SocketLayer extends Thread {
                             messageReceiver.handleNewMessage(key.channel());
                         }
                     } catch (ConnectException e) {
-                        logger.error("connect did not finish, TODO remove node?");
-                    }
+                        logger.error("connect to " + remoteAddress + " did not finish, removing");
 
+                        // remove messages pending be send to this node
+                        Iterator<PendingMessage> iter = waitingForWrite.iterator();
+                        while (iter.hasNext()) {
+                            PendingMessage m = iter.next();
+                            if (m.destination.equals(remoteAddress)) {
+                                iter.remove();
+                                break;
+                            }
+                        }
+
+                        // remove node
+                        nodeManager.removeNode(remoteAddress);
+                    }
 
 
                     it.remove();
@@ -168,6 +203,15 @@ public class SocketLayer extends Thread {
                         e.printStackTrace();
                     }
                 });
+    }
+
+    private void handleNewIncomingConnection(Selector selector) throws IOException {
+        SocketChannel clientSocket = serverSocketChannel.accept();
+        clientSocket.configureBlocking(false);
+        clientSocket.register(selector, SelectionKey.OP_READ);
+        logger.info("server: new connection established");
+
+        // connections are one way only so we do not add it to our nodes list
     }
 
     private String getDestinationDescription(InetSocketAddress inetSocketAddress) {

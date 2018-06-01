@@ -21,13 +21,12 @@ import static botnet_p2p.MessageOuterClass.Message;
 public class App {
     private static final Logger logger = LogManager.getLogger(App.class);
 
-    private static ApplicationLayer createNode(String host, int port, Peer bootstrapNode) throws InterruptedException, IOException {
-        KademliaPeer me = new KademliaPeer(host, port);
+    private static ApplicationLayer createNode(KademliaPeer me, Peer bootstrapNode) throws InterruptedException, IOException {
         BlockingQueue<ByteBuffer> receivedMessages = new LinkedBlockingQueue<>(); // coming from the world
         BlockingQueue<Message> decodedMessages = new LinkedBlockingQueue<>(); // coming from the world, decoded
         CountDownLatch initLatch = new CountDownLatch(1);
 
-        SocketLayer socketLayer = new SocketLayer(receivedMessages, initLatch);
+        SocketLayer socketLayer = new SocketLayer(receivedMessages, initLatch, me.getPort());
         socketLayer.start();
         initLatch.await();
 
@@ -56,7 +55,15 @@ public class App {
     }
 
     public static void main(String[] args) throws IOException, InterruptedException {
-        Peer boostrapNode = new Peer("127.0.0.1", 8080);
-        ApplicationLayer node1 = createNode("127.0.0.1", 3000, boostrapNode);
+        // args: me host:port, bootstrap host:port
+
+        String[] meArgs = args[0].split(":");
+        String[] bootstrapArgs = args[1].split(":");
+
+        KademliaPeer me = new KademliaPeer(meArgs[0], Integer.parseInt(meArgs[1]));
+        Peer boostrapNode = new Peer(bootstrapArgs[0], Integer.parseInt(bootstrapArgs[1]));
+
+        logger.info("Hi, I'm " + me.toString());
+        ApplicationLayer node = createNode(me, boostrapNode);
     }
 }

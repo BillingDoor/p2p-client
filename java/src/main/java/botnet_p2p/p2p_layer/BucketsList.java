@@ -10,12 +10,12 @@ import java.util.List;
 import java.util.PriorityQueue;
 import java.util.stream.Collectors;
 
-public class BucketsList {
+class BucketsList {
     private final int maxBucketSize;
     private ArrayList<ArrayList<KademliaPeer>> buckets;
     private String myGuid;
 
-    public BucketsList(int idBits, int maxBucketSize, String myGuid) {
+    BucketsList(int idBits, int maxBucketSize, String myGuid) {
         this.buckets = new ArrayList<>(idBits);
         for (int i = 0; i < idBits; i++) {
             this.buckets.add(new ArrayList<>(maxBucketSize));
@@ -28,19 +28,22 @@ public class BucketsList {
         this(128, 20, myGuid);
     }
 
-    public int largestDifferingBit(String guid1, String guid2) {
+    int largestDifferingBit(String guid1, String guid2) {
         BigInteger distance = xorGuids(guid1, guid2);
         return distance.bitLength() - 1;
     }
 
-    public synchronized List<KademliaPeer> getNearestPeers(String id) {
+    synchronized List<KademliaPeer> getNearestPeers(String id) {
         List<KademliaPeer> collected = getPeers();
+        List<KademliaPeer> foundNodes = new ArrayList<>();
+        if(collected.size() == 0) {
+            return foundNodes;
+        }
         PriorityQueue<KademliaPeer> heap = new PriorityQueue<>(collected.size(), (o1, o2) -> (
                 xorGuids(o1.getId(), id).compareTo(xorGuids(o2.getId(), id))
         ));
         heap.addAll(collected);
 
-        List<KademliaPeer> foundNodes = new ArrayList<>();
         int i = 0;
         while (i < this.maxBucketSize && !heap.isEmpty()) {
             foundNodes.add(heap.poll());
@@ -55,14 +58,14 @@ public class BucketsList {
         return g1.xor(g2);
     }
 
-    public List<KademliaPeer> getPeers() {
+    private synchronized List<KademliaPeer> getPeers() {
         return this.buckets
                 .stream()
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
     }
 
-    public synchronized KademliaPeer getPeerById(String guid) {
+    synchronized KademliaPeer getPeerById(String guid) {
         for (ArrayList<KademliaPeer> bucket : buckets) {
             for (KademliaPeer kademliaPeer : bucket) {
                 if (kademliaPeer.getId().equals(guid)) {
@@ -73,7 +76,7 @@ public class BucketsList {
         return null;
     }
 
-    public synchronized void insert(KademliaPeer kademliaPeer) {
+    synchronized void insert(KademliaPeer kademliaPeer) {
         if (kademliaPeer.getId().equals(myGuid)) {
             return;
         }
@@ -89,15 +92,15 @@ public class BucketsList {
         }
     }
 
-    public synchronized int size() {
+    synchronized int size() {
         return this.buckets.stream().map(ArrayList::size).reduce(0, (a, b) -> a + b);
     }
 
-    public int getMaxBucketSize() {
+    int getMaxBucketSize() {
         return maxBucketSize;
     }
 
-    public int getBucketsCount() {
+    int getBucketsCount() {
         return this.buckets.size();
     }
 }

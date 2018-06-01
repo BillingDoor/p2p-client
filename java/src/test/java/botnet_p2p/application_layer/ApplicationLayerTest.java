@@ -112,7 +112,7 @@ public class ApplicationLayerTest {
         BlockingQueue<MessageOuterClass.Message> decodedMessages = new LinkedBlockingQueue<>(); // coming from the world, decoded
         CountDownLatch initLatch = new CountDownLatch(1);
 
-        SocketLayer socketLayer = new SocketLayer(receivedMessages, initLatch);
+        SocketLayer socketLayer = new SocketLayer(receivedMessages, initLatch, me.getPort());
         socketLayer.start();
         initLatch.await();
 

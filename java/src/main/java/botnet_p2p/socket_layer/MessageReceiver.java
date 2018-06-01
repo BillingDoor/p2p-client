@@ -36,7 +36,6 @@ class MessageReceiver {
             }
         }
 
-        logger.info("new message received, size: " + inputBuffer.array().length);
         ByteBuffer messageBuffer = ByteBuffer.wrap(inputBuffer.array(), 0, inputBuffer.position());
         if (!this.receivedMessages.offer(messageBuffer)) {
             logger.error("queue is full!");

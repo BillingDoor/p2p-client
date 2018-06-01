@@ -33,8 +33,12 @@ public class BusinessLogicLayer extends Thread {
         List<KademliaPeer> pingedNodes = new ArrayList<>();
         p2pLayer.findNode(bootstrapNode, me);
 
-        Message message = decodedMessagesQueue.take();
-        logger.info("new message decoded found, type: " + message.getType());
+        Message message = decodedMessagesQueue.poll(5, TimeUnit.SECONDS);
+        if(message == null) {
+            logger.error("bootstrap node did not respond, timeout");
+            return;
+        }
+        logger.info("decoded message:\n" + message.toString());
         if (message.getType() == Message.MessageType.FOUND_NODES) {
 
             KademliaPeer sender = KademliaPeer.fromContact(message.getSender());
@@ -43,14 +47,16 @@ public class BusinessLogicLayer extends Thread {
                 return;
             }
             // bootstrapNode responded, adding it to routing table
-            p2pLayer.getRoutingTable().insert(sender);
+            addToRoutingTable(sender);
 
             message.getFoundNodes().getNodesList().forEach(contact -> {
-                        // pinging nodes that we got from bootstrapNode
-                        KademliaPeer peer = KademliaPeer.fromContact(contact);
-                        logger.info("pinging node: " + peer.getGuid());
-                        p2pLayer.ping(peer, me);
-                        pingedNodes.add(peer);
+                        if(!contact.getGuid().equals(me.getGuid())) {
+                            // pinging nodes that we got from bootstrapNode
+                            KademliaPeer peer = KademliaPeer.fromContact(contact);
+                            logger.info("pinging node: " + peer.getGuid());
+                            p2pLayer.ping(peer, me);
+                            pingedNodes.add(peer);
+                        }
                     }
             );
 
@@ -59,9 +65,12 @@ public class BusinessLogicLayer extends Thread {
             while (true) {
                 message = decodedMessagesQueue.poll(1, TimeUnit.SECONDS);
                 if (message != null && message.getType() == Message.MessageType.PING_RESPONSE) {
+                    logger.info("decoded message:\n" + message.toString());
+
                     KademliaPeer kademliaPeer = KademliaPeer.fromContact(message.getSender());
+
                     // peer responded, so it's alive - we can add it to routing table
-                    p2pLayer.getRoutingTable().insert(kademliaPeer);
+                    addToRoutingTable(kademliaPeer);
                     pingedNodes.remove(kademliaPeer);
                 }
 
@@ -80,37 +89,35 @@ public class BusinessLogicLayer extends Thread {
 
     @Override
     public void run() {
+        logger.info("starting main loop");
         while (true) {
             try {
-                logger.info("starting main loop");
                 Message messsage = decodedMessagesQueue.take();
-                logger.info("message received by business logic layer");
-                logger.info("processing this message");
+                logger.info("decoded message:\n" + messsage.toString());
 
                 if (messsage.getSender() == null) {
                     logger.trace("sender not defined in message, skipping");
                     continue;
                 }
 
-                // add sender to routing table
                 KademliaPeer sender = KademliaPeer.fromContact(messsage.getSender());
-                this.p2pLayer.getRoutingTable().insert(
-                        sender
-                );
 
                 switch (messsage.getType()) {
                     case PING:
                         // respond
                         p2pLayer.pingResponse(sender, me);
+                        addToRoutingTable(sender);
                         break;
                     case FIND_NODE:
                         // respond with nearest nodes list
-                        List<KademliaPeer> nearestPeers = this.p2pLayer.getRoutingTable().getNearestPeers(
+                        List<KademliaPeer> nearestPeers = this.p2pLayer.getNearestPeers(
                                 messsage.getFindNode().getGuid()
                         );
                         p2pLayer.foundNodes(sender, me, nearestPeers);
+                        addToRoutingTable(sender);
+                        break;
                     default:
-                        logger.error("unsupported message type");
+                        logger.error("unsupported message type:" + messsage.getType());
                 }
 
             } catch (InterruptedException e) {
@@ -118,6 +125,13 @@ public class BusinessLogicLayer extends Thread {
                 e.printStackTrace();
             }
         }
+    }
+
+    public void addToRoutingTable(KademliaPeer sender) {
+        // add sender to routing table
+        this.p2pLayer.addToRoutingTable(
+                sender
+        );
     }
 
 }

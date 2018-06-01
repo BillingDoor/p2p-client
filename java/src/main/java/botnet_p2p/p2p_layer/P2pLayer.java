@@ -73,4 +73,12 @@ public class P2pLayer {
                 ));
 
     }
+
+    public void addToRoutingTable(KademliaPeer peer) {
+        this.routingTable.insert(peer);
+    }
+
+    public List<KademliaPeer> getNearestPeers(String guid) {
+        return this.routingTable.getNearestPeers(guid);
+    }
 }
