@@ -34,7 +34,7 @@ public class BusinessLogicLayer extends Thread {
         p2pLayer.findNode(bootstrapNode, me);
 
         Message message = decodedMessagesQueue.poll(5, TimeUnit.SECONDS);
-        if(message == null) {
+        if (message == null) {
             logger.error("bootstrap node did not respond, timeout");
             return;
         }
@@ -50,7 +50,7 @@ public class BusinessLogicLayer extends Thread {
             addToRoutingTable(sender);
 
             message.getFoundNodes().getNodesList().forEach(contact -> {
-                        if(!contact.getGuid().equals(me.getGuid())) {
+                        if (!contact.getGuid().equals(me.getGuid())) {
                             // pinging nodes that we got from bootstrapNode
                             KademliaPeer peer = KademliaPeer.fromContact(contact);
                             logger.info("pinging node: " + peer.getGuid());
@@ -121,10 +121,11 @@ public class BusinessLogicLayer extends Thread {
                 }
 
             } catch (InterruptedException e) {
-                // TODO
-                e.printStackTrace();
+                Thread.currentThread().interrupt();
+                break;
             }
         }
+        logger.info("closing - loop ended");
     }
 
     public void addToRoutingTable(KademliaPeer sender) {
@@ -134,4 +135,9 @@ public class BusinessLogicLayer extends Thread {
         );
     }
 
+    public void shutdown() {
+        logger.info("closing");
+        this.interrupt();
+        this.p2pLayer.shutdown();
+    }
 }

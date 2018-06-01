@@ -27,4 +27,8 @@ public class ApplicationLayer {
     }
 
 
+    public void shutdown() {
+        logger.info("closing");
+        businessLogicLayer.shutdown();
+    }
 }

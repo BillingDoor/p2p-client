@@ -4,6 +4,7 @@ package botnet_p2p.socket_layer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.*;
@@ -45,13 +46,24 @@ class NodeManager {
 
     void removeNode(SocketAddress remoteAddress) {
         Iterator<Node> it = this.nodes.iterator();
-        while(it.hasNext()) {
+        while (it.hasNext()) {
             Node node = it.next();
-            if(node.address.equals(remoteAddress)) {
+            if (node.address.equals(remoteAddress)) {
                 logger.info("node removed");
                 it.remove();
                 break;
             }
         }
+    }
+
+    void closeSockets() {
+        this.nodes.forEach(node -> {
+            try {
+                if (node.socketChannel != null) {
+                    node.socketChannel.close();
+                }
+            } catch (IOException ignored) {
+            }
+        });
     }
 }

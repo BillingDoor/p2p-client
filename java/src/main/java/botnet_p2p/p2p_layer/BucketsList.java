@@ -40,7 +40,7 @@ class BucketsList {
             return foundNodes;
         }
         PriorityQueue<KademliaPeer> heap = new PriorityQueue<>(collected.size(), (o1, o2) -> (
-                xorGuids(o1.getId(), id).compareTo(xorGuids(o2.getId(), id))
+                xorGuids(o1.getGuid(), id).compareTo(xorGuids(o2.getGuid(), id))
         ));
         heap.addAll(collected);
 

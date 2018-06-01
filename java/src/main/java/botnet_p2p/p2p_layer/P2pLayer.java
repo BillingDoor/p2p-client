@@ -81,4 +81,9 @@ public class P2pLayer {
     public List<KademliaPeer> getNearestPeers(String guid) {
         return this.routingTable.getNearestPeers(guid);
     }
+
+    public void shutdown() {
+        logger.info("closing");
+        this.messageLayer.shutdown();
+    }
 }

@@ -49,11 +49,18 @@ public class MessageLayer extends Thread {
                 ByteBuffer bytes = receivedMessages.take();
                 decodedMessages.offer(Message.parseFrom(bytes));
             } catch (InterruptedException e) {
-                // TODO quit ?
-                e.printStackTrace();
+                Thread.currentThread().interrupt();
+                break;
             } catch (InvalidProtocolBufferException e) {
                 logger.trace("invalid message, ignoring");
             }
         }
+        logger.info("closing - loop ended");
+    }
+
+    public void shutdown() {
+        logger.info("closing");
+        this.interrupt();
+        this.socketLayer.shutdown();
     }
 }

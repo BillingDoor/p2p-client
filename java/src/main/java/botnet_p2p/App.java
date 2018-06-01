@@ -44,8 +44,8 @@ public class App {
             @Override
             public void run() {
                 super.run();
+                applicationLayer.shutdown();
                 logger.info("closing requested");
-                socketLayer.interrupt(); // TODO
             }
         }
         Runtime.getRuntime().addShutdownHook(new ShutdownHandler());

@@ -6,6 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
+import java.io.InterruptedIOException;
 import java.net.ConnectException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
@@ -37,8 +38,8 @@ public class SocketLayer extends Thread {
                        int port) {
         this.initLatch = initLatch;
         this.port = port;
-        this.messageReceiver = new MessageReceiver(receivedMessages);
         this.nodeManager = new NodeManager();
+        this.messageReceiver = new MessageReceiver(receivedMessages, nodeManager);
 
 
         this.waitingForWrite = new LinkedList<>();
@@ -125,14 +126,18 @@ public class SocketLayer extends Thread {
                 // handle pending connect requests
                 connectWaitingConnections();
             }
+        } catch (InterruptedIOException e) {
+            Thread.currentThread().interrupt();
+            logger.info("Interrupted via InterruptedIOException");
         } catch (IOException e) {
             if (isInterrupted()) {
-                logger.info("mainThread interrupted");
+                logger.info("interrupted");
                 Thread.currentThread().interrupt();
             } else {
                 e.printStackTrace();
             }
         }
+        logger.info("closing - loop ended");
     }
 
     private synchronized void _send(ByteBuffer bytes, Peer peer) throws IOException {
@@ -232,5 +237,11 @@ public class SocketLayer extends Thread {
             });
             logger.info("clients sockets closed");
         }
+        nodeManager.closeSockets();
+    }
+
+    public void shutdown() {
+        logger.info("closing");
+        this.interrupt();
     }
 }

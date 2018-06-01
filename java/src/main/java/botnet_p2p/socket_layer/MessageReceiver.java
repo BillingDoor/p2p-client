@@ -12,9 +12,11 @@ import java.util.concurrent.BlockingQueue;
 class MessageReceiver {
     private static final Logger logger = LogManager.getLogger(MessageReceiver.class);
     private BlockingQueue<ByteBuffer> receivedMessages;
+    private NodeManager nodeManager;
 
-    public MessageReceiver(BlockingQueue<ByteBuffer> receivedMessages) {
+    MessageReceiver(BlockingQueue<ByteBuffer> receivedMessages, NodeManager nodeManager) {
         this.receivedMessages = receivedMessages;
+        this.nodeManager = nodeManager;
     }
 
 
@@ -23,12 +25,14 @@ class MessageReceiver {
         ByteBuffer inputBuffer = ByteBuffer.allocate(512);
         try {
             if (client.read(inputBuffer) == -1) {
+                nodeManager.removeNode(client.getRemoteAddress());
                 client.close();
                 return;
             }
         } catch (IOException e) {
             if (e.getMessage().equals("An existing connection was forcibly closed by the remote host")) {
                 logger.info("client has disconnected in a dirty way " + client.getLocalAddress());
+                nodeManager.removeNode(client.getRemoteAddress());
                 client.close();
                 return;
             } else {
