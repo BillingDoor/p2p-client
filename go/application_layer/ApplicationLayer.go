@@ -1,7 +1,6 @@
 package application_layer
 
 import (
-	"fmt"
 	"github.com/lampo100/botnet_p2p/models"
 	"github.com/lampo100/botnet_p2p/business_logic_layer"
 	"os"
@@ -12,28 +11,35 @@ import (
 
 var defaultPort uint32 = 6666
 
-var terminateChannel = make(chan  struct{})
+var terminateChannel = make(chan struct{})
+var nextLayerTerminated = make(chan struct{})
 
 var bootstrapNode = models.Node{
-	Host:  "77.55.235.125",
+	//Host:  "77.55.235.125",
+	Host:  "127.0.0.1",
 	Port:  defaultPort,
 	IsNAT: false,
 }
 
-func RunApplication() {
+func RunApplication(port uint32) {
 	go interruptHandler()
-	business_logic_layer.InitLayer(defaultPort, terminateChannel)
-	_, err := business_logic_layer.JoinNetwork(bootstrapNode)
+
+	business_logic_layer.InitLayer(port, terminateChannel, nextLayerTerminated)
+
+	err := business_logic_layer.JoinNetwork(bootstrapNode)
 	if err != nil {
-		fmt.Printf("[AL] Could not join network, error: %v\n", err)
+		log.Printf("[AL] Could not join network, error: %v\n", err)
+		close(terminateChannel)
 	}
 	<-terminateChannel
+	<-nextLayerTerminated
+	log.Println("[AL] Terminated")
 }
 
 func interruptHandler() {
 	signalChannel := make(chan os.Signal, 3)
 	signal.Notify(signalChannel, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
 	<-signalChannel
-	close(terminateChannel)
 	log.Println("[AL] Terminate signal received!")
+	close(terminateChannel)
 }

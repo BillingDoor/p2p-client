@@ -11,6 +11,41 @@ var myNode models.Node
 var messageChannel chan models.Message
 var dataChannel chan []byte
 
+var terminateChannel chan struct{}
+var hasTerminated chan struct{}
+var nextLayerTerminated chan struct{}
+
+func InitLayer(selfNode models.Node, messChannel chan models.Message, terminate chan struct{}, thisTerminated chan struct{}) {
+	myNode = selfNode
+	messageChannel = messChannel
+	terminateChannel = terminate
+	hasTerminated = thisTerminated
+	nextLayerTerminated = make(chan struct{})
+	socket_layer.InitLayer(myNode.Port, dataChannel, terminateChannel, nextLayerTerminated)
+	go messageRoutine()
+	log.Println("[ML] Initialized")
+}
+
+func messageRoutine() {
+	for {
+		select {
+		case data := <-dataChannel:
+			var msg models.Message
+			err := proto.Unmarshal(data, &msg)
+			if err != nil {
+				log.Printf("[ML] Error decoding message: %v\n", err)
+				continue
+			}
+			messageChannel <- msg
+			break
+		case <-terminateChannel:
+			<-nextLayerTerminated
+			log.Println("[ML] Terminated")
+			hasTerminated <- struct{}{}
+		}
+	}
+}
+
 func createBaseMessage(sender, receiver models.Node, messageType models.Message_MessageType) models.Message {
 	message := models.Message{
 		Sender: &models.Message_Contact{
@@ -37,31 +72,6 @@ func sendMessage(target models.Node, msg models.Message) error {
 	}
 	err = socket_layer.Send(target, bytes)
 	return err
-}
-
-func messageRoutine() {
-	for {
-		select {
-		case data := <-dataChannel:
-			var msg models.Message
-			err := proto.Unmarshal(data, &msg)
-			if err != nil {
-				log.Printf("[ML] Error decoding message: %v\n", err)
-				continue
-			}
-			messageChannel <- msg
-			break
-		//Terminate signal
-		}
-	}
-}
-
-func InitLayer(selfNode models.Node, messChannel chan models.Message) {
-	myNode = selfNode
-	messageChannel = messChannel
-	socket_layer.InitLayer(myNode.Port, dataChannel)
-	go messageRoutine()
-	log.Println("[ML] Initialized")
 }
 
 func FindNode(sender, receiver models.Node, guid models.UUID) error {

@@ -9,12 +9,16 @@ import (
 )
 
 var port uint32
-var terminateChannel chan struct{}
 var incomingMessagesChannel chan []byte
 
-func InitLayer(serverPort uint32, messageChannel chan []byte) {
+var terminateChannel chan struct{}
+var hasTerminated chan struct{}
+
+func InitLayer(serverPort uint32, messageChannel chan []byte, terminate chan struct{}, thisTerminated chan struct{}) {
 	port = serverPort
 	incomingMessagesChannel = messageChannel
+	terminateChannel = terminate
+	hasTerminated = thisTerminated
 	go serverRoutine()
 	log.Println("[SL] Initialized")
 }
@@ -32,8 +36,8 @@ func serverRoutine() {
 		for {
 			c, err := listener.Accept()
 			if err != nil {
-				log.Println(err)
-				continue
+				//TODO: handle closed socket
+				return
 			}
 			newConnection <- c
 		}
@@ -41,7 +45,8 @@ func serverRoutine() {
 	for {
 		select {
 		case <-terminateChannel:
-			log.Println("[SL] Terminating listener")
+			log.Println("[SL] Terminated")
+			hasTerminated <- struct{}{}
 			return
 		case conn := <-newConnection:
 			log.Println("[SL] New connection at:", conn.RemoteAddr().String())

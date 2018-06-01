@@ -11,23 +11,21 @@ var pingedNodes []models.Node
 
 var MessagesChannel chan models.Message
 var terminateChannel chan struct{}
+var hasTerminated chan struct{}
+var nextLayerTerminated chan struct{}
 
-func InitLayer(port uint32, terminate chan struct{}) (bool, error) {
+func InitLayer(port uint32, terminate chan struct{}, thisTerminated chan struct{}) (bool, error) {
 	terminateChannel = terminate
+	hasTerminated = thisTerminated
+	nextLayerTerminated = make(chan struct{})
 	node, err := generateSelfNode(port)
 	if err != nil {
 		return false, err
 	}
 	myNode = node
-	p2p_layer.InitLayer(myNode, MessagesChannel)
+	p2p_layer.InitLayer(myNode, MessagesChannel, terminateChannel, nextLayerTerminated)
 	go messageListener()
 	log.Println("[BL] Initialized")
-	return true, nil
-}
-
-func JoinNetwork(bootstrapNode models.Node) (bool, error) {
-	p2p_layer.FindNode(bootstrapNode, myNode, myNode.Guid)
-	log.Printf("[BL] Joined network with bootstrap at %v\n", bootstrapNode)
 	return true, nil
 }
 
@@ -51,10 +49,21 @@ func messageListener() {
 				break
 			}
 		case <-terminateChannel:
-			log.Println("[BL] Terminating")
+			<-nextLayerTerminated
+			log.Println("[BL] Terminated")
+			hasTerminated <- struct{}{}
 			return
 		}
 	}
+}
+
+func JoinNetwork(bootstrapNode models.Node) error {
+	err := p2p_layer.FindNode(bootstrapNode, myNode, myNode.Guid)
+	if err != nil {
+		return err
+	}
+	log.Printf("[BL] Joined network with bootstrap at %v\n", bootstrapNode)
+	return nil
 }
 
 func handleFoundNodes(msg models.Message) {
