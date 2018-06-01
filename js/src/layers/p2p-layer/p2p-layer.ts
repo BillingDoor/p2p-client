@@ -28,7 +28,7 @@ export class P2PLayer {
 
   foundNodes(config: { to: Contact; nodes: Contact[] }) {
     const { to, nodes } = config;
-    console.log('P2P layer: Creating foundNodes message');
+    console.log(`P2P layer: Creating foundNodes message:`, nodes);
     this.worker.send(
       utils.prepareFoundNodesMessage({
         nodes: nodes.map((node) => node.toMessageContact()),
@@ -45,6 +45,18 @@ export class P2PLayer {
         type: Message.MessageType.PING,
         sender: this.me,
         receiver: node
+      })
+    );
+  }
+
+  pingResponse(config: { to: Contact }) {
+    const { to } = config;
+    console.log('P2P layer: Creating pingResponse message');
+    this.worker.send(
+      utils.prepareBaseMessage({
+        type: Message.MessageType.PING_RESPONSE,
+        sender: this.me,
+        receiver: to
       })
     );
   }
