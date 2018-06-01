@@ -9,8 +9,8 @@ export function prepareBaseMessage(config: {
   const { sender, receiver, type } = config;
   const msg = new Message();
 
-  msg.setSender(sender.toMessageContact());
-  msg.setReceiver(receiver.toMessageContact());
+  msg.setSender(Contact.toMessageContact(sender));
+  msg.setReceiver(Contact.toMessageContact(receiver));
   msg.setType(type);
   return msg;
 }

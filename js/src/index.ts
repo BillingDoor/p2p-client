@@ -81,3 +81,6 @@ function spawnNode(port: number) {
 }
 
 // TODO: pretty debug logs
+// TODO: keep TCP connections open
+// TODO: handle user close request
+// TODO: divide protobuf/utils into separate files

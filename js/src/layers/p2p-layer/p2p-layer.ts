@@ -31,7 +31,7 @@ export class P2PLayer {
     console.log(`P2P layer: Creating foundNodes message:`, nodes);
     this.worker.send(
       utils.prepareFoundNodesMessage({
-        nodes: nodes.map((node) => node.toMessageContact()),
+        nodes: nodes.map(Contact.toMessageContact),
         sender: this.me,
         receiver: to
       })

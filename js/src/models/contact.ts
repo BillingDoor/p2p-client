@@ -16,12 +16,12 @@ export class Contact {
     this.isNAT = isNAT || false;
   }
 
-  toMessageContact(): Message.Contact {
+  static toMessageContact(contact: Contact): Message.Contact {
     const messageContact = new Message.Contact();
-    messageContact.setIp(this.address.host);
-    messageContact.setPort(this.address.port);
-    messageContact.setGuid(this.guid);
-    messageContact.setIsnat(this.isNAT);
+    messageContact.setIp(contact.address.host);
+    messageContact.setPort(contact.address.port);
+    messageContact.setGuid(contact.guid);
+    messageContact.setIsnat(contact.isNAT);
     return messageContact;
   }
 
