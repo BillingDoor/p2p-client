@@ -1,28 +1,41 @@
+import { equals } from 'ramda';
 import { Observable, Subject } from 'rxjs';
 import { map, filter } from 'rxjs/operators';
 
-import { Communication } from '@models';
-import { Message } from '../../protobuf/Message_pb';
+import { Communication, Contact } from '@models';
+import { Message } from '@protobuf/Message_pb';
 
 export class MessageLayer {
-  private messages$: Observable<Communication<Message>>;
+  private messages$: Observable<Message>;
 
   constructor(
-    private inputMessages$: Observable<Communication<Buffer>>,
+    private inputMessages$: Observable<Buffer>,
     private outputMessages$: Subject<Communication<Buffer>>
   ) {
-    this.messages$ = this.inputMessages$.pipe(
-      map(({ data, address }) => ({ data: decodeMessage(data), address }))
-    );
+    this.messages$ = this.inputMessages$.pipe(map(decodeMessage));
   }
 
-  on(type: Message.MessageType): Observable<Communication<Message>> {
-    return this.messages$.pipe(filter((msg) => msg.data.getType() === type));
+  on(type: Message.MessageType): Observable<Message> {
+    return this.messages$.pipe(filter((msg) => msg.getType() === type));
   }
 
-  send(msg: Communication<Message>) {
-    const { data, address } = msg;
-    this.outputMessages$.next({ data: encodeMessage(data), address });
+  send(msg: Message) {
+    const sender = msg.getSender();
+    const receiver = msg.getReceiver();
+
+    if (!sender || !receiver) {
+      throw new Error('Message layer: Invalid message sender/receiver.');
+    }
+
+    const { address: senderAddress } = Contact.from(sender);
+    const { address } = Contact.from(receiver);
+
+    const msgToSelf = equals(senderAddress, address);
+    if (msgToSelf) {
+      throw new Error('Message layer: Cannot send message to self.');
+    }
+
+    this.outputMessages$.next({ data: encodeMessage(msg), address });
   }
 }
 

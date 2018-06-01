@@ -1,63 +1,117 @@
-import { prop } from 'ramda';
-import { first, tap, map, filter } from 'rxjs/operators';
+import { first, tap, filter, delay } from 'rxjs/operators';
 
 import { Address, Contact } from '@models';
 import { P2PLayer } from '@layers/p2p-layer/p2p-layer';
-import { Message } from '../../protobuf/Message_pb';
+import { Message } from '@protobuf/Message_pb';
 
 export class BusinessLayer {
-  // private pingedNodes: Contact[] = [];
+  private pingedNodes: Contact[] = [];
 
   constructor(private worker: P2PLayer, private me: Contact) {
-    this.worker
-      .on(Message.MessageType.FIND_NODE)
-      .pipe(
-        // map(prop('data')),
-        // map((x) => x.getFindnode()),
-        filter(Boolean)
-        // map((x) => x.getGuid())
-      )
-      .subscribe((com) => {
-        this.worker.foundNodes({
-          node: com.address,
-          guid: 'bla'
-        });
-        console.log(
-          'FIND_NODES',
-          com.address,
-          com.data.getFindnode().getGuid()
-        );
-      });
+    this.handleFindNodeMessage();
+    this.handlePingMessage();
+    this.handlePingResponseMessage();
   }
 
-  joinNetwork(node: Address) {
-    console.log('.joinNetwork');
+  joinNetwork(bootstrapNode: Address) {
     this.worker.findNode({
-      node,
+      to: bootstrapNode,
       guid: this.me.guid
     });
 
-    const nodes$ = this.worker
+    this.worker
       .on(Message.MessageType.FOUND_NODES)
       .pipe(
-        tap(()=>console.log('works')),
         first(),
-        map(prop('data')),
-        map((x) => x.getFoundnodes()),
-        filter(Boolean),
-        map((x) => x.getNodesList())
-      );
+        this.addNodeToRoutingTable(),
+        this.pingNodes(),
+        delay(60000),
+        tap(() => {
+          this.pingedNodes.forEach((node) =>
+            this.worker.routingTable.removeNode(node)
+          );
+          this.pingedNodes = [];
+        })
+      )
+      .subscribe();
 
-    nodes$.subscribe();
-      // .pipe(
-      //   mergeAll(),
-      //   tap((node: Contact) => this.worker.routingTable.addNode(node)),
-      //   tap((node) => this.worker.ping(node)),
-      //   tap((node) => this.pingedNodes.push(node))
-      //   // tap(() => console.log('It all worked!'))
-      // )
-      // .subscribe();
+    return true;
+  }
 
-    return nodes$;
+  private handleFindNodeMessage() {
+    this.worker
+      .on(Message.MessageType.FIND_NODE)
+      .pipe(
+        this.addNodeToRoutingTable(),
+        tap((msg) => {
+          const sender = checkSender(msg);
+          const node = msg.getFindnode();
+          if (node) {
+            this.worker.foundNodes({
+              to: Contact.from(sender),
+              nodes: this.worker.routingTable.getNearestNodes(node.getGuid())
+            });
+          } else {
+            throw new Error('Business layer: FindNode message not set.');
+          }
+        })
+      )
+      .subscribe();
+  }
+
+  private handlePingMessage() {
+    this.worker
+      .on(Message.MessageType.PING)
+      .pipe(
+        this.addNodeToRoutingTable(),
+        tap((msg) => {
+          const sender = checkSender(msg);
+          this.worker.pingResponse({
+            to: Contact.from(sender)
+          });
+        })
+      )
+      .subscribe();
+  }
+
+  private handlePingResponseMessage() {
+    this.worker
+      .on(Message.MessageType.PING_RESPONSE)
+      .pipe(
+        filter((msg) => {
+          const sender = checkSender(msg);
+          return this.pingedNodes.includes(Contact.from(sender));
+        }),
+        this.addNodeToRoutingTable()
+      )
+      .subscribe();
+  }
+
+  private addNodeToRoutingTable(node?: Address) {
+    return tap((msg: Message) => {
+      const sender = checkSender(msg);
+      this.worker.routingTable.addNode(Contact.from(sender));
+    });
+  }
+
+  private pingNodes() {
+    return tap((msg: Message) => {
+      const found = msg.getFoundnodes();
+      const nodes = found ? found.getNodesList() : [];
+      nodes.map(Contact.from).forEach((node) => {
+        console.log(`Business layer: Pinging node: ${node.guid}`);
+        this.worker.ping(node);
+        this.pingedNodes = [...this.pingedNodes, node];
+      });
+    });
+  }
+}
+
+function checkSender(msg: Message): Message.Contact {
+  const sender = msg.getSender();
+  if (!sender) {
+    throw new Error('Business layer: Message sender not set.');
+  } else {
+    return sender;
   }
 }

@@ -6,9 +6,10 @@
       "@models": ["models"],
       "@models*": ["models*"],
       "@layers*": ["layers*"],
-      "@utils*": ["utils*"]
+      "@protobuf*": ["protobuf*"]
     },
     "target": "es6",
+    "lib": ["es2016"],
     "module": "commonjs",
     "outDir": "dist",
     "noImplicitAny": true,

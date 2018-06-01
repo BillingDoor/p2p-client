@@ -15,8 +15,10 @@ export class Message extends jspb.Message {
   getSender(): Message.Contact | undefined;
   setSender(value?: Message.Contact): void;
 
-  getReceiver(): string;
-  setReceiver(value: string): void;
+  hasReceiver(): boolean;
+  clearReceiver(): void;
+  getReceiver(): Message.Contact | undefined;
+  setReceiver(value?: Message.Contact): void;
 
   getPropagation(): boolean;
   setPropagation(value: boolean): void;
@@ -51,11 +53,6 @@ export class Message extends jspb.Message {
   getNatcheck(): Message.NATCheckMsg | undefined;
   setNatcheck(value?: Message.NATCheckMsg): void;
 
-  hasLeave(): boolean;
-  clearLeave(): void;
-  getLeave(): Message.LeaveMsg | undefined;
-  setLeave(value?: Message.LeaveMsg): void;
-
   hasFindnode(): boolean;
   clearFindnode(): void;
   getFindnode(): Message.FindNodeMsg | undefined;
@@ -65,11 +62,6 @@ export class Message extends jspb.Message {
   clearFoundnodes(): void;
   getFoundnodes(): Message.FoundNodesMsg | undefined;
   setFoundnodes(value?: Message.FoundNodesMsg): void;
-
-  hasPing(): boolean;
-  clearPing(): void;
-  getPing(): Message.PingMsg | undefined;
-  setPing(value?: Message.PingMsg): void;
 
   getPayloadCase(): Message.PayloadCase;
   serializeBinary(): Uint8Array;
@@ -87,7 +79,7 @@ export namespace Message {
     uuid: string,
     type: Message.MessageType,
     sender?: Message.Contact.AsObject,
-    receiver: string,
+    receiver?: Message.Contact.AsObject,
     propagation: boolean,
     signature: Uint8Array | string,
     command?: Message.CommandMsg.AsObject,
@@ -95,10 +87,8 @@ export namespace Message {
     filechunk?: Message.FileChunkMsg.AsObject,
     natrequest?: Message.NATRequestMsg.AsObject,
     natcheck?: Message.NATCheckMsg.AsObject,
-    leave?: Message.LeaveMsg.AsObject,
     findnode?: Message.FindNodeMsg.AsObject,
     foundnodes?: Message.FoundNodesMsg.AsObject,
-    ping?: Message.PingMsg.AsObject,
   }
 
   export class Contact extends jspb.Message {
@@ -263,26 +253,6 @@ export namespace Message {
     }
   }
 
-  export class LeaveMsg extends jspb.Message {
-    getGuid(): string;
-    setGuid(value: string): void;
-
-    serializeBinary(): Uint8Array;
-    toObject(includeInstance?: boolean): LeaveMsg.AsObject;
-    static toObject(includeInstance: boolean, msg: LeaveMsg): LeaveMsg.AsObject;
-    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
-    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
-    static serializeBinaryToWriter(message: LeaveMsg, writer: jspb.BinaryWriter): void;
-    static deserializeBinary(bytes: Uint8Array): LeaveMsg;
-    static deserializeBinaryFromReader(message: LeaveMsg, reader: jspb.BinaryReader): LeaveMsg;
-  }
-
-  export namespace LeaveMsg {
-    export type AsObject = {
-      guid: string,
-    }
-  }
-
   export class FindNodeMsg extends jspb.Message {
     getGuid(): string;
     setGuid(value: string): void;
@@ -298,26 +268,6 @@ export namespace Message {
   }
 
   export namespace FindNodeMsg {
-    export type AsObject = {
-      guid: string,
-    }
-  }
-
-  export class PingMsg extends jspb.Message {
-    getGuid(): string;
-    setGuid(value: string): void;
-
-    serializeBinary(): Uint8Array;
-    toObject(includeInstance?: boolean): PingMsg.AsObject;
-    static toObject(includeInstance: boolean, msg: PingMsg): PingMsg.AsObject;
-    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
-    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
-    static serializeBinaryToWriter(message: PingMsg, writer: jspb.BinaryWriter): void;
-    static deserializeBinary(bytes: Uint8Array): PingMsg;
-    static deserializeBinaryFromReader(message: PingMsg, reader: jspb.BinaryReader): PingMsg;
-  }
-
-  export namespace PingMsg {
     export type AsObject = {
       guid: string,
     }
@@ -353,9 +303,10 @@ export namespace Message {
     NAT_REQUEST = 4,
     NAT_CHECK = 5,
     PING = 6,
-    LEAVE = 7,
-    FIND_NODE = 8,
-    FOUND_NODES = 9,
+    PING_RESPONSE = 7,
+    LEAVE = 8,
+    FIND_NODE = 9,
+    FOUND_NODES = 10,
   }
 
   export enum Status {
@@ -370,10 +321,8 @@ export namespace Message {
     FILECHUNK = 9,
     NATREQUEST = 10,
     NATCHECK = 11,
-    LEAVE = 12,
     FINDNODE = 13,
     FOUNDNODES = 14,
-    PING = 15,
   }
 }
 

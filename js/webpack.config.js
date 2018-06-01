@@ -19,8 +19,7 @@ module.exports = {
     plugins: [
       new TsconfigPathsPlugin({
         configFile: './tsconfig.json',
-        logLevel: 'info',
-        extensions: ['.ts', '.tsx']
+        extensions: ['.ts', '.tsx', '.js']
       })
     ]
   },
