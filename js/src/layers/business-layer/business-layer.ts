@@ -11,10 +11,11 @@ export class BusinessLayer {
   constructor(private worker: P2PLayer, private me: Contact) {
     this.worker.on(Message.MessageType.FIND_NODE).subscribe((msg) => {
       const sender = msg.getSender();
-      if (sender) {
+      const node = msg.getFindnode();
+      if (sender && node) {
         this.worker.foundNodes({
-          nodes: [],
-          to: Contact.from(sender)
+          to: Contact.from(sender),
+          nodes: this.worker.routingTable.getNearestNodes(node.getGuid())
         });
       } else {
         throw new Error('Business layer: Message sender not set.');

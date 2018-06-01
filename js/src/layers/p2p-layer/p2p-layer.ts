@@ -26,12 +26,12 @@ export class P2PLayer {
     );
   }
 
-  foundNodes(config: { to: Contact; nodes: Message.Contact[] }) {
+  foundNodes(config: { to: Contact; nodes: Contact[] }) {
     const { to, nodes } = config;
     console.log('P2P layer: Creating foundNodes message');
     this.worker.send(
       utils.prepareFoundNodesMessage({
-        nodes,
+        nodes: nodes.map((node) => node.toMessageContact()),
         sender: this.me,
         receiver: to
       })

@@ -1,3 +1,4 @@
+import { equals } from 'ramda';
 import { Observable, Subject } from 'rxjs';
 import { map, filter } from 'rxjs/operators';
 
@@ -25,15 +26,15 @@ export class MessageLayer {
     if (!sender || !receiver) {
       throw new Error('Message layer: Invalid message sender/receiver.');
     }
+
     const { address: senderAddress } = Contact.from(sender);
     const { address } = Contact.from(receiver);
 
-    const msgToSelf =
-      senderAddress.host == address.host && senderAddress.port == address.port;
+    const msgToSelf = equals(senderAddress, address);
     if (msgToSelf) {
       throw new Error('Message layer: Cannot send message to self.');
     }
-    
+
     this.outputMessages$.next({ data: encodeMessage(msg), address });
   }
 }

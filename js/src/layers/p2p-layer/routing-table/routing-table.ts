@@ -1,5 +1,14 @@
 import * as bigInt from 'big-integer';
-import { flatten, slice, find, propEq, equals, reject } from 'ramda';
+import {
+  slice,
+  find,
+  propEq,
+  equals,
+  reject,
+  flatten,
+  sort,
+  pipe
+} from 'ramda';
 
 import { Contact } from '@models/contact';
 
@@ -20,7 +29,7 @@ export class RoutingTable {
     const bucketNotFull = bucket.length < RoutingTable.bucketSize;
 
     if (notSelf && bucketNotFull) {
-      console.log(`P2P layer: Adding node: ${node.guid} to routing table`)
+      console.log(`P2P layer: Adding node: ${node.guid} to routing table`);
       bucket = [...bucket, node];
     }
   }
@@ -34,10 +43,18 @@ export class RoutingTable {
     return find(propEq('guid', guid), this.buckets[this.selectBucket(guid)]);
   }
 
-  getNearestNodes(
-    limit = RoutingTable.bucketCount * RoutingTable.bucketSize
-  ): Contact[] {
-    return slice(-limit, Infinity)(flatten(this.buckets));
+  getNearestNodes(guid: string, limit = RoutingTable.bucketSize): Contact[] {
+    const nearestNodes = pipe<Contact[][], Contact[], Contact[], Contact[]>(
+      flatten,
+      sort((node) =>
+        bigInt(node.guid)
+          .xor(bigInt(guid))
+          .compare(bigInt(guid))
+      ),
+      slice(0, limit)
+    )(this.buckets);
+
+    return nearestNodes;
   }
 
   private selectBucket(guid: string): number {
