@@ -3,7 +3,7 @@ import { first, tap, map, filter } from 'rxjs/operators';
 
 import { Address, Contact } from '@models';
 import { P2PLayer } from '@layers/p2p-layer/p2p-layer';
-import { Message } from '../../protobuf/Message_pb';
+import { Message } from '@protobuf/Message_pb';
 
 export class BusinessLayer {
   private pingedNodes: Contact[] = [];
@@ -17,7 +17,7 @@ export class BusinessLayer {
           to: Contact.from(sender)
         });
       } else {
-        throw new Error('Business layer: Message receiver not set.');
+        throw new Error('Business layer: Message sender not set.');
       }
     });
 
@@ -56,7 +56,7 @@ export class BusinessLayer {
           })
         );
       } else {
-        throwError('Business layer: Sender is not defined!');
+        throwError('Business layer: Message sender not set.');
       }
     });
   }

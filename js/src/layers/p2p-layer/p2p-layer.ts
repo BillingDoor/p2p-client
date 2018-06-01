@@ -2,7 +2,7 @@ import { Observable } from 'rxjs';
 
 import { Address, Contact } from '@models';
 import { MessageLayer } from '@layers//message-layer/message-layer';
-import { Message } from '../../protobuf/Message_pb';
+import { Message } from '@protobuf/Message_pb';
 import * as utils from '@protobuf/utils';
 
 import { RoutingTable } from './routing-table/routing-table';

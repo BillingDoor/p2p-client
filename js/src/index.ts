@@ -1,9 +1,9 @@
 import { Subject } from 'rxjs';
 
 // import { StringDecoder } from 'string_decoder';
-import { SocketLayer } from './layers/socket-layer/socket-layer';
-import { Communication, Contact } from './models';
-import { MessageLayer } from './layers/message-layer/message-layer';
+import { SocketLayer } from '@layers/socket-layer/socket-layer';
+import { Communication, Contact } from '@models';
+import { MessageLayer } from '@layers/message-layer/message-layer';
 import { P2PLayer } from '@layers/p2p-layer/p2p-layer';
 import { BusinessLayer } from '@layers/business-layer/business-layer';
 import { ApplicationLayer } from '@layers/application-layer/application-layer';

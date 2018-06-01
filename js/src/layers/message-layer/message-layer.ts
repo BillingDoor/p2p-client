@@ -2,7 +2,7 @@ import { Observable, Subject } from 'rxjs';
 import { map, filter } from 'rxjs/operators';
 
 import { Communication, Contact } from '@models';
-import { Message } from '../../protobuf/Message_pb';
+import { Message } from '@protobuf/Message_pb';
 
 export class MessageLayer {
   private messages$: Observable<Message>;

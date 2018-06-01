@@ -1,7 +1,7 @@
 import * as bigInt from 'big-integer';
 
 import { Address } from '@models';
-import { Message } from '../protobuf/Message_pb';
+import { Message } from '@protobuf/Message_pb';
 
 export class Contact {
   address: Address;
