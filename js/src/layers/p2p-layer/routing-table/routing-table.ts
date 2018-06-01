@@ -37,8 +37,8 @@ export class RoutingTable {
   }
 
   removeNode(node: Contact): void {
-    let bucket = this.buckets[this.selectBucket(node.guid)];
-    bucket = reject(equals(node), bucket);
+    let bucket = this.selectBucket(node.guid);
+    this.buckets[bucket] = reject(equals(node), this.buckets[bucket]);
   }
 
   getNodeByGUID(guid: string): Contact | undefined {

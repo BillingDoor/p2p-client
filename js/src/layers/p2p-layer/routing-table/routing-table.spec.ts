@@ -1,5 +1,6 @@
 import { Contact } from '@models';
 import { RoutingTable } from './routing-table';
+import { sortBy, prop } from 'ramda';
 
 describe('RoutingTable', () => {
   let selfNode: Contact;
@@ -174,7 +175,9 @@ describe('RoutingTable', () => {
 
       it('should return nodes', () => {
         const nearestNodes = routingTable.getNearestNodes(node.guid);
-        expect(nearestNodes).toEqual(nodes);
+        const result = sortBy<Contact>(prop('guid'), nearestNodes);
+        const expected = sortBy<Contact>(prop('guid'), nodes);
+        expect(result).toEqual(expected);
       });
     });
   });
