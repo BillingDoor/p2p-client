@@ -8,7 +8,7 @@ import * as utils from '@protobuf/utils';
 import { RoutingTable } from './routing-table/routing-table';
 
 export class P2PLayer {
-  routingTable: RoutingTable;
+  readonly routingTable: RoutingTable;
 
   constructor(private worker: MessageLayer, private me: Contact) {
     this.routingTable = new RoutingTable(this.me);

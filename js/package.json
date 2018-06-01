@@ -4,8 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "webpack --config webpack.config.js --watch",
-    "test": "jasmine dist/spec.js"
+    "compile": "webpack --config webpack.config.js",
+    "compile:watch": "webpack --config webpack.config.js --watch",
+    "start": "npm run compile && node dist/app.js",
+    "test": "npm run compile && jasmine dist/spec.js"
   },
   "author": "Filip Konieczny",
   "license": "ISC",
