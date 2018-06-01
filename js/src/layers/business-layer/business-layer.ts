@@ -27,9 +27,6 @@ export class BusinessLayer {
         this.pingNodes(),
         delay(60000),
         tap(() => {
-          this.pingedNodes.forEach((node) =>
-            this.worker.routingTable.removeNode(node)
-          );
           this.pingedNodes = [];
         })
       )
