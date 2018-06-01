@@ -2,6 +2,7 @@ import { sortBy, prop } from 'ramda';
 
 import { Contact } from '@models';
 import { RoutingTable } from './routing-table';
+import { sortBy, prop } from 'ramda';
 
 describe('RoutingTable', () => {
   let selfNode: Contact;
