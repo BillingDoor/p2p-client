@@ -6,35 +6,37 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
+import java.net.ConnectException;
 import java.net.InetSocketAddress;
-import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
-import java.util.Iterator;
-import java.util.Optional;
-import java.util.Queue;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CountDownLatch;
 
 public class SocketLayer extends Thread {
-    private static final Logger logger = LogManager.getLogger(Socket.class);
+    private static final Logger logger = LogManager.getLogger(SocketLayer.class);
 
     private final MessageReceiver messageReceiver;
     private final NodeManager nodeManager;
     private Selector selector;
     private Queue<PendingMessage> waitingForWrite;
 
-    // private CountDownLatch initLatch;
+    private CountDownLatch initLatch;
 
 
-    public SocketLayer(BlockingQueue<ByteBuffer> receivedMessages) {
+    public SocketLayer(BlockingQueue<ByteBuffer> receivedMessages, CountDownLatch initLatch) {
+        this.initLatch = initLatch;
         this.messageReceiver = new MessageReceiver(receivedMessages);
         this.nodeManager = new NodeManager();
+
+        this.waitingForWrite = new LinkedList<>();
     }
 
     public void send(Communication<ByteBuffer> communication) throws IOException {
+        logger.info("sending message to " + communication.getPeer().getAddress());
         this._send(communication.getData(), communication.getPeer());
     }
 
@@ -43,11 +45,11 @@ public class SocketLayer extends Thread {
         logger.info("starting client");
         try {
             selector = Selector.open();
-/*
+
             if (initLatch != null) {
                 this.initLatch.countDown();
             }
-*/
+
             while (true) {
                 // blocking call, waiting for at least one ready channel
                 int channels = selector.select();
@@ -57,21 +59,27 @@ public class SocketLayer extends Thread {
                 while (it.hasNext()) {
                     SelectionKey key = it.next();
 
-                    if (key.isValid() && key.isConnectable()) {
-                        logger.info("finishing connect");
-                        SocketChannel channel = (SocketChannel) key.channel();
-                        if (!channel.finishConnect()) {
-                            logger.error("connect did not finish");
-                        } else {
-                            handleConnectionEstablished(channel);
-                            logger.info("connect finished");
+                    try {
+                        if (key.isValid() && key.isConnectable()) {
+                            logger.info("finishing connect");
+                            SocketChannel channel = (SocketChannel) key.channel();
+                            if (!channel.finishConnect()) {
+                                logger.error("connect did not finish");
+                            } else {
+                                handleConnectionEstablished(channel);
+                                logger.info("connect finished");
+                            }
                         }
+
+                        if (key.isReadable()) {
+                            logger.info("incoming message");
+                            messageReceiver.handleNewMessage(key.channel());
+                        }
+                    } catch (ConnectException e) {
+                        logger.error("connect did not finish, TODO remove node?");
                     }
 
-                    if (key.isReadable()) {
-                        logger.info("incoming message");
-                        messageReceiver.handleNewMessage(key.channel());
-                    }
+
 
                     it.remove();
                 }

@@ -36,13 +36,9 @@ class MessageReceiver {
             }
         }
 
-
-        //ByteBuffer messageBuffer = ByteBuffer.wrap(inputBuffer.array(), 0, inputBuffer.position());
-        //Message message = Message.parseFrom(messageBuffer);
-        // messageHandler
-
         logger.info("new message received, size: " + inputBuffer.array().length);
-        if (!this.receivedMessages.offer(inputBuffer)) {
+        ByteBuffer messageBuffer = ByteBuffer.wrap(inputBuffer.array(), 0, inputBuffer.position());
+        if (!this.receivedMessages.offer(messageBuffer)) {
             logger.error("queue is full!");
         }
         inputBuffer.clear();

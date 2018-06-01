@@ -33,7 +33,7 @@ public class BucketsList {
         return distance.bitLength() - 1;
     }
 
-    public synchronized List<KademliaPeer> getNearestPeers(String id, int limit) {
+    public synchronized List<KademliaPeer> getNearestPeers(String id) {
         List<KademliaPeer> collected = getPeers();
         PriorityQueue<KademliaPeer> heap = new PriorityQueue<>(collected.size(), (o1, o2) -> (
                 xorGuids(o1.getId(), id).compareTo(xorGuids(o2.getId(), id))
@@ -42,7 +42,7 @@ public class BucketsList {
 
         List<KademliaPeer> foundNodes = new ArrayList<>();
         int i = 0;
-        while (i < limit && !heap.isEmpty()) {
+        while (i < this.maxBucketSize && !heap.isEmpty()) {
             foundNodes.add(heap.poll());
             i++;
         }

