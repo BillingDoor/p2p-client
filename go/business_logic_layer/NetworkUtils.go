@@ -1,4 +1,4 @@
-package main
+package business_logic_layer
 
 import (
 	"net/http"

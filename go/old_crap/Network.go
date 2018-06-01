@@ -11,7 +11,6 @@ import (
 var globalMessageChannel = make(chan Message, messageBufferSize)
 var routingTable BucketList
 
-
 func spawnConnection(c net.Conn, in chan Message, out chan Message, kill chan struct{}) {
 	defer c.Close()
 	buffer := make([]byte, 12000)
@@ -81,7 +80,7 @@ func clientRoutine(kill chan struct{}) {
 	// send JOIN message
 	input <- Message{
 		Type: Message_PING,
-		}
+	}
 
 }
 
@@ -150,10 +149,10 @@ func handleMessages(in chan Message, out chan Message, kill chan struct{}) {
 				in <- Message{Type: Message_UNDEFINED}
 				break
 			case Message_NAT_REQUEST:
-					//find if requested node is already waiting, if not add to queue
+				//find if requested node is already waiting, if not add to queue
 				break
 			case Message_NAT_CHECK:
-					// find if anyone want to connect if so, delegate to relay methods
+				// find if anyone want to connect if so, delegate to relay methods
 			default:
 				globalMessageChannel <- message
 				break
@@ -161,4 +160,3 @@ func handleMessages(in chan Message, out chan Message, kill chan struct{}) {
 		}
 	}
 }
-
