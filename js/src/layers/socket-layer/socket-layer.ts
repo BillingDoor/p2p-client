@@ -6,11 +6,10 @@ import { Communication } from '@models';
 
 export class SocketLayer {
   private server: net.Server = {} as net.Server;
-  private closed$ = new Subject<void>();
 
   constructor(
     private port: number,
-    private messages$: Subject<Buffer>,
+    private receivedMessages$: Subject<Buffer>,
     private messagesToSend$: Observable<Communication<Buffer>>
   ) {
     this.handleMessagesToSend();
@@ -33,17 +32,13 @@ export class SocketLayer {
   }
 
   close(): void {
+    this.receivedMessages$.complete();
     console.log('Socket layer: closing connections.');
     this.server.close();
-    this.closed$.next();
-    this.closed$.complete();
-    this.messages$.complete();
   }
 
   private handleMessagesToSend() {
-    this.messagesToSend$
-      .pipe(takeUntil(this.closed$), tap((msg) => this.send(msg)))
-      .subscribe();
+    this.messagesToSend$.pipe(tap((msg) => this.send(msg))).subscribe();
   }
 
   private listen(): void {
@@ -51,7 +46,7 @@ export class SocketLayer {
     this.server = net.createServer((socket) => {
       socket.on('data', (data: Buffer) => {
         console.log('Socket layer: new message!');
-        this.messages$.next(data);
+        this.receivedMessages$.next(data);
         socket.destroy();
       });
     });

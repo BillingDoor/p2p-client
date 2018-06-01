@@ -9,10 +9,10 @@ export class MessageLayer {
   private messages$: Observable<Message>;
 
   constructor(
-    private inputMessages$: Observable<Buffer>,
-    private outputMessages$: Subject<Communication<Buffer>>
+    private receivedMessages$: Observable<Buffer>,
+    private messagesToSend$: Subject<Communication<Buffer>>
   ) {
-    this.messages$ = this.inputMessages$.pipe(map(decodeMessage));
+    this.messages$ = this.receivedMessages$.pipe(map(decodeMessage));
   }
 
   on(type: Message.MessageType): Observable<Message> {
@@ -35,7 +35,12 @@ export class MessageLayer {
       throw new Error('Message layer: Cannot send message to self.');
     }
 
-    this.outputMessages$.next({ data: encodeMessage(msg), address });
+    this.messagesToSend$.next({ data: encodeMessage(msg), address });
+  }
+
+  close() {
+    this.messagesToSend$.complete();
+    this.worker.close();
   }
 }
 

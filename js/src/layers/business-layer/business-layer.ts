@@ -35,6 +35,10 @@ export class BusinessLayer {
     return true;
   }
 
+  close() {
+    this.worker.close();
+  }
+
   private handleFindNodeMessage() {
     this.worker
       .on(Message.MessageType.FIND_NODE)
