@@ -52,6 +52,15 @@ func FoundNodes(selfNode, targetNode models.Node, guid models.UUID) error {
 	return message_layer.FoundNodes(selfNode, targetNode, nodes)
 }
 
+func LeaveNetwork() error {
+	var err error
+	nodes := routingTable.GetAllNodes()
+	for _, node := range nodes {
+		err = message_layer.LeaveNetwork(myNode, node)
+	}
+	return err
+}
+
 func AddNodeToRoutingTable(node models.Node) {
 	log.Printf("[P2] Adding node to RT: %v\n", node)
 	mutex.Lock()

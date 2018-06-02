@@ -88,3 +88,13 @@ func (l *BucketList) String() string {
 	}
 	return str
 }
+
+func (l* BucketList) GetAllNodes() []Node {
+	nodes := make([]Node, 0)
+	for _, bucket := range l.buckets {
+		for _, node := range bucket {
+			nodes = append(nodes, node)
+		}
+	}
+	return nodes
+}

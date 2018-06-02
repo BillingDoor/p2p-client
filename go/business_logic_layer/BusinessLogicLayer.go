@@ -6,6 +6,7 @@ import (
 	"log"
 	"math/rand"
 	"time"
+	"sync"
 )
 
 var myNode models.Node
@@ -16,12 +17,17 @@ var terminateChannel chan struct{}
 var hasTerminated chan struct{}
 var nextLayerTerminated chan struct{}
 
+var mainTerminateChannel chan struct{}
+
+var mutex = &sync.Mutex{}
+
 func InitLayer(port uint32, terminate chan struct{}, thisTerminated chan struct{}) (bool, error) {
 	rand.Seed(time.Now().UnixNano())
-	terminateChannel = terminate
+	terminateChannel = make(chan struct{})
+	mainTerminateChannel = terminate
 	hasTerminated = thisTerminated
 	nextLayerTerminated = make(chan struct{})
-	messagesChannel = make(chan models.Message)
+	messagesChannel = make(chan models.Message, 16)
 	node, err := generateSelfNode(port)
 	if err != nil {
 		return false, err
@@ -34,27 +40,34 @@ func InitLayer(port uint32, terminate chan struct{}, thisTerminated chan struct{
 }
 
 func messageListener() {
+	messageHandlerLoop()
+	log.Println("[BL] Leaving network")
+	LeaveNetwork()
+	close(terminateChannel)
+	<-nextLayerTerminated
+	log.Println("[BL] Terminated")
+	hasTerminated <- struct{}{}
+}
+
+func messageHandlerLoop() {
 	for {
 		select {
 		case msg := <-messagesChannel:
 			switch msg.Type {
 			case models.Message_FOUND_NODES:
-				handleFoundNodes(msg)
+				go handleFoundNodes(msg)
 				break
 			case models.Message_FIND_NODE:
-				handleFindNode(msg)
+				go handleFindNode(msg)
 				break
 			case models.Message_PING:
-				handlePingMessage(msg)
+				go handlePingMessage(msg)
 				break
 			case models.Message_PING_RESPONSE:
-				handlePingResponse(msg)
+				go handlePingResponse(msg)
 				break
 			}
-		case <-terminateChannel:
-			<-nextLayerTerminated
-			log.Println("[BL] Terminated")
-			hasTerminated <- struct{}{}
+		case <-mainTerminateChannel:
 			return
 		}
 	}
@@ -69,6 +82,10 @@ func JoinNetwork(bootstrapNode models.Node) error {
 	return nil
 }
 
+func LeaveNetwork() {
+	p2p_layer.LeaveNetwork()
+}
+
 func handleFoundNodes(msg models.Message) {
 	foundNodesMsg := msg.GetFoundNodes().Nodes
 	foundNodes := make([]models.Node, 0, len(foundNodesMsg))
@@ -81,9 +98,18 @@ func handleFoundNodes(msg models.Message) {
 	for _, node := range foundNodes {
 		log.Printf("[BL] Pinging node: %v", node.Guid)
 		p2p_layer.Ping(myNode, node)
+		mutex.Lock()
 		pingedNodes = append(pingedNodes, node)
+		mutex.Unlock()
 	}
-
+	<-time.After(10 * time.Second)
+	mutex.Lock()
+	for _, node := range pingedNodes {
+		log.Printf("[BL] Timeout pinging node: %v", node)
+		p2p_layer.RemoveFromRoutingTable(node)
+	}
+	pingedNodes = pingedNodes[:0]
+	mutex.Unlock()
 }
 
 func handleFindNode(msg models.Message) {
@@ -98,12 +124,15 @@ func handlePingMessage(msg models.Message) {
 }
 
 func handlePingResponse(msg models.Message) {
-	for _, node := range pingedNodes {
+	mutex.Lock()
+	for i, node := range pingedNodes {
 		if node.Equals(msg.Sender.ToNode()) {
 			p2p_layer.AddNodeToRoutingTable(msg.Sender.ToNode())
+			pingedNodes = append(pingedNodes[:i], pingedNodes[i+1:]...)
 			break
 		}
 	}
+	mutex.Unlock()
 }
 
 func generateSelfNode(port uint32) (models.Node, error) {

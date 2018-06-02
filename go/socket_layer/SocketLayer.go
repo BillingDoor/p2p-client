@@ -26,7 +26,7 @@ func InitLayer(serverPort uint32, messageChannel chan []byte, terminate chan str
 func serverRoutine() {
 	listener, err := net.Listen("tcp4", ":"+strconv.Itoa(int(port)))
 	if err != nil {
-		log.Fatalf("[SL] Listening at port %d failed, %s", port, err)
+		log.Printf("[SL] Listening at port %d failed, %s\n", port, err)
 		return
 	}
 	log.Printf("[SL] Listeninig at port: %d", port)

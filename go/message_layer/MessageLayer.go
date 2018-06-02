@@ -40,7 +40,6 @@ func messageRoutine() {
 			}
 			log.Printf("[ML] Decoded message %v\n", msg)
 			messageChannel <- msg
-			break
 		case <-terminateChannel:
 			<-nextLayerTerminated
 			log.Println("[ML] Terminated")
@@ -116,5 +115,10 @@ func Ping(sender, receiver models.Node) error {
 
 func PingResponse(sender, receiver models.Node) error {
 	message := createBaseMessage(sender, receiver, models.Message_PING_RESPONSE)
+	return sendMessage(receiver, message)
+}
+
+func LeaveNetwork(sender, receiver models.Node) error {
+	message := createBaseMessage(sender, receiver, models.Message_LEAVE)
 	return sendMessage(receiver, message)
 }

@@ -7,6 +7,7 @@ import (
 	"os/signal"
 	"syscall"
 	"log"
+	"bufio"
 )
 
 var defaultPort uint32 = 6666
@@ -30,6 +31,16 @@ func RunApplication(listenPort uint32, connectPort uint32) {
 		log.Printf("[AL] Could not join network, error: %v\nAssuming this is bootstrap node", err)
 
 	}
+	go func() {
+		for {
+			reader := bufio.NewReader(os.Stdin)
+			ch, _, _ := reader.ReadRune()
+			if ch == 'c' {
+				close(terminateChannel)
+				return
+			}
+		}
+	}()
 	<-terminateChannel
 	<-nextLayerTerminated
 	log.Println("[AL] Terminated")
