@@ -24,8 +24,8 @@ process.stdin.on('data', function(input: Buffer) {
 
   if (text == 'close') {
     bootstrapNode.close();
-    nodes.forEach((node) => node.close());
-    process.exit();
+    // nodes.forEach((node) => node.close());
+    // process.exit();
   }
 });
 
@@ -48,4 +48,4 @@ function spawnNode(port: number) {
 // TODO: divide protobuf/utils into separate files
 // TODO: handle errors
 // * bootstrapNode not listening / not available
-
+// * wait on closing until all messages are sent

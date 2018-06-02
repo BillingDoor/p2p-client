@@ -3,6 +3,7 @@ import { first, tap, filter, delay } from 'rxjs/operators';
 import { Address, Contact } from '@models';
 import { P2PLayer } from '@layers/p2p-layer/p2p-layer';
 import { Message } from '@protobuf/Message_pb';
+import logger from '@utils/logging';
 
 export class BusinessLayer {
   private pingedNodes: Contact[] = [];
@@ -58,7 +59,7 @@ export class BusinessLayer {
               nodes: this.worker.routingTable.getNearestNodes(node.getGuid())
             });
           } else {
-            throw new Error('Business layer: FindNode message not set.');
+            logger.warn('Business layer: FindNode message not set.');
           }
         })
       )
@@ -70,6 +71,7 @@ export class BusinessLayer {
       .on(Message.MessageType.LEAVE)
       .pipe(
         tap((msg) => {
+          logger.info('Business layer: got leave message');
           const sender = checkSender(msg);
           this.worker.routingTable.removeNode(Contact.from(sender));
         })
@@ -117,7 +119,7 @@ export class BusinessLayer {
       const found = msg.getFoundnodes();
       const nodes = found ? found.getNodesList() : [];
       nodes.map(Contact.from).forEach((node) => {
-        console.log(`Business layer: Pinging node: ${node.guid}`);
+        logger.info(`Business layer: Pinging node: ${node.guid}`);
         this.worker.ping(node);
         this.pingedNodes = [...this.pingedNodes, node];
       });
@@ -128,6 +130,7 @@ export class BusinessLayer {
 function checkSender(msg: Message): Message.Contact {
   const sender = msg.getSender();
   if (!sender) {
+    logger.error('Business layer: Message sender not set.');
     throw new Error('Business layer: Message sender not set.');
   } else {
     return sender;
