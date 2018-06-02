@@ -7,8 +7,12 @@ const loggingFormat = format.printf((info) => {
 const logger = createLogger({
   format: format.combine(format.colorize(), loggingFormat),
   transports: [
-    new transports.Console(),
-    new transports.File({ filename: 'dist/app.log' })
+    new transports.File({
+      filename: 'dist/app.log',
+      options: {
+        flags: 'w' // open in write mode
+      }
+    })
   ]
 });
 

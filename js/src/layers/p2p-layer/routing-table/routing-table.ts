@@ -33,7 +33,13 @@ export class RoutingTable {
     if (notSelf && bucketNotFull) {
       logger.info(`P2P layer: Adding node ${node.guid} to routing table`);
       this.buckets[bucket] = [...this.buckets[bucket], node];
-      logger.debug(`RoutingTable: ${this.buckets.filter((x) => x.length)}`);
+      logger.info(
+        `RoutingTable: ${JSON.stringify(
+          this.buckets.filter((x) => x.length),
+          null,
+          2
+        )}`
+      );
     }
   }
 
