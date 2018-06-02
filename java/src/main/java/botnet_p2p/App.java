@@ -39,7 +39,6 @@ public class App {
 
         ApplicationLayer applicationLayer = new ApplicationLayer(businessLogicLayer);
 
-
         class ShutdownHandler extends Thread {
             @Override
             public void run() {
@@ -61,13 +60,12 @@ public class App {
         logger.info("Hi, I'm " + me.toString());
         ApplicationLayer node = createNode(me);
 
-        if(args.length  == 2) {
+        if (args.length == 2) {
             String[] bootstrapArgs = args[1].split(":");
             Peer boostrapNode = new Peer(bootstrapArgs[0], Integer.parseInt(bootstrapArgs[1]));
             node.launchClient(boostrapNode);
         } else {
             node.startWithoutBootstrapping();
         }
-
     }
 }

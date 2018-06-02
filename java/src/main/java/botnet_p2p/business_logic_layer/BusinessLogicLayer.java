@@ -148,4 +148,12 @@ public class BusinessLogicLayer extends Thread {
         this.interrupt();
         this.p2pLayer.shutdown();
     }
+
+    public String getRoutingTable() {
+        return this.p2pLayer.getPeers()
+                .stream()
+                .map(KademliaPeer::toString)
+                .reduce("Routing table:\n\t",(a,b) -> a + "\n\t" + b);
+
+    }
 }
