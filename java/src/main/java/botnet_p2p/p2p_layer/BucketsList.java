@@ -62,7 +62,7 @@ class BucketsList {
         return g1.xor(g2);
     }
 
-    private synchronized List<KademliaPeer> getPeers() {
+    synchronized List<KademliaPeer> getPeers() {
         return this.buckets
                 .stream()
                 .flatMap(Collection::stream)
@@ -81,7 +81,7 @@ class BucketsList {
     }
 
     synchronized void insert(KademliaPeer kademliaPeer) {
-        if (kademliaPeer.getId().equals(myGuid)) {
+        if (kademliaPeer.getGuid().equals(myGuid)) {
             return;
         }
 
@@ -94,6 +94,11 @@ class BucketsList {
         if (!bucket.contains(kademliaPeer)) {
             bucket.add(kademliaPeer);
         }
+    }
+
+    boolean remove(KademliaPeer kademliaPeer) {
+        int index = largestDifferingBit(kademliaPeer.getGuid(), myGuid);
+        return buckets.get(index).remove(kademliaPeer);
     }
 
     synchronized int size() {

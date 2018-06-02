@@ -71,19 +71,37 @@ public class P2pLayer {
                         Protobuf.createFoundNodesMessage(destination, me, nearestPeers),
                         destination.toPeer()
                 ));
+    }
 
+    public void leave(KademliaPeer sender, KademliaPeer destination) {
+        messageLayer.send(
+                new Communication<>(
+                        Protobuf.createLeaveMessage(sender, destination),
+                        destination.toPeer()
+                ));
     }
 
     public void addToRoutingTable(KademliaPeer peer) {
         this.routingTable.insert(peer);
     }
 
+    public void removeFromRoutingTable(KademliaPeer kademliaPeer) {
+        boolean removed = this.routingTable.remove(kademliaPeer);
+        logger.trace("removed from routing table " + removed);
+    }
+
     public List<KademliaPeer> getNearestPeers(String guid) {
         return this.routingTable.getNearestPeers(guid);
+    }
+
+    public List<KademliaPeer> getPeers() {
+        return this.routingTable.getPeers();
     }
 
     public void shutdown() {
         logger.info("closing");
         this.messageLayer.shutdown();
     }
+
+
 }

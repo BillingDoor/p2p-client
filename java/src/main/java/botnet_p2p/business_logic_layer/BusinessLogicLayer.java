@@ -116,6 +116,11 @@ public class BusinessLogicLayer extends Thread {
                         p2pLayer.foundNodes(sender, me, nearestPeers);
                         addToRoutingTable(sender);
                         break;
+                    case LEAVE:
+                        // remove from routing table
+                        p2pLayer.removeFromRoutingTable(sender);
+                        logger.info(sender.getGuid() + " said goodbye");
+                        break;
                     default:
                         logger.error("unsupported message type:" + messsage.getType());
                 }
@@ -128,7 +133,7 @@ public class BusinessLogicLayer extends Thread {
         logger.info("closing - loop ended");
     }
 
-    public void addToRoutingTable(KademliaPeer sender) {
+    private void addToRoutingTable(KademliaPeer sender) {
         // add sender to routing table
         this.p2pLayer.addToRoutingTable(
                 sender
@@ -136,6 +141,9 @@ public class BusinessLogicLayer extends Thread {
     }
 
     public void shutdown() {
+        p2pLayer.getPeers().forEach(
+                peer -> p2pLayer.leave(me, peer)
+        );
         logger.info("closing");
         this.interrupt();
         this.p2pLayer.shutdown();

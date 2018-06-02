@@ -224,7 +224,7 @@ public class SocketLayer extends Thread {
     }
 
     @Override
-    public void interrupt() {
+    public synchronized void interrupt() {
         super.interrupt();
 
         if (selector != null) {

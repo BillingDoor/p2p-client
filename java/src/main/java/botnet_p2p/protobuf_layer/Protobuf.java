@@ -89,6 +89,12 @@ public class Protobuf {
                 .build();
     }
 
+    public static Message createLeaveMessage(KademliaPeer sender, KademliaPeer destination) {
+        return createBaseMessage(sender, destination)
+                .setType(Message.MessageType.LEAVE)
+                .build();
+    }
+
     private static Message.Contact kademliaPeerToContact(KademliaPeer peer) {
         return Message.Contact.newBuilder()
                 .setGuid(peer.getGuid())
@@ -97,4 +103,6 @@ public class Protobuf {
                 .setPort(peer.getPort())
                 .build();
     }
+
+
 }
