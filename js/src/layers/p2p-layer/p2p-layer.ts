@@ -46,6 +46,18 @@ export class P2PLayer {
     );
   }
 
+  leave() {
+    this.routingTable.getAllNodes().forEach((node) =>
+      this.worker.send(
+        utils.prepareBaseMessage({
+          type: Message.MessageType.LEAVE,
+          sender: this.me,
+          receiver: node
+        })
+      )
+    );
+  }
+
   ping(node: Contact) {
     console.log('P2P layer: Creating ping message');
     this.worker.send(
@@ -68,6 +80,4 @@ export class P2PLayer {
       })
     );
   }
-
-  
 }
