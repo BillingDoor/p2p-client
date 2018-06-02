@@ -15,24 +15,14 @@ public class ApplicationLayer {
     }
 
     public void launchClient(Peer bootstrapNode) {
-        new Thread(() -> {
-            // blocking
-            try {
-                businessLogicLayer.joinNetwork(bootstrapNode);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            logger.info("bootstrap finished");
+        businessLogicLayer.joinNetwork(bootstrapNode);
 
-            // non blocking
-            businessLogicLayer.start();
-        }).start();
-
+        logger.info("bootstrap finished");
         readCommands();
     }
 
     public void startWithoutBootstrapping() {
-        businessLogicLayer.start();
+        businessLogicLayer.createNetwork();
 
         readCommands();
     }
