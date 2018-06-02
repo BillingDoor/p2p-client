@@ -34,6 +34,10 @@ class BucketsList {
     }
 
     synchronized List<KademliaPeer> getNearestPeers(String id) {
+        return getNearestPeers(id, this.maxBucketSize);
+    }
+
+    synchronized List<KademliaPeer> getNearestPeers(String id, int limit) {
         List<KademliaPeer> collected = getPeers();
         List<KademliaPeer> foundNodes = new ArrayList<>();
         if(collected.size() == 0) {
@@ -45,7 +49,7 @@ class BucketsList {
         heap.addAll(collected);
 
         int i = 0;
-        while (i < this.maxBucketSize && !heap.isEmpty()) {
+        while (i < limit && !heap.isEmpty()) {
             foundNodes.add(heap.poll());
             i++;
         }
