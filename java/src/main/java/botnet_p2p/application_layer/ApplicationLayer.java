@@ -26,6 +26,10 @@ public class ApplicationLayer {
         businessLogicLayer.start();
     }
 
+    public void startWithoutBootstrapping() {
+        businessLogicLayer.start();
+    }
+
 
     public void shutdown() {
         logger.info("closing");

@@ -96,7 +96,7 @@ public class SocketLayer extends Thread {
                         }
 
                         if (key.isReadable()) {
-                            logger.info("incoming message");
+                            logger.trace("incoming message");
                             messageReceiver.handleNewMessage(key.channel());
                         }
                     } catch (ConnectException e) {

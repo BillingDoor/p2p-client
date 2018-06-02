@@ -52,7 +52,7 @@ public class MessageLayer extends Thread {
                 Thread.currentThread().interrupt();
                 break;
             } catch (InvalidProtocolBufferException e) {
-                logger.trace("invalid message, ignoring");
+                logger.info("invalid message, ignoring");
             }
         }
         logger.info("closing - loop ended");

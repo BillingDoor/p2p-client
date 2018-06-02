@@ -96,7 +96,7 @@ public class BusinessLogicLayer extends Thread {
                 logger.info("decoded message:\n" + messsage.toString());
 
                 if (messsage.getSender() == null) {
-                    logger.trace("sender not defined in message, skipping");
+                    logger.info("sender not defined in message, skipping");
                     continue;
                 }
 
