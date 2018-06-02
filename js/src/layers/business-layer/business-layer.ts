@@ -9,6 +9,7 @@ export class BusinessLayer {
 
   constructor(private worker: P2PLayer, private me: Contact) {
     this.handleFindNodeMessage();
+    this.handleLeaveMessage();
     this.handlePingMessage();
     this.handlePingResponseMessage();
   }
@@ -27,6 +28,9 @@ export class BusinessLayer {
         this.pingNodes(),
         delay(60000),
         tap(() => {
+          this.pingedNodes.forEach((node) =>
+            this.worker.routingTable.removeNode(node)
+          );
           this.pingedNodes = [];
         })
       )
@@ -56,6 +60,18 @@ export class BusinessLayer {
           } else {
             throw new Error('Business layer: FindNode message not set.');
           }
+        })
+      )
+      .subscribe();
+  }
+
+  private handleLeaveMessage() {
+    this.worker
+      .on(Message.MessageType.LEAVE)
+      .pipe(
+        tap((msg) => {
+          const sender = checkSender(msg);
+          this.worker.routingTable.removeNode(Contact.from(sender));
         })
       )
       .subscribe();
