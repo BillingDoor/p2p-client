@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 
 import static botnet_p2p.MessageOuterClass.Message;
 
@@ -71,52 +72,39 @@ public class BusinessLogicLayer extends Thread {
 
     private void preBootstrapLoop() {
         long foundNodesStart = System.currentTimeMillis() + BOOTSTRAP_FOUND_NODES_RESPONSE_TIMEOUT * 1000;
+        long pingResponseStart = 0;
+        boolean pingsSent = false;
+        List<KademliaPeer> pingedNodes = new ArrayList<>();
+
         while (true) {
             if (System.currentTimeMillis() > foundNodesStart) {
                 logger.error("bootstrap node did not respond, timeout");
                 break;
             }
 
-            long pingResponseStart = 0;
-            boolean pingsSent = false;
-            List<KademliaPeer> pingedNodes = new ArrayList<>();
-
             try {
-                Message message = decodedMessagesQueue.take();
+                Message message = decodedMessagesQueue.poll(1, TimeUnit.SECONDS);
+                if(message == null) {
+                    continue;
+                }
                 logger.info("decoded message:\n" + message.toString());
-
-                KademliaPeer sender = KademliaPeer.fromContact(message.getSender());
-
 
                 switch (message.getType()) {
                     case FOUND_NODES:
+                        KademliaPeer sender = KademliaPeer.fromContact(message.getSender());
                         if (!sender.equalsTo(bootstrapNode)) {
                             logger.error("found nodes msg does not come from bootstrapNode");
-                            return;
+                            break;
                         }
-                        // bootstrapNode responded, adding it to routing table
-                        messageHandler.addToRoutingTable(sender);
-
-                        message.getFoundNodes().getNodesList().forEach(contact -> {
-                            if (!contact.getGuid().equals(me.getGuid())) {
-                                // pinging nodes that we got from bootstrapNode
-                                KademliaPeer peer = KademliaPeer.fromContact(contact);
-                                logger.info("pinging node: " + peer.getGuid());
-                                p2pLayer.ping(peer, me);
-                                pingedNodes.add(peer);
-                            }
-                        });
+                        messageHandler.handleFoundNodes(message, pingedNodes);
 
                         // wait for ping responses
                         pingsSent = true;
                         pingResponseStart = System.currentTimeMillis() + BOOTSTRAP_PING_RESPONSE_TIMEOUT * 1000;
                         logger.info("waiting for ping responses");
-
                         break;
                     case PING_RESPONSE:
-                        // peer responded, so it's alive - we can add it to routing table
-                        messageHandler.addToRoutingTable(sender);
-                        pingedNodes.remove(sender);
+                        messageHandler.handlePingResponse(message,pingedNodes);
                         break;
                     case PING:
                         messageHandler.handlePingMessage(message);

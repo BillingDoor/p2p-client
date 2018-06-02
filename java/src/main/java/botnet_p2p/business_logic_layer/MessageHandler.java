@@ -48,6 +48,30 @@ class MessageHandler {
         addToRoutingTable(sender);
     }
 
+    void handleFoundNodes(Message message, List<KademliaPeer> pingedNodes) {
+        // bootstrapNode responded, adding it to routing table
+        KademliaPeer sender = KademliaPeer.fromContact(message.getSender());
+        addToRoutingTable(sender);
+
+        message.getFoundNodes().getNodesList().forEach(contact -> {
+            if (!contact.getGuid().equals(me.getGuid())) {
+                // pinging nodes that we got from bootstrapNode
+                KademliaPeer peer = KademliaPeer.fromContact(contact);
+                logger.info("pinging node: " + peer.getGuid());
+                p2pLayer.ping(peer, me);
+                pingedNodes.add(peer);
+            }
+        });
+    }
+
+    void handlePingResponse(Message message, List<KademliaPeer> pingedNodes) {
+        // peer responded to ping, so it's alive - we can add it to routing table
+        KademliaPeer sender = KademliaPeer.fromContact(message.getSender());
+        addToRoutingTable(sender);
+
+        pingedNodes.remove(sender);
+    }
+
     void addToRoutingTable(KademliaPeer sender) {
         // add sender to routing table
         this.p2pLayer.addToRoutingTable(
