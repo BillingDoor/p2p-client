@@ -1,25 +1,13 @@
 package main
 
 import (
+	"github.com/lampo100/botnet_p2p/application_layer"
 	"os"
-	"os/signal"
-	"log"
-	"syscall"
+	"strconv"
 )
 
 func main() {
-	terminate := make(chan struct{})
-	log.Println("Botnet P2P booting...")
-	go exitHandler(terminate)
-	go clientRoutine(terminate)
-	serverRoutine(defaultPort, terminate)
-}
-
-func exitHandler(term chan struct{}) {
-	signalChannel := make(chan os.Signal, 3)
-	signal.Notify(signalChannel, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
-	<-signalChannel
-	close(term)
-	log.Println("Terminate signal received!")
-	//os.Exit(0)
+	listenPort, _ := strconv.Atoi(os.Args[1])
+	connectPort, _ := strconv.Atoi(os.Args[2])
+	application_layer.RunApplication(uint32(listenPort), uint32(connectPort))
 }
