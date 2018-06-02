@@ -48,4 +48,4 @@ function spawnNode(port: number) {
 // TODO: divide protobuf/utils into separate files
 // TODO: handle errors
 // * bootstrapNode not listening / not available
-
+// * wait on closing until all messages are sent

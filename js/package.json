@@ -14,13 +14,15 @@
   "dependencies": {
     "big-integer": "^1.6.30",
     "ramda": "^0.25.0",
-    "rxjs": "^6.2.0"
+    "rxjs": "^6.2.0",
+    "winston": "^3.0.0-rc6"
   },
   "devDependencies": {
     "@types/google-protobuf": "^3.2.7",
     "@types/jasmine": "^2.8.8",
     "@types/node": "^10.3.0",
     "@types/ramda": "github:types/npm-ramda#dist",
+    "@types/winston": "^2.3.9",
     "jasmine": "^3.1.0",
     "ts-loader": "^4.3.0",
     "ts-protoc-gen": "^0.7.3",

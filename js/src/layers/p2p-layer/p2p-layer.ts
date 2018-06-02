@@ -4,6 +4,7 @@ import { Address, Contact } from '@models';
 import { MessageLayer } from '@layers//message-layer/message-layer';
 import { Message } from '@protobuf/Message_pb';
 import * as utils from '@protobuf/utils';
+import logger from '@utils/logging';
 
 import { RoutingTable } from './routing-table/routing-table';
 
@@ -24,7 +25,7 @@ export class P2PLayer {
 
   findNode(config: { to: Address; guid: string }) {
     const { to, guid } = config;
-    console.log('P2P layer: Creating findNode message');
+    logger.info('P2P layer: Creating findNode message');
     this.worker.send(
       utils.prepareFindNodeMessage({
         node: guid,
@@ -36,7 +37,7 @@ export class P2PLayer {
 
   foundNodes(config: { to: Contact; nodes: Contact[] }) {
     const { to, nodes } = config;
-    console.log(`P2P layer: Creating foundNodes message:`, nodes);
+    logger.info(`P2P layer: Creating foundNodes message:`, nodes);
     this.worker.send(
       utils.prepareFoundNodesMessage({
         nodes: nodes.map(Contact.toMessageContact),
@@ -47,6 +48,7 @@ export class P2PLayer {
   }
 
   leave() {
+    logger.info('P2P layer: Creating leave messages');
     this.routingTable.getAllNodes().forEach((node) =>
       this.worker.send(
         utils.prepareBaseMessage({
@@ -59,7 +61,7 @@ export class P2PLayer {
   }
 
   ping(node: Contact) {
-    console.log('P2P layer: Creating ping message');
+    logger.info('P2P layer: Creating ping message');
     this.worker.send(
       utils.prepareBaseMessage({
         type: Message.MessageType.PING,
@@ -71,7 +73,7 @@ export class P2PLayer {
 
   pingResponse(config: { to: Contact }) {
     const { to } = config;
-    console.log('P2P layer: Creating pingResponse message');
+    logger.info('P2P layer: Creating pingResponse message');
     this.worker.send(
       utils.prepareBaseMessage({
         type: Message.MessageType.PING_RESPONSE,
