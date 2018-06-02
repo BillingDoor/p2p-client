@@ -30,6 +30,9 @@ func (b *Bucket) IndexOf(node Node) int {
 
 func (b *BucketList) Init(node Node) {
 	b.hostNode = node
+	b.bucketSize = 10
+	b.bucketsNumber = 64
+	b.buckets = make([]Bucket, b.bucketsNumber)
 }
 
 func (l *BucketList) Insert(node Node) {

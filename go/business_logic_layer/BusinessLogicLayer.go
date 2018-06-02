@@ -9,7 +9,7 @@ import (
 var myNode models.Node
 var pingedNodes []models.Node
 
-var MessagesChannel chan models.Message
+var messagesChannel chan models.Message
 var terminateChannel chan struct{}
 var hasTerminated chan struct{}
 var nextLayerTerminated chan struct{}
@@ -18,12 +18,13 @@ func InitLayer(port uint32, terminate chan struct{}, thisTerminated chan struct{
 	terminateChannel = terminate
 	hasTerminated = thisTerminated
 	nextLayerTerminated = make(chan struct{})
+	messagesChannel = make(chan models.Message)
 	node, err := generateSelfNode(port)
 	if err != nil {
 		return false, err
 	}
 	myNode = node
-	p2p_layer.InitLayer(myNode, MessagesChannel, terminateChannel, nextLayerTerminated)
+	p2p_layer.InitLayer(myNode, messagesChannel, terminateChannel, nextLayerTerminated)
 	go messageListener()
 	log.Println("[BL] Initialized")
 	return true, nil
@@ -32,7 +33,7 @@ func InitLayer(port uint32, terminate chan struct{}, thisTerminated chan struct{
 func messageListener() {
 	for {
 		select {
-		case msg := <-MessagesChannel:
+		case msg := <-messagesChannel:
 			log.Printf("[BL] Got message: %v", msg)
 			switch msg.Type {
 			case models.Message_FOUND_NODES:
@@ -58,7 +59,7 @@ func messageListener() {
 }
 
 func JoinNetwork(bootstrapNode models.Node) error {
-	err := p2p_layer.FindNode(bootstrapNode, myNode, myNode.Guid)
+	err := p2p_layer.FindNode(myNode, bootstrapNode, myNode.Guid)
 	if err != nil {
 		return err
 	}

@@ -56,12 +56,15 @@ func serverRoutine() {
 }
 
 func spawnConnection(conn net.Conn) {
-	buffer := make([]byte, 0, 12000)
+	defer conn.Close()
+	buffer := make([]byte, 12000)
 	n, err := conn.Read(buffer)
 	if err == io.EOF {
 		return
 	}
+	log.Printf("[SL] Received message of length %d\n", n)
 	incomingMessagesChannel <- buffer[:n]
+	log.Printf("[SL] Closing connection with %v\n", conn.RemoteAddr())
 }
 
 func Send(target models.Node, data []byte) error {
@@ -74,6 +77,7 @@ func Send(target models.Node, data []byte) error {
 	}
 	defer conn.Close()
 	log.Printf("[SL] Sending message to %v\n", target)
-	conn.Write(data)
-	return nil
+	n, err := conn.Write(data)
+	log.Printf("[SL] Sent %d bytes, closing connection with %v\n", n, conn.RemoteAddr())
+	return err
 }

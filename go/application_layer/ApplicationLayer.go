@@ -21,15 +21,14 @@ var bootstrapNode = models.Node{
 	IsNAT: false,
 }
 
-func RunApplication(port uint32) {
+func RunApplication(listenPort uint32, connectPort uint32) {
 	go interruptHandler()
-
-	business_logic_layer.InitLayer(port, terminateChannel, nextLayerTerminated)
-
+	business_logic_layer.InitLayer(listenPort, terminateChannel, nextLayerTerminated)
+	bootstrapNode.Port = connectPort
 	err := business_logic_layer.JoinNetwork(bootstrapNode)
 	if err != nil {
-		log.Printf("[AL] Could not join network, error: %v\n", err)
-		close(terminateChannel)
+		log.Printf("[AL] Could not join network, error: %v\nAssuming this is bootstrap node", err)
+
 	}
 	<-terminateChannel
 	<-nextLayerTerminated

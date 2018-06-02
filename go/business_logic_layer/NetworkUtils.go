@@ -1,26 +1,24 @@
 package business_logic_layer
 
 import (
-	"net/http"
-	"io/ioutil"
 	"net"
 	"log"
 )
 
 func getRemoteIP() (string, error) {
 	var remoteIP = "127.0.0.1"
-	response, err := http.Get("https://api.ipify.org")
-	if err != nil {
-		return remoteIP, err
-	}
-	defer response.Body.Close()
-	if response.StatusCode == http.StatusOK {
-		bodyBytes, err := ioutil.ReadAll(response.Body)
-		if err != nil {
-			return remoteIP, err
-		}
-		remoteIP = string(bodyBytes)
-	}
+	//response, err := http.Get("https://api.ipify.org")
+	//if err != nil {
+	//	return remoteIP, err
+	//}
+	//defer response.Body.Close()
+	//if response.StatusCode == http.StatusOK {
+	//	bodyBytes, err := ioutil.ReadAll(response.Body)
+	//	if err != nil {
+	//		return remoteIP, err
+	//	}
+	//	remoteIP = string(bodyBytes)
+	//}
 	return remoteIP, nil
 }
 

@@ -21,6 +21,7 @@ func InitLayer(selfNode models.Node, messChannel chan models.Message, terminate 
 	terminateChannel = terminate
 	hasTerminated = thisTerminated
 	nextLayerTerminated = make(chan struct{})
+	dataChannel = make(chan []byte)
 	socket_layer.InitLayer(myNode.Port, dataChannel, terminateChannel, nextLayerTerminated)
 	go messageRoutine()
 	log.Println("[ML] Initialized")
@@ -30,18 +31,21 @@ func messageRoutine() {
 	for {
 		select {
 		case data := <-dataChannel:
+			log.Printf("[ML] Decoding message\n")
 			var msg models.Message
 			err := proto.Unmarshal(data, &msg)
 			if err != nil {
 				log.Printf("[ML] Error decoding message: %v\n", err)
 				continue
 			}
+			log.Printf("[ML] Decoded message %v\n", msg)
 			messageChannel <- msg
 			break
 		case <-terminateChannel:
 			<-nextLayerTerminated
 			log.Println("[ML] Terminated")
 			hasTerminated <- struct{}{}
+			return
 		}
 	}
 }

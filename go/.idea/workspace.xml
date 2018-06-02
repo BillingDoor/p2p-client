@@ -11,23 +11,20 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="Main.go" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Main.go">
+      <file leaf-file-name="BucketList.go" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/models/BucketList.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="187">
-              <caret line="11" column="1" lean-forward="true" selection-start-line="11" selection-start-column="1" selection-end-line="11" selection-end-column="1" />
-              <folding>
-                <element signature="e#14#93#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="646">
+              <caret line="38" column="65" selection-start-line="38" selection-start-column="61" selection-end-line="38" selection-end-column="65" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ApplicationLayer.go" pinned="false" current-in-tab="true">
+      <file leaf-file-name="ApplicationLayer.go" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/application_layer/ApplicationLayer.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="391">
-              <caret line="30" column="11" selection-start-line="30" selection-start-column="11" selection-end-line="30" selection-end-column="11" />
+            <state relative-caret-position="374">
+              <caret line="29" column="91" selection-start-line="29" selection-start-column="91" selection-end-line="29" selection-end-column="91" />
             </state>
           </provider>
         </entry>
@@ -35,35 +32,17 @@
       <file leaf-file-name="BusinessLogicLayer.go" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/business_logic_layer/BusinessLogicLayer.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="629">
-              <caret line="62" column="18" lean-forward="true" selection-start-line="62" selection-start-column="18" selection-end-line="62" selection-end-column="18" />
+            <state relative-caret-position="765">
+              <caret line="85" column="46" selection-start-line="85" selection-start-column="40" selection-end-line="85" selection-end-column="46" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="P2PLayer.go" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/p2p_layer/P2PLayer.go">
+      <file leaf-file-name="NetworkUtils.go" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/business_logic_layer/NetworkUtils.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="723">
-              <caret line="56" lean-forward="true" selection-start-line="56" selection-end-line="56" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="MessageLayer.go" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/message_layer/MessageLayer.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-535">
-              <caret line="42" column="28" selection-start-line="42" selection-start-column="28" selection-end-line="42" selection-end-column="28" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="SocketLayer.go" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/socket_layer/SocketLayer.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="663">
-              <caret line="75" column="36" selection-start-line="75" selection-start-column="36" selection-end-line="75" selection-end-column="36" />
+            <state relative-caret-position="102">
+              <caret line="11" selection-start-line="11" selection-end-line="22" selection-end-column="7" />
             </state>
           </provider>
         </entry>
@@ -105,16 +84,18 @@
         <option value="$PROJECT_DIR$/BusinessLogicLayer.go" />
         <option value="$PROJECT_DIR$/BusinessLogicLayer/BusinessLogicLayer.go" />
         <option value="$PROJECT_DIR$/ApplicationLayer/ApplicationLayer.go" />
-        <option value="$PROJECT_DIR$/../../../Go/src/github.com/lampo100/botnet_p2p/application_layer/ApplicationLayer.go" />
         <option value="$PROJECT_DIR$/models/BucketList.go" />
         <option value="$PROJECT_DIR$/old_crap/Network.go" />
         <option value="$PROJECT_DIR$/models/Node.go" />
-        <option value="$PROJECT_DIR$/Main.go" />
-        <option value="$PROJECT_DIR$/message_layer/MessageLayer.go" />
-        <option value="$PROJECT_DIR$/socket_layer/SocketLayer.go" />
-        <option value="$PROJECT_DIR$/business_logic_layer/BusinessLogicLayer.go" />
         <option value="$PROJECT_DIR$/p2p_layer/P2PLayer.go" />
         <option value="$PROJECT_DIR$/application_layer/ApplicationLayer.go" />
+        <option value="$PROJECT_DIR$/../../../Go/src/github.com/lampo100/botnet_p2p/application_layer/ApplicationLayer.go" />
+        <option value="$PROJECT_DIR$/Main.go" />
+        <option value="$PROJECT_DIR$/message_layer/MessageLayer.go" />
+        <option value="$PROJECT_DIR$/business_logic_layer/BusinessLogicLayer.go" />
+        <option value="$PROJECT_DIR$/../../../Go/src/github.com/lampo100/botnet_p2p/models/BucketList.go" />
+        <option value="$PROJECT_DIR$/socket_layer/SocketLayer.go" />
+        <option value="$PROJECT_DIR$/business_logic_layer/NetworkUtils.go" />
       </list>
     </option>
   </component>
@@ -223,7 +204,7 @@
       <module name="go" />
       <working_directory value="$PROJECT_DIR$/" />
       <go_parameters value="-i" />
-      <parameters value="6666" />
+      <parameters value="6666 6666" />
       <kind value="DIRECTORY" />
       <filePath value="$PROJECT_DIR$/" />
       <directory value="$PROJECT_DIR$/" />
@@ -233,18 +214,18 @@
     <frame x="-8" y="-8" width="2576" height="1416" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.13515624" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.13515624" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
       <window_info anchor="right" id="Database" order="3" />
       <window_info anchor="bottom" id="Find" order="1" />
       <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="9" show_stripe_button="false" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.3289777" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.3289777" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Terminal" order="8" />
       <window_info id="Favorites" order="2" side_tool="true" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.39969254" />
+      <window_info anchor="bottom" id="Debug" order="3" visible="true" weight="0.39969254" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
@@ -271,26 +252,23 @@
           <url>file://$PROJECT_DIR$/old_crap/Kademlia.go</url>
           <option name="timeStamp" value="5" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/../../../Go/src/github.com/lampo100/botnet_p2p/models/BucketList.go</url>
+          <line>38</line>
+          <properties />
+          <option name="timeStamp" value="10" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/models/Node.go</url>
+          <line>25</line>
+          <properties />
+          <option name="timeStamp" value="11" />
+        </line-breakpoint>
       </breakpoints>
-      <option name="time" value="10" />
+      <option name="time" value="12" />
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/old_crap/Network.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2533">
-          <caret line="149" column="53" selection-start-line="149" selection-start-column="53" selection-end-line="149" selection-end-column="53" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/old_crap/Message.pb.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="13294">
-          <caret line="784" column="23" selection-start-line="784" selection-start-column="23" selection-end-line="784" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Globals.go" />
     <entry file="file://$PROJECT_DIR$/old_crap/Kademlia.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1479">
@@ -466,38 +444,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/business_logic_layer/NetworkUtils.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="68">
-          <caret line="9" column="5" selection-start-line="9" selection-start-column="5" selection-end-line="9" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../../Go/src/github.com/lampo100/botnet_p2p/application_layer/ApplicationLayer.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="14" column="55" selection-start-line="14" selection-start-column="55" selection-end-line="14" selection-end-column="55" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/models/BucketList.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="459">
-          <caret line="45" column="27" selection-start-line="45" selection-start-column="27" selection-end-line="45" selection-end-column="27" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../../../Go/src/github.com/lampo100/botnet_p2p/socket_layer/SocketLayer.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="576">
           <caret line="61" column="5" selection-start-line="61" selection-start-column="5" selection-end-line="61" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../../Go/src/github.com/lampo100/botnet_p2p/models/BucketList.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="525">
-          <caret line="56" column="23" lean-forward="true" selection-start-line="56" selection-start-column="23" selection-end-line="56" selection-end-column="23" />
         </state>
       </provider>
     </entry>
@@ -508,34 +458,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/models/Node.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="629">
-          <caret line="52" lean-forward="true" selection-start-line="52" selection-end-line="52" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../../Go/src/github.com/lampo100/botnet_p2p/p2p_layer/P2PLayer.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="425">
-          <caret line="29" column="20" selection-start-line="29" selection-start-column="20" selection-end-line="29" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../../Go/src/github.com/lampo100/botnet_p2p/business_logic_layer/BusinessLogicLayer.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="299">
-          <caret line="28" column="17" selection-start-line="28" selection-start-column="17" selection-end-line="28" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/old_crap/Network.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="680">
-          <caret line="52" column="34" lean-forward="true" selection-start-line="52" selection-start-column="34" selection-end-line="52" selection-end-column="34" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://D:/LIBS/Go/src/os/proc.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="187">
@@ -543,48 +465,125 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/socket_layer/SocketLayer.go">
+    <entry file="file://$PROJECT_DIR$/../../../Go/src/github.com/lampo100/botnet_p2p/application_layer/ApplicationLayer.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="663">
-          <caret line="75" column="36" selection-start-line="75" selection-start-column="36" selection-end-line="75" selection-end-column="36" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/message_layer/MessageLayer.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-535">
-          <caret line="42" column="28" selection-start-line="42" selection-start-column="28" selection-end-line="42" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/business_logic_layer/BusinessLogicLayer.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="629">
-          <caret line="62" column="18" lean-forward="true" selection-start-line="62" selection-start-column="18" selection-end-line="62" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/p2p_layer/P2PLayer.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="723">
-          <caret line="56" lean-forward="true" selection-start-line="56" selection-end-line="56" />
+        <state relative-caret-position="204">
+          <caret line="19" selection-start-line="19" selection-end-line="19" selection-end-column="23" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Main.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="11" column="1" lean-forward="true" selection-start-line="11" selection-start-column="1" selection-end-line="11" selection-end-column="1" />
+        <state relative-caret-position="204">
+          <caret line="12" column="1" lean-forward="true" selection-start-line="12" selection-start-column="1" selection-end-line="12" selection-end-column="1" />
           <folding>
             <element signature="e#14#93#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://D:/LIBS/Go/src/net/net.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="282">
+          <caret line="120" column="4" selection-start-line="120" selection-start-column="4" selection-end-line="120" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/old_crap/Network.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="111">
+          <caret line="15" column="32" selection-start-line="15" selection-start-column="27" selection-end-line="15" selection-end-column="32" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/message_layer/MessageLayer.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="476">
+          <caret line="33" column="48" selection-start-line="33" selection-start-column="48" selection-end-line="33" selection-end-column="48" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/p2p_layer/P2PLayer.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="221">
+          <caret line="17" column="38" selection-start-line="17" selection-start-column="24" selection-end-line="17" selection-end-column="38" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://D:/LIBS/Go/src/runtime/panic.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="244">
+          <caret line="27" selection-start-line="27" selection-end-line="27" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/socket_layer/SocketLayer.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="410">
+          <caret line="66" column="69" selection-start-line="66" selection-start-column="69" selection-end-line="66" selection-end-column="69" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../../Go/src/github.com/lampo100/botnet_p2p/p2p_layer/P2PLayer.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="569">
+          <caret line="51" selection-start-line="51" selection-end-line="51" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../../Go/src/github.com/lampo100/botnet_p2p/business_logic_layer/BusinessLogicLayer.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1598">
+          <caret line="98" column="48" selection-start-line="98" selection-start-column="48" selection-end-line="98" selection-end-column="48" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../../Go/src/github.com/lampo100/botnet_p2p/models/Node.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="442">
+          <caret line="29" selection-start-line="29" selection-end-line="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../../Go/src/github.com/lampo100/botnet_p2p/models/BucketList.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="159">
+          <caret line="38" selection-start-line="38" selection-end-line="38" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/Node.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="374">
+          <caret line="25" column="26" selection-start-line="25" selection-start-column="18" selection-end-line="25" selection-end-column="26" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/application_layer/ApplicationLayer.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="391">
-          <caret line="30" column="11" selection-start-line="30" selection-start-column="11" selection-end-line="30" selection-end-column="11" />
+        <state relative-caret-position="374">
+          <caret line="29" column="91" selection-start-line="29" selection-start-column="91" selection-end-line="29" selection-end-column="91" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/BucketList.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="646">
+          <caret line="38" column="65" selection-start-line="38" selection-start-column="61" selection-end-line="38" selection-end-column="65" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/business_logic_layer/BusinessLogicLayer.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="765">
+          <caret line="85" column="46" selection-start-line="85" selection-start-column="40" selection-end-line="85" selection-end-column="46" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/business_logic_layer/NetworkUtils.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="102">
+          <caret line="11" selection-start-line="11" selection-end-line="22" selection-end-column="7" />
         </state>
       </provider>
     </entry>
