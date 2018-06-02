@@ -4,6 +4,8 @@ import (
 	"github.com/lampo100/botnet_p2p/models"
 	"github.com/lampo100/botnet_p2p/p2p_layer"
 	"log"
+	"math/rand"
+	"time"
 )
 
 var myNode models.Node
@@ -15,6 +17,7 @@ var hasTerminated chan struct{}
 var nextLayerTerminated chan struct{}
 
 func InitLayer(port uint32, terminate chan struct{}, thisTerminated chan struct{}) (bool, error) {
+	rand.Seed(time.Now().UnixNano())
 	terminateChannel = terminate
 	hasTerminated = thisTerminated
 	nextLayerTerminated = make(chan struct{})
@@ -34,7 +37,6 @@ func messageListener() {
 	for {
 		select {
 		case msg := <-messagesChannel:
-			log.Printf("[BL] Got message: %v", msg)
 			switch msg.Type {
 			case models.Message_FOUND_NODES:
 				handleFoundNodes(msg)
@@ -68,12 +70,14 @@ func JoinNetwork(bootstrapNode models.Node) error {
 }
 
 func handleFoundNodes(msg models.Message) {
-	p2p_layer.AddNodeToRoutingTable(msg.Sender.ToNode())
 	foundNodesMsg := msg.GetFoundNodes().Nodes
 	foundNodes := make([]models.Node, 0, len(foundNodesMsg))
+	log.Printf("[BL] Got FoundNodes : %v\n", foundNodes)
+	p2p_layer.AddNodeToRoutingTable(msg.Sender.ToNode())
 	for _, f := range foundNodesMsg {
 		foundNodes = append(foundNodes, f.ToNode())
 	}
+
 	for _, node := range foundNodes {
 		log.Printf("[BL] Pinging node: %v", node.Guid)
 		p2p_layer.Ping(myNode, node)

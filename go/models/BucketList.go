@@ -1,6 +1,9 @@
 package models
 
-import "sort"
+import (
+	"sort"
+	"fmt"
+)
 
 type Bucket []Node
 type BucketList struct {
@@ -44,6 +47,7 @@ func (l *BucketList) Insert(node Node) {
 	if !bucket.Contains(node) {
 		bucket = append(bucket, node)
 	}
+	l.buckets[bucketNumber] = bucket
 }
 
 func (l *BucketList) Remove(node Node) {
@@ -70,4 +74,17 @@ func (l *BucketList) NearestNodes(targetUUID UUID, limit int) []Node {
 		return nodes[i].Guid < nodes[j].Guid
 	})
 	return nodes
+}
+
+func (l *BucketList) String() string {
+	str := ""
+	for idx, b := range l.buckets {
+		if len(b) != 0 {
+			str += fmt.Sprintf("Bucket %v, size %v:\n", idx, len(b))
+			for _, node := range b {
+				str += fmt.Sprintf("\t%v\n", node)
+			}
+		}
+	}
+	return str
 }

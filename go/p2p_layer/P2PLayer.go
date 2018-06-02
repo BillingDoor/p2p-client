@@ -4,6 +4,7 @@ import (
 	"github.com/lampo100/botnet_p2p/models"
 	"log"
 	"github.com/lampo100/botnet_p2p/message_layer"
+	"sync"
 )
 
 var routingTable models.BucketList
@@ -13,6 +14,7 @@ var myNode models.Node
 var terminateChannel chan struct{}
 var hasTerminated chan struct{}
 var nextLayerTerminated chan struct{}
+var mutex = &sync.Mutex{}
 
 func InitLayer(selfNode models.Node, messageChannel chan models.Message, terminate chan struct{}, thisTerminated chan struct{}) {
 	BBLMessageChannel = messageChannel
@@ -44,13 +46,24 @@ func FindNode(selfNode, targetNode models.Node, guid models.UUID) error {
 }
 
 func FoundNodes(selfNode, targetNode models.Node, guid models.UUID) error {
-	return message_layer.FoundNodes(selfNode, targetNode, routingTable.NearestNodes(guid, 100))
+	mutex.Lock()
+	nodes := routingTable.NearestNodes(guid, 100)
+	mutex.Unlock()
+	return message_layer.FoundNodes(selfNode, targetNode, nodes)
 }
 
 func AddNodeToRoutingTable(node models.Node) {
+	log.Printf("[P2] Adding node to RT: %v\n", node)
+	mutex.Lock()
 	routingTable.Insert(node)
+	mutex.Unlock()
+	log.Printf("[P2] RoutingTable:\n%v", routingTable.String())
 }
 
 func RemoveFromRoutingTable(node models.Node) {
+	log.Printf("[P2] Removing node to RT: %v\n", node)
+	mutex.Lock()
 	routingTable.Remove(node)
+	mutex.Unlock()
+	log.Printf("[P2] RoutingTable:\n%v", routingTable.String())
 }
