@@ -1,6 +1,19 @@
 import heapq
-import threading
+import asyncio
 import itertools
+import logging.handlers
+
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='%(name)s: %(message)s',
+)
+handler = logging.handlers.RotatingFileHandler(
+    "bl_log.txt",
+    maxBytes=65536,
+    backupCount=10
+)
+log = logging.getLogger(__name__)
+log.addHandler(handler)
 
 def largest_differing_bit(value1, value2):
     """
@@ -28,11 +41,11 @@ class BucketList(object):
         self.bucket_size = bucket_size
         self.buckets = [[] for i in range(buckets_number)]
         self.id = id
-        self.lock = threading.Lock()
+        self.lock = asyncio.Lock()
 
     def __len__(self):
         """
-        Returns ammount of nodes in bucketlist
+        Returns amount of nodes in bucketlist
         """
         return sum([len(bucket) for bucket in self.buckets])
 
@@ -42,36 +55,47 @@ class BucketList(object):
         """
         return peer in self.buckets[largest_differing_bit(self.id, peer.id)]
 
-    def __getitem__(self, id):
+    async def get(self, id):
         """
         Return Peer if in routing table. Otherwise None
         :param id: searched id
         :return: Found Peer or None
         """
-        with self.lock:
-            for peer in itertools.chain.from_iterable(self.buckets):
-                if peer.id == id:
-                    return peer
+        await self.lock.acquire()
+        for peer in itertools.chain.from_iterable(self.buckets):
+            if peer.id == id:
+                self.lock.release()
+                log.debug("Found node {!r}".format(peer.get_info()))
+                return peer
 
+        self.lock.release()
+        log.debug("Didn't find node of id {}".format(id))
         return None
 
-    def insert(self, peer):
+    async def insert(self, peer):
         """
         Insert peer into appropriate bucket
         :param peer: Peer to insert
         """
         if peer.id != self.id:
             bucket_number = largest_differing_bit(self.id, peer.id)
-            with self.lock:
-                bucket = self.buckets[bucket_number]
-                if len(bucket) >= self.bucket_size:
-                    bucket.pop(0)
-                if peer not in bucket:
-                    bucket.append(peer)
+            bucket = self.buckets[bucket_number]
 
-    def nearest_nodes(self, key, limit=None):
+            await self.lock.acquire()
+            if len(bucket) >= self.bucket_size:
+                log.debug("Bucket {!r} is full, popping first".format(bucket))
+                bucket.pop(0)
+            if peer not in bucket:
+                log.debug("Insert {!r} into bucket {!r}".format(peer.get_info(), bucket_number))
+                bucket.append(peer)
+            self.lock.release()
+
+    async def nearest_nodes(self, key, limit=None):
         num_results = limit if limit else self.bucket_size
-        with self.lock:
-            peers = [peer for bucket in self.buckets for peer in bucket]
-            best_peers = heapq.nsmallest(num_results, peers, lambda p: key ^ int(p.get_info()[2]))
+
+        await self.lock.acquire()
+        peers = [peer for bucket in self.buckets for peer in bucket]
+        best_peers = heapq.nsmallest(num_results, peers, lambda p: key ^ int(p.get_info()[2]))
+        self.lock.release()
+
         return best_peers

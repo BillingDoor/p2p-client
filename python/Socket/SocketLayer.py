@@ -1,5 +1,4 @@
 import socketserver
-from rx import Observer, Observable
 
 class Server(socketserver.ThreadingMixIn, socketserver.TCPServer):
     def __init__(self, server_address, request_handler_class, kademlia_node):
@@ -105,4 +104,17 @@ class RequestHandler(socketserver.BaseRequestHandler):
 
 class SocketLayer:
     def __init__(self):
-        self.server = Server(self.peer.address(), RequestHandler, self)
+        pass
+
+    async def add_layer_communication(self, higher=None, lower=None):
+        """
+        Adds means of communicating with lower and/or lower layer. Higher and lower should be a tuple of two objects
+        that support asynchronous communication using get() and put() method to pass along data.
+        :param higher: Tuple of two objects for communication with higher layer
+        :param lower: Tuple of two objects for communication with lower layer
+        """
+        if higher:
+            self._higher = higher
+
+        if lower:
+            self._lower = lower

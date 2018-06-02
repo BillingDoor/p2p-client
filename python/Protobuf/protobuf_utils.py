@@ -1,5 +1,6 @@
 import python.Protobuf.Message_pb2
-import python.peer
+import python.P2P.peer
+import random
 
 def create_find_node_message(sender_id, target_id, address, port):
     """
@@ -12,15 +13,16 @@ def create_find_node_message(sender_id, target_id, address, port):
     msg.type = msg.FIND_NODE
     return msg.SerializeToString()
 
-def create_ping_message(sender_id, address, port):
+def create_ping_message(sender, receiver):
     """
     Creates protobuf message of Ping type and returns it as a serialized string of bytes
-    :param sender_id: ID of source peer
-    :return: String message of bytes
+    :param sender: Sending Peer
+    :param receiver: Receiving Peer
+    :return: Ping Message
     """
-    msg = _prepare_base_message(sender_id, address, port)
+    msg = _prepare_base_message(sender, receiver)
     msg.type = msg.PING
-    return msg.SerializeToString()
+    return msg
 
 def create_find_value_message(sender_id, target_id, address, port):
     """
@@ -53,17 +55,25 @@ def create_found_nodes_message(sender_id, peers, address, port):
 
     return msg.SerializeToString()
 
-def _prepare_base_message(id, address, port):
+def _prepare_base_message(sender, receiver):
     """
-    Prepares base message that is the same in all types of messages
-    :param address:
-    :param port:
-    :param id: id of sender
-    :return: Prepared message
+    Prepare base for all other messages
+    :param sender: Peer of sender
+    :param receiver: Peer of receiver
+    :return: Message
     """
     msg = python.Protobuf.Message_pb2.Message()
-    msg.sender = address + ":" + str(port)
-    msg.uuid = id
+    msg.sender.guid = str(sender.id)
+    msg.sender.IP = sender.ip
+    msg.sender.port = sender.port
+    msg.sender.isNAT = sender.is_NAT
+
+    msg.receiver.guid = str(receiver.id)
+    msg.receiver.IP = receiver.ip
+    msg.receiver.port = receiver.port
+    msg.receiver.isNAT = receiver.is_NAT
+
+    msg.uuid = str(random.Random().getrandbits(32))
     return msg
 
 def read_message(message):
@@ -82,5 +92,5 @@ def get_peers_from_found_nodes_message(message):
     :param message: FOUND_NODES message
     :return: List containing Peers
     """
-    return [python.peer.Peer(node.IP, int(node.Port), node.guid, node.isNAT) for node in message.pFoundNodes.nodes]
+    return [python.P2P.peer.Peer(node.IP, int(node.Port), node.guid, node.isNAT) for node in message.pFoundNodes.nodes]
 

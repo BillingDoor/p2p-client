@@ -1,4 +1,4 @@
-from python.peer import Peer
+from python.P2P.peer import Peer
 from python.P2P.BucketList import BucketList, largest_differing_bit
 import python.protobuf_utils as putils
 import socketserver

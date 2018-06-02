@@ -10,34 +10,35 @@ message Message {
         NAT_REQUEST = 4;
         NAT_CHECK = 5;
         PING = 6;
-        LEAVE = 7;
-        FIND_NODE = 8;
-        FOUND_NODES = 9;
-        FIND_VALUE = 10;
+        PING_RESPONSE = 7;
+        LEAVE = 8;
+        FIND_NODE = 9;
+        FOUND_NODES = 10;
     }
+
     enum Status {
         FAIL = 0;
         OK = 1;
     }
 
-    message NodeDescription {
-        uint64 guid = 1;
+    message Contact {
+        string guid = 1;
         string IP = 2;
-        string Port = 3;
+        uint32 port = 3;
         bool isNAT = 4;
     }
 
-    message Command {
+    message CommandMsg {
         string commandString = 1;
         bool sendResponse = 2;
     }
 
-    message Response {
+    message ResponseMsg {
         string value = 1;
         Status status = 2;
     }
-    
-    message FileChunk {
+
+    message FileChunkMsg {
         string path = 1;
         bool name = 2;
         uint32 chunkNumber = 3;
@@ -46,46 +47,35 @@ message Message {
         bytes data = 6;
     }
 
-    message NATRequest {
-        uint64 target = 1;
+    message NATRequestMsg {
+        string guid = 1;
     }
 
-    message NATCheck {
-        uint64 source = 1;
+    message NATCheckMsg {
+        string guid = 1;
     }
 
-    message FindValue {
-        uint64 guid = 1;
+    message FindNodeMsg {
+        string guid = 1;
     }
 
-    message Leave {
-        uint64 guid = 1;
+    message FoundNodesMsg {
+        repeated Contact nodes = 1;
     }
-    
-    message FindNode {
-        uint64 guid = 1;
-    }
-    
-    message FoundNodes {
-        repeated NodeDescription nodes = 1;
-    }
-    
 
-    uint64 uuid = 1;
+    string uuid = 1;
     MessageType type = 2;
-    string sender = 3;
-    string receiver = 4;
+    Contact sender = 3;
+    Contact receiver = 4;
     bool propagation = 5;
     bytes signature = 6;
     oneof payload {
-        Command pCommand = 7;
-        Response pResponse = 8;
-        FileChunk pFile = 9;
-        NATRequest pNATRequest = 10;
-        NATCheck pNATCheck = 11;
-        Leave pLeave = 12;
-        FindNode pFindNode = 13;
-        FoundNodes pFoundNodes = 14;
-        FindValue pFindValue = 15;
+        CommandMsg command = 7;
+        ResponseMsg response = 8;
+        FileChunkMsg fileChunk = 9;
+        NATRequestMsg NATRequest = 10;
+        NATCheckMsg NATCheck = 11;
+        FindNodeMsg findNode = 13;
+        FoundNodesMsg foundNodes = 14;
     }
 }

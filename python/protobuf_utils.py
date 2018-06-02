@@ -1,5 +1,5 @@
 import python.Protobuf.Message_pb2
-import python.peer
+import python.P2P.peer
 
 def create_find_node_message(sender_id, target_id, address, port):
     """
@@ -82,5 +82,5 @@ def get_peers_from_found_nodes_message(message):
     :param message: FOUND_NODES message
     :return: List containing Peers
     """
-    return [python.peer.Peer(node.IP, int(node.Port), node.guid, node.isNAT) for node in message.pFoundNodes.nodes]
+    return [python.P2P.peer.Peer(node.IP, int(node.Port), node.guid, node.isNAT) for node in message.pFoundNodes.nodes]
 
