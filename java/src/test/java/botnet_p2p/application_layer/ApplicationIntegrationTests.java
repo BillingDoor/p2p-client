@@ -1,14 +1,11 @@
 package botnet_p2p.application_layer;
 
-import botnet_p2p.MessageOuterClass;
-import botnet_p2p.business_logic_layer.BusinessLogicLayer;
-import botnet_p2p.message_layer.MessageLayer;
 import botnet_p2p.model.KademliaPeer;
-import botnet_p2p.model.Peer;
-import botnet_p2p.p2p_layer.P2pLayer;
-import botnet_p2p.protobuf_layer.Protobuf;
-import botnet_p2p.socket_layer.SocketLayer;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -17,35 +14,38 @@ import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.ByteBuffer;
-import java.util.Arrays;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.LinkedBlockingQueue;
 
 import static botnet_p2p.MessageOuterClass.Message;
-import static java.lang.Thread.sleep;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.StringContains.containsString;
 import static org.junit.Assert.assertEquals;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = {Config.class})
+public class ApplicationIntegrationTests {
 
-public class ApplicationLayerTest {
+
     private static final String SERVER_HOST = "127.0.0.1";
     private static final int SERVER_PORT = 3000;
     private final KademliaPeer me = new KademliaPeer(SERVER_HOST, SERVER_PORT);
 
+    @Autowired
+    private ApplicationLayer app;
 
+/*
     @Test
     public void bootstrapTest() throws IOException, InterruptedException {
 
         new Thread(() -> {
             try {
                 // start node
-                ApplicationLayer applicationLayer = buildApplicationLayer();
+                ApplicationLayer applicationLayer = this.app;
 
                 sleep(500);
                 Peer boostrapNode = new Peer("127.0.0.1", 123);
                 applicationLayer.launchClient(boostrapNode);
 
-            } catch (IOException | InterruptedException e) {
+            } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }).start();
@@ -104,25 +104,56 @@ public class ApplicationLayerTest {
 
         assertEquals(receivedMessage.getType(), Message.MessageType.PING_RESPONSE);
     }
+*/
+
+    @Test
+    public void executeCommandTest() throws IOException, InterruptedException {
+
+        new Thread(() -> {
+            // start node
+            ApplicationLayer applicationLayer = this.app;
+            applicationLayer.startWithoutBootstrapping();
+        }).start();
 
 
+        // socket that sends command
+        Socket socket = new Socket();
+        socket.connect(new InetSocketAddress(SERVER_HOST, SERVER_PORT));
+        BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(socket.getOutputStream());
 
-    private ApplicationLayer buildApplicationLayer() throws InterruptedException, IOException {
-        BlockingQueue<ByteBuffer> receivedMessages = new LinkedBlockingQueue<>(); // coming from the world
-        BlockingQueue<MessageOuterClass.Message> decodedMessages = new LinkedBlockingQueue<>(); // coming from the world, decoded
-        CountDownLatch initLatch = new CountDownLatch(1);
+        // initialize test peer and send message
+        Message message = Message.newBuilder()
+                .setType(Message.MessageType.COMMAND)
+                .setSender(
+                        Message.Contact.newBuilder()
+                                .setIP("127.0.0.1")
+                                .setPort(1234)
+                                .build()
+                )
+                .setCommand(
+                        Message.CommandMsg.newBuilder()
+                                .setCommandString("dir")
+                ).build();
+        message.writeTo(bufferedOutputStream);
+        bufferedOutputStream.flush();
 
-        SocketLayer socketLayer = new SocketLayer(receivedMessages, initLatch, me.getPort());
-        socketLayer.start();
-        initLatch.await();
 
-        MessageLayer messageLayer = new MessageLayer(socketLayer, receivedMessages, decodedMessages);
-        messageLayer.start();
+        // wait for connection from node
+        ServerSocket serverSocket = new ServerSocket();
+        serverSocket.bind(new InetSocketAddress("127.0.0.1", 1234));
+        Socket socketRec = serverSocket.accept();
 
-        P2pLayer p2pLayer = new P2pLayer(messageLayer, decodedMessages, me);
 
-        BusinessLogicLayer businessLogicLayer = new BusinessLogicLayer(p2pLayer, me);
+        // receive data
+        BufferedInputStream bufferedInputStream = new BufferedInputStream(socketRec.getInputStream());
+        byte[] buffer = new byte[2048];
+        int read = bufferedInputStream.read(buffer);
+        ByteBuffer messageBuffer = ByteBuffer.wrap(buffer, 0, read);
+        Message receivedMessage = Message.parseFrom(messageBuffer);
 
-        return new ApplicationLayer(businessLogicLayer);
+        // check message
+        assertEquals(receivedMessage.getType(), Message.MessageType.RESPONSE);
+        assertEquals(Message.Status.OK, receivedMessage.getResponse().getStatus());
+        assertThat(receivedMessage.getResponse().getValue(), containsString("Volume in drive"));
     }
 }

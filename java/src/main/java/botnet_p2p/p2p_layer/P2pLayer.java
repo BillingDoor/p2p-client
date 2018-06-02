@@ -81,6 +81,14 @@ public class P2pLayer {
                 ));
     }
 
+    public void commandResponse(KademliaPeer destination, KademliaPeer me, String response, boolean success) {
+        messageLayer.send(
+                new Communication<>(
+                        Protobuf.createCommandReponseMessage(destination, me, response, success),
+                        destination.toPeer()
+                ));
+    }
+
     public void addToRoutingTable(KademliaPeer peer) {
         this.routingTable.insert(peer);
     }
@@ -102,6 +110,5 @@ public class P2pLayer {
         logger.info("closing");
         this.messageLayer.shutdown();
     }
-
 
 }

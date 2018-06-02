@@ -28,24 +28,24 @@ public class BusinessLogicLayer extends Thread {
     private BotMessageHandler botMessageHandler;
     private Semaphore bootstrapFinish;
 
-    public BusinessLogicLayer(P2pLayer p2pLayer, KademliaPeer me, KadMessageHandler kadMessageHandler) {
+    public BusinessLogicLayer(P2pLayer p2pLayer, KademliaPeer me, KadMessageHandler kadMessageHandler, BotMessageHandler botMessageHandler) {
         this.p2pLayer = p2pLayer;
         this.me = me;
 
         decodedMessagesQueue = p2pLayer.getDecodedMessagesQueue();
         this.kadMessageHandler = kadMessageHandler;
-        this.botMessageHandler = new BotMessageHandler();
+        this.botMessageHandler = botMessageHandler;
         this.bootstrapFinish = new Semaphore(0);
         logger.info("Hi, I'm " + me.toString());
     }
 
-    public BusinessLogicLayer(P2pLayer p2pLayer, KademliaPeer me) {
+    public BusinessLogicLayer(P2pLayer p2pLayer, KademliaPeer me, BotMessageHandler botMessageHandler) {
         this.p2pLayer = p2pLayer;
         this.me = me;
 
         decodedMessagesQueue = p2pLayer.getDecodedMessagesQueue();
+        this.botMessageHandler = botMessageHandler;
         this.kadMessageHandler = new KadMessageHandler(p2pLayer, me);
-        this.botMessageHandler = new BotMessageHandler();
         this.bootstrapFinish = new Semaphore(0);
     }
 

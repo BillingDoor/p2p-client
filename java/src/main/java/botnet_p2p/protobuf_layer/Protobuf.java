@@ -95,6 +95,20 @@ public class Protobuf {
                 .build();
     }
 
+    public static Message createCommandReponseMessage(KademliaPeer destination,
+                                                      KademliaPeer me,
+                                                      String response,
+                                                      boolean success) {
+        return createBaseMessage(me, destination)
+                .setType(Message.MessageType.RESPONSE)
+                .setResponse(
+                        Message.ResponseMsg.newBuilder()
+                                .setValue(response)
+                                .setStatus(success ? Message.Status.OK : Message.Status.FAIL)
+                                .build())
+                .build();
+    }
+
     private static Message.Contact kademliaPeerToContact(KademliaPeer peer) {
         return Message.Contact.newBuilder()
                 .setGuid(peer.getGuid())
@@ -103,6 +117,5 @@ public class Protobuf {
                 .setPort(peer.getPort())
                 .build();
     }
-
 
 }
