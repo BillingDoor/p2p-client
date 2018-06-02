@@ -26,14 +26,7 @@ class P2PLayer:
         self.lower_layer = lower_layer
         self.log = logging.getLogger(__name__)
 
-        #create peer containing info about this node
-        local_random = random.Random()
-        local_random.seed(int(''.join(address.split('.'))) * int(port))
-        if id is None:
-            id = local_random.getrandbits(64)
-
         self._this_peer = Peer(id, address, port)
-
         self._routing_table = BucketList(bucket_size=5, buckets_number=64, id=self._this_peer.id)
 
     async def add_layer_communication(self, higher, lower):
@@ -53,25 +46,23 @@ class P2PLayer:
         try:
             while True:
                 log.debug("P2P: Waiting for message from lower layer")
-                message = await self._lower[0].get_peer_by_id()
+                message = await self._lower[0].get()
                 log.debug("P2P: Got message {!r}, sending it to higher layer".format(message))
                 await self._higher[1].put(message)
                 log.debug("P2P: Message {!r} sent to the higher layer".format(message))
         except asyncio.CancelledError:
             log.debug("P2P: Caught CancelledError: Stop handling input from lower layer")
-            raise
 
     async def _handle_higher_input(self):
         try:
             while True:
                 log.debug("P2P: Waiting for message from higher layer")
-                message = await self._higher[0].get_peer_by_id()
+                message = await self._higher[0].get()
                 log.debug("P2P: Got message {!r}, sending it to lower layer".format(message))
                 await self._lower[1].put(message)
                 log.debug("P2P: Message {!r} sent to the lower layer".format(message))
         except asyncio.CancelledError:
             log.debug("P2P: Caught CancelledError: Stop handling input from higher layer")
-            raise
 
 
     def get_myself(self):

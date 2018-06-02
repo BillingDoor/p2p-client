@@ -62,40 +62,42 @@ class BucketList(object):
         :return: Found Peer or None
         """
         await self.lock.acquire()
+        found_peer = None
         for peer in itertools.chain.from_iterable(self.buckets):
             if peer.id == id:
-                self.lock.release()
                 log.debug("Found node {!r}".format(peer.get_info()))
-                return peer
+                found_peer = peer
 
         self.lock.release()
-        log.debug("Didn't find node of id {}".format(id))
-        return None
+        if found_peer is None:
+            log.debug("Didn't find node of id {}".format(id))
+
+        return found_peer
 
     async def insert(self, peer):
         """
         Insert peer into appropriate bucket
         :param peer: Peer to insert
         """
-        if peer.id != self.id:
-            bucket_number = largest_differing_bit(self.id, peer.id)
-            bucket = self.buckets[bucket_number]
+        if peer.id == self.id:
+            return
 
-            await self.lock.acquire()
-            if len(bucket) >= self.bucket_size:
-                log.debug("Bucket {!r} is full, popping first".format(bucket))
-                bucket.pop(0)
-            if peer not in bucket:
-                log.debug("Insert {!r} into bucket {!r}".format(peer.get_info(), bucket_number))
-                bucket.append(peer)
-            self.lock.release()
+        bucket_number = largest_differing_bit(self.id, peer.id)
+        bucket = self.buckets[bucket_number]
+
+        await self.lock.acquire()
+        if len(bucket) >= self.bucket_size:
+            log.debug("Bucket {!r} is full".format(bucket))
+        if peer not in bucket:
+            log.debug("Insert {!r} into bucket {!r}".format(peer.get_info(), bucket_number))
+            bucket.append(peer)
+        self.lock.release()
 
     async def nearest_nodes(self, key, limit=None):
         num_results = limit if limit else self.bucket_size
 
         await self.lock.acquire()
         peers = [peer for bucket in self.buckets for peer in bucket]
-        best_peers = heapq.nsmallest(num_results, peers, lambda p: key ^ int(p.get_info()[2]))
         self.lock.release()
-
+        best_peers = heapq.nsmallest(num_results, peers, lambda p: key ^ int(p.get_info()[2]))
         return best_peers
