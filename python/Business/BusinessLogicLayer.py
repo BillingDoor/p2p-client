@@ -27,7 +27,7 @@ class BusinessLogicLayer:
         :return: SUCCESS or ERROR
         """
         sender = await self.lower_layer.get_myself()
-        receiver = await self.lower_layer.get_peer(target_id)
+        receiver = await self.lower_layer.get_peer_by_id(target_id)
         message = putils.create_ping_message()
 
     async def join_network(self, bootstrap_node):

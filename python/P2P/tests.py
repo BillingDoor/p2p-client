@@ -62,7 +62,7 @@ class P2PTest(unittest.TestCase):
         peer = Peer(1, "127.33.21.22", 3233, False)
         _run(self.p2pl._routing_table.insert(peer))
 
-        peer = _run(self.p2pl.get_peer(1))
+        peer = _run(self.p2pl.get_peer_by_id(1))
         self.assertEqual(peer.id, 1)
         self.assertEqual(peer.ip, "127.33.21.22")
         self.assertEqual(peer.port, 3233)

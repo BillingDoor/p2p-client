@@ -23,11 +23,11 @@ def largest_differing_bit(value1, value2):
     :return: index(from 0 to 127) of largest differing bit.
     """
     distance = value1 ^ value2
-    length = -1
+    length = 0
     while (distance):
         distance >>= 1
         length += 1
-    return max(0, length)
+    return length
 
 class BucketList(object):
     """
@@ -55,7 +55,7 @@ class BucketList(object):
         """
         return peer in self.buckets[largest_differing_bit(self.id, peer.id)]
 
-    async def get(self, id):
+    async def get_peer_by_id(self, id):
         """
         Return Peer if in routing table. Otherwise None
         :param id: searched id
