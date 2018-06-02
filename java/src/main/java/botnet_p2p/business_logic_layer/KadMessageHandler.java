@@ -10,13 +10,13 @@ import java.util.List;
 import static botnet_p2p.MessageOuterClass.Message;
 
 
-class MessageHandler {
-    private static final Logger logger = LogManager.getLogger(MessageHandler.class);
+class KadMessageHandler {
+    private static final Logger logger = LogManager.getLogger(KadMessageHandler.class);
 
     private P2pLayer p2pLayer;
     private KademliaPeer me;
 
-    public MessageHandler(P2pLayer p2pLayer, KademliaPeer me) {
+    public KadMessageHandler(P2pLayer p2pLayer, KademliaPeer me) {
         this.p2pLayer = p2pLayer;
         this.me = me;
     }

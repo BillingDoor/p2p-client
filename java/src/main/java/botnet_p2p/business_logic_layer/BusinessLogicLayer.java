@@ -24,15 +24,28 @@ public class BusinessLogicLayer extends Thread {
     private KademliaPeer me;
     private Peer bootstrapNode;
     private BlockingQueue<Message> decodedMessagesQueue;
-    private MessageHandler messageHandler;
+    private KadMessageHandler kadMessageHandler;
+    private BotMessageHandler botMessageHandler;
     private Semaphore bootstrapFinish;
+
+    public BusinessLogicLayer(P2pLayer p2pLayer, KademliaPeer me, KadMessageHandler kadMessageHandler) {
+        this.p2pLayer = p2pLayer;
+        this.me = me;
+
+        decodedMessagesQueue = p2pLayer.getDecodedMessagesQueue();
+        this.kadMessageHandler = kadMessageHandler;
+        this.botMessageHandler = new BotMessageHandler();
+        this.bootstrapFinish = new Semaphore(0);
+        logger.info("Hi, I'm " + me.toString());
+    }
 
     public BusinessLogicLayer(P2pLayer p2pLayer, KademliaPeer me) {
         this.p2pLayer = p2pLayer;
         this.me = me;
 
         decodedMessagesQueue = p2pLayer.getDecodedMessagesQueue();
-        this.messageHandler = new MessageHandler(p2pLayer, me);
+        this.kadMessageHandler = new KadMessageHandler(p2pLayer, me);
+        this.botMessageHandler = new BotMessageHandler();
         this.bootstrapFinish = new Semaphore(0);
     }
 
@@ -52,6 +65,10 @@ public class BusinessLogicLayer extends Thread {
     public void createNetwork() {
         this.doBootstrap = false;
         this.start();
+    }
+
+    public void sendFileTo() {
+
     }
 
 
@@ -84,7 +101,7 @@ public class BusinessLogicLayer extends Thread {
 
             try {
                 Message message = decodedMessagesQueue.poll(1, TimeUnit.SECONDS);
-                if(message == null) {
+                if (message == null) {
                     continue;
                 }
                 logger.info("decoded message:\n" + message.toString());
@@ -96,7 +113,7 @@ public class BusinessLogicLayer extends Thread {
                             logger.error("found nodes msg does not come from bootstrapNode");
                             break;
                         }
-                        messageHandler.handleFoundNodes(message, pingedNodes);
+                        kadMessageHandler.handleFoundNodes(message, pingedNodes);
 
                         // wait for ping responses
                         pingsSent = true;
@@ -104,10 +121,10 @@ public class BusinessLogicLayer extends Thread {
                         logger.info("waiting for ping responses");
                         break;
                     case PING_RESPONSE:
-                        messageHandler.handlePingResponse(message,pingedNodes);
+                        kadMessageHandler.handlePingResponse(message, pingedNodes);
                         break;
                     case PING:
-                        messageHandler.handlePingMessage(message);
+                        kadMessageHandler.handlePingMessage(message);
                         break;
                     default:
                         logger.error("unsupported message type:" + message.getType());
@@ -140,13 +157,16 @@ public class BusinessLogicLayer extends Thread {
 
                 switch (messsage.getType()) {
                     case PING:
-                        messageHandler.handlePingMessage(messsage);
+                        kadMessageHandler.handlePingMessage(messsage);
                         break;
                     case FIND_NODE:
-                        messageHandler.handleFindNode(messsage);
+                        kadMessageHandler.handleFindNode(messsage);
                         break;
                     case LEAVE:
-                        messageHandler.handleLeaveMessage(messsage);
+                        kadMessageHandler.handleLeaveMessage(messsage);
+                        break;
+                    case COMMAND:
+                        botMessageHandler.handleCommandMessage(messsage);
                         break;
                     default:
                         logger.error("unsupported message type:" + messsage.getType());
