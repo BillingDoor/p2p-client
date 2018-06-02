@@ -19,13 +19,18 @@ const bootstrapNode = spawnNode(1337);
 
 const decoder = new StringDecoder('utf8');
 
+process.stdout.write('> ');
+
 process.stdin.on('data', function(input: Buffer) {
   const text = decoder.write(input).trim();
 
   if (text == 'close') {
+    process.stdout.write('Closing application...\n');
     bootstrapNode.close();
-//    nodes.forEach((node) => node.close());
-    process.exit();
+    // nodes.forEach((node) => node.close());
+    // process.exit();
+  } else {
+    process.stdout.write('> ');
   }
 });
 
