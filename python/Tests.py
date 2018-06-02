@@ -35,7 +35,7 @@ class TestMessaging(unittest.TestCase):
         sock.send(msg)
 
         response = sock.recv(12000)
-        message = putils.read_message(response)
+        message = putils.decode_message(response)
         sock.close()
 
         # Dunno how to do other way

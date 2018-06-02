@@ -20,6 +20,8 @@ handler = logging.handlers.RotatingFileHandler(
 )
 log = logging.getLogger(__name__)
 log.addHandler(handler)
+formatter = logging.Formatter('%(name)s: %(message)s')
+handler.formatter = formatter
 
 class P2PLayer:
     def __init__(self, lower_layer, address, port, id = None):
@@ -45,24 +47,24 @@ class P2PLayer:
     async def _handle_lower_input(self):
         try:
             while True:
-                log.debug("P2P: Waiting for message from lower layer")
+                log.debug("Waiting for message from lower layer")
                 message = await self._lower[0].get()
-                log.debug("P2P: Got message {!r}, sending it to higher layer".format(message))
+                log.debug("Got message {!r}, sending it to higher layer".format(message))
                 await self._higher[1].put(message)
-                log.debug("P2P: Message {!r} sent to the higher layer".format(message))
+                log.debug("Message {!r} sent to the higher layer".format(message))
         except asyncio.CancelledError:
-            log.debug("P2P: Caught CancelledError: Stop handling input from lower layer")
+            log.debug("Caught CancelledError: Stop handling input from lower layer")
 
     async def _handle_higher_input(self):
         try:
             while True:
-                log.debug("P2P: Waiting for message from higher layer")
+                log.debug("Waiting for message from higher layer")
                 message = await self._higher[0].get()
-                log.debug("P2P: Got message {!r}, sending it to lower layer".format(message))
+                log.debug("Got message {!r}, sending it to lower layer".format(message))
                 await self._lower[1].put(message)
-                log.debug("P2P: Message {!r} sent to the lower layer".format(message))
+                log.debug("Message {!r} sent to the lower layer".format(message))
         except asyncio.CancelledError:
-            log.debug("P2P: Caught CancelledError: Stop handling input from higher layer")
+            log.debug("Caught CancelledError: Stop handling input from higher layer")
 
 
     def get_myself(self):
@@ -95,10 +97,10 @@ class P2PLayer:
         self.log.debug("Putting message to Queue {!r}".format(self._lower[1]))
         try:
             await self._lower[1].put(message)
-            self.log.debug("P2P: Message {} put into Queue {}".format(message, self._lower[1]))
+            self.log.debug("Message {} put into Queue {}".format(message, self._lower[1]))
             return StatusMessage.SUCCESS
         except asyncio.CancelledError:
-            self.log.debug("P2P: Message {} has not been put onto {} because CancelledError was caught".format(
+            self.log.debug("Message {} has not been put onto {} because CancelledError was caught".format(
                 message,
                 self._lower[1]
             ))

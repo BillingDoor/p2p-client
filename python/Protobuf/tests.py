@@ -27,7 +27,13 @@ class ProtobufTest(unittest.TestCase):
         mess = putils.create_ping_message(self.sender, self.receiver)
         self.assertEqual(mess.type, Message.PING)
 
+    def test_encoding_and_decoding(self):
+        mess = putils.create_ping_message(self.sender, self.receiver)
+        self.assertEqual(putils.deserialize_message(putils.serialize_message(mess)), mess)
 
+    def test_get_receiver_address(self):
+        mess = putils.create_ping_message(self.sender, self.receiver)
+        self.assertEqual((self.receiver.ip, self.receiver.port), putils.get_receiver_address(mess))
 
 if __name__ == '__main__':
     unittest.main()

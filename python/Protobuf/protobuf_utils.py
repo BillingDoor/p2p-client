@@ -76,15 +76,34 @@ def _prepare_base_message(sender, receiver):
     msg.uuid = str(random.Random().getrandbits(32))
     return msg
 
-def read_message(message):
+def deserialize_message(message):
     """
-    Takes string containing protobuf message serialized to string of bytes and returns decoded message.
+    Takes string containing protobuf message serialized to string of bytes and returns deserialized message.
     :param message: String containing serialized message
     :return: Message object
     """
     msg = python.Protobuf.Message_pb2.Message()
     msg.ParseFromString(message)
     return msg
+
+def serialize_message(message):
+    """
+    Takes instance of Message class and serializes it to string of bytes.
+    :param message: Message to serialize
+    :return: Serialized message
+    """
+    return message.SerializeToString()
+
+def get_receiver_address(message):
+    """
+    Returns receiver address from message
+    :param message: message to get info from
+    :return: address: (ip, port)
+    """
+    ip = message.receiver.IP
+    port = message.receiver.port
+    return ip, port
+
 
 def get_peers_from_found_nodes_message(message):
     """

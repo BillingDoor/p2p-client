@@ -7,6 +7,7 @@ from python.P2P.P2PLayer import P2PLayer
 from python.Message.MessageLayer import MessageLayer
 from python.StatusMessage import StatusMessage
 from python.P2P.peer import Peer
+from python.Protobuf.Message_pb2 import Message
 
 def _run(cor):
     return asyncio.get_event_loop().run_until_complete(cor)
@@ -47,6 +48,12 @@ class P2PTest(unittest.TestCase):
         _run(self.p2pl._routing_table.insert(peer))
         status = _run(self.p2pl.ping(2))
         self.assertIs(status, StatusMessage.SUCCESS)
+        message = _run(self.lower[1].get())
+        self.assertIsInstance(message, Message)
+
+        ping_message = putils.create_ping_message(self.p2pl.get_myself(), peer)
+        ping_message.uuid = message.uuid
+        self.assertEqual(message, ping_message)
 
         status = _run(self.p2pl.ping(33))
         self.assertIs(status, StatusMessage.FAILURE)

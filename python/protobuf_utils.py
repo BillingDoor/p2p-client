@@ -66,7 +66,7 @@ def _prepare_base_message(id, address, port):
     msg.uuid = id
     return msg
 
-def read_message(message):
+def decode_message(message):
     """
     Takes string containing protobuf message serialized to string of bytes and returns decoded message.
     :param message: String containing serialized message

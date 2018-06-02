@@ -14,7 +14,7 @@ class RequestHandler(socketserver.BaseRequestHandler):
     def handle(self):
         # self.request is the TCP socket connected to the client
         data = self.request.recv(12000)
-        message = putils.read_message(data)
+        message = putils.decode_message(data)
         """
         UNDEFINED = 0;
         COMMAND = 1;
