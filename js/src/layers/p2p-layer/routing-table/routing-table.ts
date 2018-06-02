@@ -41,6 +41,10 @@ export class RoutingTable {
     this.buckets[bucket] = reject(equals(node), this.buckets[bucket]);
   }
 
+  getAllNodes(): Contact[] {
+    return flatten(this.buckets);
+  }
+
   getNodeByGUID(guid: string): Contact | undefined {
     return find(propEq('guid', guid), this.buckets[this.selectBucket(guid)]);
   }

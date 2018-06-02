@@ -36,6 +36,7 @@ export class BusinessLayer {
   }
 
   close() {
+    this.worker.leave();
     this.worker.close();
   }
 
