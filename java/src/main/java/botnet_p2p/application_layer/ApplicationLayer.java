@@ -5,6 +5,8 @@ import botnet_p2p.model.Peer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.Scanner;
+
 public class ApplicationLayer {
     private static final Logger logger = LogManager.getLogger(ApplicationLayer.class);
 
@@ -39,10 +41,16 @@ public class ApplicationLayer {
     }
 
     private void readCommands() {
+        Scanner scanner = new Scanner(System.in);
+
         while (true) {
-            String command = System.console().readLine();
-            if("p".equals(command)) {
-                this.printRoutingTable();
+            try {
+                String command = scanner.nextLine();
+                if ("p".equals(command)) {
+                    this.printRoutingTable();
+                }
+            } catch(Exception ignored) {
+
             }
         }
     }
