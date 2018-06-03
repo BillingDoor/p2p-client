@@ -4,6 +4,7 @@ import python.Protobuf.protobuf_utils as putils
 import logging.handlers
 from python.StatusMessage import StatusMessage
 from python.Socket.Server import run_server
+from python.Socket.Client import client
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -48,7 +49,10 @@ class SocketLayer:
         :param message: message to send
         :return: SUCCESS or FAILURE
         """
-        return StatusMessage.FAILURE
+        peer_address = message[1]
+        serialized_message = message[0]
+        status = await client(peer_address, serialized_message)
+        return status
 
     def start_server(self, ip, port):
         self.stop_server_event = threading.Event()
@@ -60,6 +64,16 @@ class SocketLayer:
         self.server_thread.start()
         log.debug("Started server thread")
         self.server_monitor = asyncio.ensure_future(self._monitor_server_thread())
+
+    async def stop_server(self):
+        if self.server_monitor:
+            self.server_monitor.cancel()
+            status = await self.server_monitor
+            self.server_monitor = None
+            return status
+        else:
+            log.warning("Cannot stop the server because it is not running")
+            return StatusMessage.FAILURE
 
     async def _monitor_server_thread(self):
         """
@@ -86,13 +100,4 @@ class SocketLayer:
         """
         Last resort function to kill the server
         """
-
-    async def stop_server(self):
-        if self.server_monitor:
-            self.server_monitor.cancel()
-            status = await self.server_monitor
-            self.server_monitor = None
-            return status
-        else:
-            log.warning("Cannot stop the server because it is not running")
-            return StatusMessage.FAILURE
+        return StatusMessage.FAILURE
