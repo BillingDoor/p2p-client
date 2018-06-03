@@ -16,8 +16,7 @@ import java.net.Socket;
 import java.nio.ByteBuffer;
 
 import static botnet_p2p.MessageOuterClass.Message;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.StringContains.containsString;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -133,6 +132,7 @@ public class ApplicationIntegrationTests {
                 .setCommand(
                         Message.CommandMsg.newBuilder()
                                 .setCommandString("dir")
+                                .setSendResponse(true)
                 ).build();
         message.writeTo(bufferedOutputStream);
         bufferedOutputStream.flush();
@@ -154,6 +154,6 @@ public class ApplicationIntegrationTests {
         // check message
         assertEquals(receivedMessage.getType(), Message.MessageType.RESPONSE);
         assertEquals(Message.Status.OK, receivedMessage.getResponse().getStatus());
-        assertThat(receivedMessage.getResponse().getValue(), containsString("Volume in drive"));
+        assertThat(receivedMessage.getResponse().getValue()).contains("Volume in drive");
     }
 }

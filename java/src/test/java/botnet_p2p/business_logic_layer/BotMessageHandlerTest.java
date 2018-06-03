@@ -6,7 +6,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import static botnet_p2p.MessageOuterClass.Message;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -33,7 +33,7 @@ public class BotMessageHandlerTest {
 
         String result = botMessageHandler.executeSystemCommand("dir");
 
-        assertThat(result, org.hamcrest.core.StringContains.containsString("Volume in drive"));
+        assertThat(result).contains("Volume in drive");
     }
 
     @Test

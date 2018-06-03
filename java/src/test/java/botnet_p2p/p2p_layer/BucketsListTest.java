@@ -5,8 +5,7 @@ import org.junit.Test;
 
 import java.util.List;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.IsCollectionContaining.hasItems;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
@@ -76,11 +75,11 @@ public class BucketsListTest {
 
         nearest = bucketsList.getNearestPeers(keyPeer.getGuid(), 4);
         assertEquals(4, nearest.size());
-        assertThat(nearest, hasItems(
+        assertThat(nearest).containsOnly(
                 new KademliaPeer("127.11.11.17", 10, intToStr(0b00011101)),
                 new KademliaPeer("127.11.11.16", 10, intToStr(0b00111101)),
                 new KademliaPeer("127.11.11.12", 10, intToStr(0b00110101)),
-                keyPeer));
+                keyPeer);
     }
 
 }
