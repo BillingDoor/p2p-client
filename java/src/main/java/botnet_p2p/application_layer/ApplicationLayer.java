@@ -20,13 +20,13 @@ public class ApplicationLayer {
         businessLogicLayer.joinNetwork(bootstrapNode);
 
         logger.info("bootstrap finished");
-        readCommands();
+        readUserCommands();
     }
 
     public void startWithoutBootstrapping() {
         businessLogicLayer.createNetwork();
 
-        readCommands();
+        readUserCommands();
     }
 
     public void shutdown() {
@@ -40,7 +40,12 @@ public class ApplicationLayer {
         );
     }
 
-    private void readCommands() {
+    public void sendCommand(String command) {
+        businessLogicLayer.sendCommand(command);
+
+    }
+
+    private void readUserCommands() {
         Scanner scanner = new Scanner(System.in);
 
         while (true) {

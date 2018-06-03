@@ -67,11 +67,6 @@ public class BusinessLogicLayer extends Thread {
         this.start();
     }
 
-    public void sendFileTo() {
-
-    }
-
-
     @Override
     public void run() {
         if (doBootstrap) {
