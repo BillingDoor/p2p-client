@@ -40,11 +40,12 @@ message Message {
     
     message FileChunkMsg {
         string path = 1;
-        bool name = 2;
+        string uuid = 2;
         uint32 chunkNumber = 3;
         uint32 allChunks = 4;
         uint32 chunkSize = 5;
-        bytes data = 6;
+        uint32 fileSize = 6;
+        bytes data = 7;
     }
 
     message NATRequestMsg {
