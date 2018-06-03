@@ -37,6 +37,10 @@ message Message {
         string value = 1;
         Status status = 2;
     }
+
+    message FileRequestMsg {
+        string path = 1;
+    }
     
     message FileChunkMsg {
         string uuid = 1;
