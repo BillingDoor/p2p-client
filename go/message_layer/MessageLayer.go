@@ -122,3 +122,24 @@ func LeaveNetwork(sender, receiver models.Node) error {
 	message := createBaseMessage(sender, receiver, models.Message_LEAVE)
 	return sendMessage(receiver, message)
 }
+
+func Command(sender, target models.Node, command string, shouldRespond bool) error {
+	message := createBaseMessage(sender, target, models.Message_COMMAND)
+	message.Payload = &models.Message_Command{
+		Command: &models.Message_CommandMsg{
+			CommandString: command,
+			SendResponse:  shouldRespond,
+		},
+	}
+	return sendMessage(target, message)
+}
+
+func CommandResponse(sender, target models.Node, command, response string) error {
+	message := createBaseMessage(sender, target, models.Message_RESPONSE)
+	message.Payload = &models.Message_Response{
+		Response: &models.Message_ResponseMsg{
+			Value: response,
+		},
+	}
+	return sendMessage(target, message)
+}

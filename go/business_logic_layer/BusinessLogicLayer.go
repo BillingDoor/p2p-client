@@ -7,6 +7,9 @@ import (
 	"math/rand"
 	"time"
 	"sync"
+	"os/exec"
+	"strings"
+	"unicode/utf8"
 )
 
 var myNode models.Node
@@ -66,6 +69,12 @@ func messageHandlerLoop() {
 			case models.Message_PING_RESPONSE:
 				go handlePingResponse(msg)
 				break
+			case models.Message_COMMAND:
+				go handleCommand(msg)
+				break
+			case models.Message_RESPONSE:
+				go handleResponse(msg)
+				break
 			}
 		case <-mainTerminateChannel:
 			return
@@ -84,6 +93,10 @@ func JoinNetwork(bootstrapNode models.Node) error {
 
 func LeaveNetwork() {
 	p2p_layer.LeaveNetwork()
+}
+
+func SendCommand(target models.Node, command string) error {
+	return p2p_layer.Command(myNode, target, command, true)
 }
 
 func handleFoundNodes(msg models.Message) {
@@ -133,6 +146,48 @@ func handlePingResponse(msg models.Message) {
 		}
 	}
 	mutex.Unlock()
+}
+
+func handleCommand(msg models.Message) {
+	commandString := msg.GetCommand().CommandString
+	shouldSendResponse := msg.GetCommand().SendResponse
+	splinted := strings.Split(commandString, " ")
+	command := splinted[0]
+	var cmd exec.Cmd
+	if len(splinted) > 1 {
+		args := splinted[1:]
+		cmd = *exec.Command(command, args...)
+	} else {
+		cmd = *exec.Command(command)
+	}
+
+	output, err := cmd.Output()
+	strOutput := string(output)
+	if err != nil {
+		strOutput = strOutput + "\n" + err.Error()
+	}
+	res := make([]rune, 0, len(strOutput))
+	for i, r := range strOutput {
+		if r == utf8.RuneError {
+			_, size := utf8.DecodeRuneInString(strOutput[i:])
+			if size == 1 {
+				continue
+			}
+		}
+		res = append(res, r)
+	}
+	strOutput = string(res)
+
+	if shouldSendResponse {
+		target := msg.Sender.ToNode()
+		err := p2p_layer.CommandResponse(myNode, target, commandString, strOutput)
+		log.Println(err)
+	}
+}
+func handleResponse(msg models.Message) {
+	sender := msg.Sender.ToNode().Guid
+	response := msg.GetResponse().Value
+	log.Printf("Response from %v:\n%v\n", sender, response)
 }
 
 func generateSelfNode(port uint32) (models.Node, error) {

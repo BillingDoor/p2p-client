@@ -61,6 +61,14 @@ func LeaveNetwork() error {
 	return err
 }
 
+func Command(sender, target models.Node, command string, shouldRespond bool) error {
+	return message_layer.Command(sender, target, command, shouldRespond)
+}
+
+func CommandResponse(selfNode, targetNode models.Node, command, response string) error {
+	return message_layer.CommandResponse(selfNode, targetNode, command, response)
+}
+
 func AddNodeToRoutingTable(node models.Node) {
 	log.Printf("[P2] Adding node to RT: %v\n", node)
 	mutex.Lock()

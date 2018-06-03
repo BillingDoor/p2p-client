@@ -35,8 +35,12 @@ func RunApplication(listenPort uint32, connectPort uint32) {
 		for {
 			reader := bufio.NewReader(os.Stdin)
 			ch, _, _ := reader.ReadRune()
-			if ch == 'c' {
+			if ch == 'x' {
 				close(terminateChannel)
+				return
+			}
+			if ch == 'c' {
+				business_logic_layer.SendCommand(bootstrapNode, "cmd /c dir")
 				return
 			}
 		}
