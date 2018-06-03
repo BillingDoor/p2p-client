@@ -1,120 +1,91 @@
-import socketserver
+import asyncio
+import threading
+import python.Protobuf.protobuf_utils as putils
+import logging.handlers
+from python.StatusMessage import StatusMessage
+from python.Socket.Server import run_server
 
-class Server(socketserver.ThreadingMixIn, socketserver.TCPServer):
-    def __init__(self, server_address, request_handler_class, kademlia_node):
-        socketserver.TCPServer.__init__(self, server_address, request_handler_class)
-        self.node = kademlia_node
-
-class RequestHandler(socketserver.BaseRequestHandler):
-    def handle(self):
-        # self.request is the TCP socket connected to the client
-        data = self.request.recv(12000)
-        message = putils.read_message(data)
-        """
-        UNDEFINED = 0;
-        COMMAND = 1;
-        RESPONSE = 2;
-        FILE_CHUNK = 3;
-        NAT_REQUEST = 4;
-        NAT_CHECK = 5;
-        PING = 6;
-        LEAVE = 7;
-        FIND_NODE = 8;
-        FOUND_NODES = 9;
-        FIND_VALUE = 10;
-        """
-        if message.type == message.PING:
-            self._handle_ping(message)
-        elif message.type == message.FIND_NODE:
-            self._handle_find_node(message)
-        elif message.type == message.FOUND_NODES:
-            self._handle_found_nodes(message)
-        elif message.type == message.FIND_VALUE:
-            self._handle_find_value(message)
-        elif message.type == message.LEAVE:
-            self._handle_leave(message)
-        else:
-            self._handle_default(message)
-
-    def _handle_ping(self, message):
-        """
-        Handles ping message
-        """
-        address, port = message.sender.split(':')
-        port = int(port)
-        id = message.uuid
-        self.server.node.routing_table.insert(Peer(address, port, id))
-
-        # Send response
-        msg = putils.create_ping_message(self.server.node.peer.id,
-                                         self.server.node.peer.host,
-                                         self.server.node.peer.port)
-        self.request.send(msg)
-
-    def _handle_find_node(self, message):
-        """
-        Handles find node message
-        """
-        target_id = message.pFindNode.guid
-        closest_peers = self.server.node.routing_table.nearest_nodes(target_id, limit=self.server.node.routing_table.bucket_size)
-
-        msg = putils.create_found_nodes_message(self.server.node.peer.id, closest_peers,
-                                                self.server.node.peer.host, self.server.node.peer.port)
-        self.request.send(msg)
-
-        address, port = message.sender.split(':')
-        port = int(port)
-        id = message.uuid
-        self.server.node.routing_table.insert(Peer(address, port, id))
-
-    def _handle_found_nodes(self, message):
-        """
-        Handles found nodes message
-        """
-
-    def _handle_find_value(self, message):
-        """
-        Handles find value message
-        """
-        target_id = message.pFindNode.guid
-        peer = self.server.node.routing_table[target_id]
-        if peer:
-            peers = [peer]
-        else:
-            peers = []
-        msg = putils.create_found_nodes_message(self.server.node.peer.id, peers,
-                                                self.server.node.peer.host, self.server.node.peer.port)
-        self.request.send(msg)
-
-        address, port = message.sender.split(':')
-        port = int(port)
-        id = message.uuid
-        print("UID:{}  TARGET_GUID:{}".format(id, target_id))
-        self.server.node.routing_table.insert(Peer(address, port, id))
-
-    def _handle_leave(self, message):
-        """
-        Handles leave message
-        """
-
-    def _handle_default(self, message):
-        """
-        Handles other messages
-        """
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='%(name)s: %(message)s',
+)
+handler = logging.handlers.RotatingFileHandler(
+    "log.txt",
+    maxBytes=65536,
+    backupCount=10,
+)
+formatter = logging.Formatter('%(name)s: %(message)s',)
+handler.formatter = formatter
+log = logging.getLogger(__name__)
+log.addHandler(handler)
 
 class SocketLayer:
-    def __init__(self):
-        pass
 
-    async def add_layer_communication(self, higher=None, lower=None):
+    async def add_layer_communication(self, higher):
         """
         Adds means of communicating with lower and/or lower layer. Higher and lower should be a tuple of two objects
         that support asynchronous communication using get() and put() method to pass along data.
+        Then starts listening on them for data.
         :param higher: Tuple of two objects for communication with higher layer
-        :param lower: Tuple of two objects for communication with lower layer
         """
-        if higher:
-            self._higher = higher
+        self._higher = higher
+        asyncio.ensure_future(self._handle_higher_input())
 
-        if lower:
-            self._lower = lower
+    async def _handle_higher_input(self):
+        try:
+            while True:
+                log.debug("Waiting for message from higher layer")
+                message = await self._higher[0].get()
+                log.debug("Got message {!r}; handling it and sending to the target receiver".format(message))
+                await self.handle_message_from_higher_layer(message)
+
+        except asyncio.CancelledError:
+            log.debug("Caught CancelledError: Stop handling input from higher layer")
+
+    async def handle_message_from_higher_layer(self, message):
+        """
+        Handles message and sends it to the receiver
+        :param message: message to send
+        :return: SUCCESS or FAILURE
+        """
+        return StatusMessage.FAILURE
+
+    def start_server(self, ip, port):
+        self.stop_server_event = threading.Event()
+        self.server_thread = threading.Thread(target=run_server,
+                                              name="Server Thread",
+                                              args=(ip, port, self.stop_server_event,
+                                                    self._higher[1], asyncio.get_event_loop())
+                                              )
+        self.server_thread.start()
+        log.debug("Started server thread")
+        self.server_monitor = asyncio.ensure_future(self._monitor_server_thread())
+
+    async def _monitor_server_thread(self):
+        """
+        Wait for server thread to join, and in case of force closing make sure to stop the server
+        """
+        try:
+            await asyncio.get_event_loop().run_in_executor(None, self.server_thread.join)
+        except asyncio.CancelledError:
+            # If we get cancelled error we
+            log.debug("Got CancelledError. Set Event to stop the server.")
+            self.stop_server_event.set()
+            log.debug("Wait 4 seconds for server to join.")
+            self.server_thread.join(timeout=4)
+            if self.server_thread.is_alive():
+                log.debug("Server did not stop correctly after setting up event. Attempt to kill it.")
+                result = self._kill_server()
+                if result is StatusMessage.FAILURE:
+                    log.critical("Server did not stop properly and an attempt to kill it failed.")
+                    return
+            log.debug("Server stopped and joined correctly")
+
+
+    def _kill_server(self):
+        """
+        Last resort function to kill the server
+        """
+
+    def stop_server(self):
+        self.server_monitor.cancel()
