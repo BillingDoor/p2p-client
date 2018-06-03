@@ -15,19 +15,23 @@
 * **Konsola operatorska w Python** - Kacper Kamiński
 
 **Prace w ramach węzła**
-* wątki komunikacyjne
-* parser komunikatów
-* część aplikacyjna - wykonywanie przekazanych komand
+* implementancja warstw aplikacji:
+  * komunikacja po socketach
+  * parsowanie wiadomości
+  * obsługa wiadomości
 * testy jednostkowe
 
 **Prace w ramach konsoli operatorskiej**
-* wątki komunikacyjne
-* parser komunikatów
-* generowanie podpisanych komunikatów sterujących
-* interfejs użytkownika
+* implementancja warstw aplikacji:
+  * komunikacja po socketach
+  * parsowanie wiadomości
+  * obsługa wiadomości
 * testy jednostkowe
+* interfejs użytkownika
 
-**Prace w ramach testu integracyjnego działania systemu** - wszyscy
+**Prace w ramach testu integracyjnego działania systemu**
+* utworzenie lokalnych węzłów stworzonych w różnych językach, komunikujących się po różnych portach
+* potwierdzenie otrzymania wiadomości i ich obsługi
 
 ## Opis funkcjonalności i wymagań
 
@@ -45,21 +49,19 @@
 * Węzeł powinien mieć możliwość odbierania i dalszego przesyłania dowolnego typu pliku.
 * Jeden z węzłów (Operator) powinien dostarczać użytkownikowi kontrolę nad całą siecią.
 * Możliwość przesłania pliku do innych węzłów (propagacja).
-* Operator powinien posiadać możliwość wydawania komend dowolnym węzłom w sieci:
-  - Wylistowanie wszystkich węzłów.
-  - Uśpienie/obudzenie/zakończenie pracy węzła.
-  - Wylistowanie plików na danym węźle.
-  - Wysłanie komunikatu o przesłaniu pliku z danego węzła do innego węzła.
-* Odłączenie się dowolnego węzła nie powinno powodować zmiany w pozostałej części sieci.
+* Operator powinien posiadać możliwość wydawania komend:
+  - wylistowanie wszystkich węzłów
+  - zakończenie pracy węzła operatorskiego
+  - wylistowanie plików na danym węźle
+  - wysłanie komunikatu o przesłaniu pliku z danego węzła do innego węzła
 * Tylko węzeł konsoli operatorskiej powinien móc wydawać komendy.
 
 ## Analiza wymagań funkcjonalnych i niefunkcjonalnych
 * Realizacja przesyłania plików po protokole TCP (zapewnienie integralności danych).
 * Realizacja topologii sieci za pomocą algorytmu Kademlia.
-* Zastosowanie kryptografii asymetrycznej do podpisywania wiadomości wysyłanych przez Operatora.
 * Komunikaty są znakowane UUID.
 * Działanie węzła jest zrealizowane za pomocą wątków z rozdzieloną odpowiedzialnością zadań.
-* Przypadki wielodostępu będziemy realizować za pomocą semaforów/monitorów/kolejek wiadomości (w zależności od języka implementacji).
+* Przypadki wielodostępu będziemy realizować za pomocą mutexów/kolejek wiadomości.
 
 ## Architektura realizacji
 
@@ -85,8 +87,8 @@ Adres $A$ jest bliższy adresowi $B$ niż adres $C$, jeżeli $A \oplus B < C \op
 ##### Struktura tablicy routingu
 Tablica routingowa składa się z $N$ *$k$-elementowych bucket'ów*. Każdy *k-bucket* może przechowywać do *k* wpisów. *N*-ty *k-bucket* zawiera wpisy o hostach, których *GUID* mają te same bity na poprzednich $N-1$ pozycjach.
 
-Oznacza to że pierwszy *k-bucket* zawiera adresy najbardziej odległe. Jest on także najłatwiejszy do zapełnienia, ponieważ może się w nim znaleźć $\frac{1}{2}$ wszystkich hostów w sieci (są to adresy z 1 bitem innym od bitu hosta). 
-Analogicznie ostatni *k-bucket* może przechowywać tylko jednego hosta - ten którego jedynie ostatni bit jest różny od bitu hosta.
+Oznacza to że ostatni *k-bucket* zawiera adresy najbardziej odległe. Jest on także najłatwiejszy do zapełnienia, ponieważ może się w nim znaleźć $\frac{1}{2}$ wszystkich hostów w sieci (są to adresy z pierwszym bitem innym od bitu hosta). 
+Analogicznie pierwszy *k-bucket* może przechowywać tylko jednego hosta - ten którego jedynie ostatni bit jest różny od bitu hosta.
 
 ##### Znajdowanie węzła
 W przypadku kiedy w tablicy-routingowej hosta nie znajduje się wpis o hoście do którego chcemy wysłać wiadomość, odpytywane zostają węzły z *k-bucket*'a w którym znajdowałby się poszukiwany host. 
@@ -96,14 +98,12 @@ Następnie możemy wysłać zapytanie o szukany węzeł do jednego z ostatnich z
 
 ### Bootowanie i dołączanie do sieci
 
-1. Nowy host musi posiadać adres bootstrap node'a.
-2. Tworzy on swoje GUID.
-3. Nowy host wysyła do bootstrap node'a wiadomość `FIND_NODE` podając własne GUID jako parametr.
-4. Bootstrap node zwraca listę najbliższych nodeów, a także uaktualnia swoją tablicę routingową o adres nowego hosta.
-5. Nowy host ponownie wysyła wiadomość `FIND_NODE` do zwróconych node'ów. Node'y te także uzupełniają swoją tablicę routingową o pytającego (nowego) node'a i zwracają w odpowiedzi listę node'ów.
-6. Proces ten przebiega dopóki nowy host nie dostanie już żadnej odpowiedzi.
-7. W procesie tym zapełniliśmy wszystkie *k-buckety* lepsze niż *k-bucket* bootstrap-node'a.
-8. Następnie *host* aktualizuje buckety dalsze niż bucket bootstrap node'a poprzez wysyłanie zapytania `FIND_NODE` z losowym GUID należącym do tych kolejnych bucketów.
+1. Nowy host tworzy swój GUID.
+2. Nowy host wysyła do bootstrap node'a (musi znać wcześniej jego adres) wiadomość `FIND_NODE` podając własny `GUID` jako parametr.
+3. Bootstrap node zwraca listę najbliższych węzłów, a także uaktualnia swoją tablicę routingową o adres nowego hosta.
+4. Nowy host wysyła do każdego zwróconego węzła wiadomość `PING`.
+5. Hosty, które otrzymały wiadomość dodają nowego hosta do swojej tablicy routingowej i wysyłają do niego wiadomość `PING_RESPONSE`.
+6. Nowy host dodaje do swojej tablicy routingowej wszystkie węzły, które odpowiedziały zapytaniem `PING_RESPONSE` w zadanym czasie. Dzięki temu wiemy, które węzły wciąż żyją.
 
 ### Odłączanie się od sieci
 ![](https://i.imgur.com/Wh1Jut3.png)
@@ -117,9 +117,9 @@ Wszystkie węzły w tablicy routingu danego węzła muszą być periodycznie `pi
 
 
 ### Uwagi implementacyjne
- * Routing realizowany jest za pomocą algorytmu Kademlia
- * Tablica routingu zawiera krotki (GUID, IP, Port, isNAT, isRelay)
- * Relay, czyli węzeł pośredniczący, akceptuje wiadomości od węzłów które chcą wysłać wiadomość do węzła który stoi za NATem
+ * Routing realizowany jest za pomocą algorytmu Kademlia.
+ * Tablica routingu zawiera krotki (GUID, IP, Port, isNAT).
+ * Relay, czyli węzeł pośredniczący, akceptuje wiadomości od węzłów które chcą wysłać wiadomość do węzła który stoi za NATem.
  * Węzły stojące za NATem odpytują co jakiś czas węzły pośredniczące czy istnieją jakieś wiadomościo przeznaczone dla nich; jeżeli istnieją, to zestawiane jest połaczenie między nadawcą i odbiorcą przez węzeł pośredniczący - nadawca jest informowany o możliwości nadawania
  * Odłączenie i podłączenie się węzła jest realizowane zgodnie z algorytmem Kademlia, a same protokoły opisane są poniżej
  * Klucz prywatny Operatora (do weryfikacji podpisu) jest na stałe zapisany w pamięci klienta 
@@ -127,26 +127,27 @@ Wszystkie węzły w tablicy routingu danego węzła muszą być periodycznie `pi
 ### Warstwy
 
 ![warstwy](https://i.imgur.com/iJJVQJC.png)
-* Warstwa komunikacji (Sockety)
-  - tworzy Sockety
-  - przyjmuje połączenia
-  - odkrywa węzły sieci i odpowiada na zgłoszenia nowych węzłów
-  - zgłasza do sieci informację o odpięciu się od sieci (w miarę możliwości)
-  - parsuje komunikaty
-  - buduje komunikaty
-  - weryfikuje poprawność i autentyczność komunikatów
-  - odpowiada za wysyłanie komunikatów do węzłów pośredniczących, jeżeli węzeł docelowy znajduje się za NATem
-  - jeżeli nie znajduje się za NATem, to działa jako węzeł pośredniczący
-  - propaguje wiadomości oznaczone do propagacji
-* Warstwa API
-  - udostępnia funkcje pozwalające wysyłać polecenia i pliki
-  - udostępnia handlery zdarzeń i odpowiedzi na zapytania w systemie
-* Warstwa aplikacyjna
+* **Warstwa aplikacyjna**
   - tworzy aplikację
   - dołącza się do sieci
   - wykonuje komunikaty
   - zapisuje/odczytuje pliki z dysku
   - w przypadku konsoli operatorskiej pozwala na wysyłanie komunikatów
+* **Warstwa logiki biznesowej**
+  - udostępnia API biznesowe, takie jak `joinNetwork`
+  - nasłuchuje na typy wiadomości i odpowiada na nie
+* **Warstwa P2P**
+  - umożliwia tworzenie wiadomości
+  - umożliwia nasłuchiwanie na wiadomości
+* **Warstwa parsowania wiadomości**
+  - parsuje otrzymane wiadomości
+  - koduje wiadomości do wysłania
+* **Warstwa komunikacji (sockety)**
+  - tworzy połączenia
+  - przyjmuje połączenia
+  - zapełnia kolejkę odebranych wiadomości
+  - wysyła wiadomości z kolejki wiadomości do wysłania
+
 
 ### Struktura wątków węzła 
 
