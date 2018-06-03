@@ -6,14 +6,15 @@ message Message {
         UNDEFINED = 0;
         COMMAND = 1;
         COMMAND_RESPONSE = 2;
-        FILE_CHUNK = 3;
-        NAT_REQUEST = 4;
-        NAT_CHECK = 5;
-        PING = 6;
-        PING_RESPONSE = 7;
-        LEAVE = 8;
-        FIND_NODE = 9;
-        FOUND_NODES = 10;
+        FILE_REQUEST = 3;
+        FILE_CHUNK = 4;
+        NAT_REQUEST = 5;
+        NAT_CHECK = 6;
+        PING = 7;
+        PING_RESPONSE = 8;
+        LEAVE = 9;
+        FIND_NODE = 10;
+        FOUND_NODES = 11;
     }
 
     enum Status {
@@ -75,9 +76,10 @@ message Message {
     oneof payload {
         CommandMsg command = 7;
         CommandResponseMsg response = 8;
-        FileChunkMsg fileChunk = 9;
-        NATRequestMsg NATRequest = 10;
-        NATCheckMsg NATCheck = 11;
+        FileRequestMsg fileRequest = 9;
+        FileChunkMsg fileChunk = 10;
+        NATRequestMsg NATRequest = 11;
+        NATCheckMsg NATCheck = 12;
         FindNodeMsg findNode = 13;
         FoundNodesMsg foundNodes = 14;          
     }
