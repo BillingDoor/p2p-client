@@ -35,8 +35,13 @@ export class Message extends jspb.Message {
 
   hasResponse(): boolean;
   clearResponse(): void;
-  getResponse(): Message.ResponseMsg | undefined;
-  setResponse(value?: Message.ResponseMsg): void;
+  getResponse(): Message.CommandResponseMsg | undefined;
+  setResponse(value?: Message.CommandResponseMsg): void;
+
+  hasFilerequest(): boolean;
+  clearFilerequest(): void;
+  getFilerequest(): Message.FileRequestMsg | undefined;
+  setFilerequest(value?: Message.FileRequestMsg): void;
 
   hasFilechunk(): boolean;
   clearFilechunk(): void;
@@ -83,7 +88,8 @@ export namespace Message {
     propagation: boolean,
     signature: Uint8Array | string,
     command?: Message.CommandMsg.AsObject,
-    response?: Message.ResponseMsg.AsObject,
+    response?: Message.CommandResponseMsg.AsObject,
+    filerequest?: Message.FileRequestMsg.AsObject,
     filechunk?: Message.FileChunkMsg.AsObject,
     natrequest?: Message.NATRequestMsg.AsObject,
     natcheck?: Message.NATCheckMsg.AsObject,
@@ -124,11 +130,11 @@ export namespace Message {
   }
 
   export class CommandMsg extends jspb.Message {
-    getCommandstring(): string;
-    setCommandstring(value: string): void;
+    getCommand(): string;
+    setCommand(value: string): void;
 
-    getSendresponse(): boolean;
-    setSendresponse(value: boolean): void;
+    getShouldrespond(): boolean;
+    setShouldrespond(value: boolean): void;
 
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): CommandMsg.AsObject;
@@ -142,12 +148,12 @@ export namespace Message {
 
   export namespace CommandMsg {
     export type AsObject = {
-      commandstring: string,
-      sendresponse: boolean,
+      command: string,
+      shouldrespond: boolean,
     }
   }
 
-  export class ResponseMsg extends jspb.Message {
+  export class CommandResponseMsg extends jspb.Message {
     getValue(): string;
     setValue(value: string): void;
 
@@ -155,37 +161,54 @@ export namespace Message {
     setStatus(value: Message.Status): void;
 
     serializeBinary(): Uint8Array;
-    toObject(includeInstance?: boolean): ResponseMsg.AsObject;
-    static toObject(includeInstance: boolean, msg: ResponseMsg): ResponseMsg.AsObject;
+    toObject(includeInstance?: boolean): CommandResponseMsg.AsObject;
+    static toObject(includeInstance: boolean, msg: CommandResponseMsg): CommandResponseMsg.AsObject;
     static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
     static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
-    static serializeBinaryToWriter(message: ResponseMsg, writer: jspb.BinaryWriter): void;
-    static deserializeBinary(bytes: Uint8Array): ResponseMsg;
-    static deserializeBinaryFromReader(message: ResponseMsg, reader: jspb.BinaryReader): ResponseMsg;
+    static serializeBinaryToWriter(message: CommandResponseMsg, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): CommandResponseMsg;
+    static deserializeBinaryFromReader(message: CommandResponseMsg, reader: jspb.BinaryReader): CommandResponseMsg;
   }
 
-  export namespace ResponseMsg {
+  export namespace CommandResponseMsg {
     export type AsObject = {
       value: string,
       status: Message.Status,
     }
   }
 
-  export class FileChunkMsg extends jspb.Message {
+  export class FileRequestMsg extends jspb.Message {
     getPath(): string;
     setPath(value: string): void;
 
-    getName(): boolean;
-    setName(value: boolean): void;
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): FileRequestMsg.AsObject;
+    static toObject(includeInstance: boolean, msg: FileRequestMsg): FileRequestMsg.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: FileRequestMsg, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): FileRequestMsg;
+    static deserializeBinaryFromReader(message: FileRequestMsg, reader: jspb.BinaryReader): FileRequestMsg;
+  }
 
-    getChunknumber(): number;
-    setChunknumber(value: number): void;
+  export namespace FileRequestMsg {
+    export type AsObject = {
+      path: string,
+    }
+  }
 
-    getAllchunks(): number;
-    setAllchunks(value: number): void;
+  export class FileChunkMsg extends jspb.Message {
+    getUuid(): string;
+    setUuid(value: string): void;
 
-    getChunksize(): number;
-    setChunksize(value: number): void;
+    getFilename(): string;
+    setFilename(value: string): void;
+
+    getFilesize(): number;
+    setFilesize(value: number): void;
+
+    getOrdinal(): number;
+    setOrdinal(value: number): void;
 
     getData(): Uint8Array | string;
     getData_asU8(): Uint8Array;
@@ -204,11 +227,10 @@ export namespace Message {
 
   export namespace FileChunkMsg {
     export type AsObject = {
-      path: string,
-      name: boolean,
-      chunknumber: number,
-      allchunks: number,
-      chunksize: number,
+      uuid: string,
+      filename: string,
+      filesize: number,
+      ordinal: number,
       data: Uint8Array | string,
     }
   }
@@ -298,15 +320,16 @@ export namespace Message {
   export enum MessageType {
     UNDEFINED = 0,
     COMMAND = 1,
-    RESPONSE = 2,
-    FILE_CHUNK = 3,
-    NAT_REQUEST = 4,
-    NAT_CHECK = 5,
-    PING = 6,
-    PING_RESPONSE = 7,
-    LEAVE = 8,
-    FIND_NODE = 9,
-    FOUND_NODES = 10,
+    COMMAND_RESPONSE = 2,
+    FILE_REQUEST = 3,
+    FILE_CHUNK = 4,
+    NAT_REQUEST = 5,
+    NAT_CHECK = 6,
+    PING = 7,
+    PING_RESPONSE = 8,
+    LEAVE = 9,
+    FIND_NODE = 10,
+    FOUND_NODES = 11,
   }
 
   export enum Status {
@@ -318,9 +341,10 @@ export namespace Message {
     PAYLOAD_NOT_SET = 0,
     COMMAND = 7,
     RESPONSE = 8,
-    FILECHUNK = 9,
-    NATREQUEST = 10,
-    NATCHECK = 11,
+    FILEREQUEST = 9,
+    FILECHUNK = 10,
+    NATREQUEST = 11,
+    NATCHECK = 12,
     FINDNODE = 13,
     FOUNDNODES = 14,
   }
