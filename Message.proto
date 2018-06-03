@@ -42,10 +42,8 @@ message Message {
         string path = 1;
         string uuid = 2;
         uint32 chunkNumber = 3;
-        uint32 allChunks = 4;
-        uint32 chunkSize = 5;
-        uint32 fileSize = 6;
-        bytes data = 7;
+        uint32 fileSize = 4;
+        bytes data = 5;
     }
 
     message NATRequestMsg {
