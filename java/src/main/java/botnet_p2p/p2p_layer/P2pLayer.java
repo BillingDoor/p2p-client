@@ -89,6 +89,14 @@ public class P2pLayer {
                 ));
     }
 
+    public void fileChunk(KademliaPeer destination, KademliaPeer me, Message.FileChunkMsg response) {
+        messageLayer.send(
+                new Communication<>(
+                        Protobuf.createFileChunkMessage(destination, me, response),
+                        destination.toPeer()
+                ));
+    }
+
     public void addToRoutingTable(KademliaPeer peer) {
         this.routingTable.insert(peer);
     }
@@ -110,5 +118,4 @@ public class P2pLayer {
         logger.info("closing");
         this.messageLayer.shutdown();
     }
-
 }

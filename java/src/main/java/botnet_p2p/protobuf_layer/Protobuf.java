@@ -44,23 +44,6 @@ public class Protobuf {
                 .build();
     }
 
-    public static Message createFoundNodes(KademliaPeer sender,
-                                           Peer receiver,
-                                           List<KademliaPeer> nearestPeers) {
-        List<Message.Contact> contacts = nearestPeers
-                .stream()
-                .map(Protobuf::kademliaPeerToContact).collect(Collectors.toList());
-
-        Message.FoundNodesMsg foundNodes = Message.FoundNodesMsg.newBuilder()
-                .addAllNodes(contacts)
-                .build();
-
-        return createBaseMessage(sender, receiver)
-                .setType(Message.MessageType.FOUND_NODES)
-                .setFoundNodes(foundNodes)
-                .build();
-    }
-
     public static Message createPingMessage(KademliaPeer destination, KademliaPeer me) {
         return createBaseMessage(me, destination)
                 .setType(Message.MessageType.PING)
@@ -109,6 +92,15 @@ public class Protobuf {
                 .build();
     }
 
+    public static Message createFileChunkMessage(KademliaPeer destination,
+                                                KademliaPeer me,
+                                                Message.FileChunkMsg fileChunk) {
+        return createBaseMessage(me, destination)
+                .setType(Message.MessageType.FILE_CHUNK)
+                .setFileChunk(fileChunk)
+                .build();
+    }
+
     private static Message.Contact kademliaPeerToContact(KademliaPeer peer) {
         return Message.Contact.newBuilder()
                 .setGuid(peer.getGuid())
@@ -117,5 +109,4 @@ public class Protobuf {
                 .setPort(peer.getPort())
                 .build();
     }
-
 }
