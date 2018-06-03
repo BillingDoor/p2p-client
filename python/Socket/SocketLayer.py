@@ -78,14 +78,21 @@ class SocketLayer:
                 result = self._kill_server()
                 if result is StatusMessage.FAILURE:
                     log.critical("Server did not stop properly and an attempt to kill it failed.")
-                    return
+                    return result
             log.debug("Server stopped and joined correctly")
-
+            return StatusMessage.SUCCESS
 
     def _kill_server(self):
         """
         Last resort function to kill the server
         """
 
-    def stop_server(self):
-        self.server_monitor.cancel()
+    async def stop_server(self):
+        if self.server_monitor:
+            self.server_monitor.cancel()
+            status = await self.server_monitor
+            self.server_monitor = None
+            return status
+        else:
+            log.warning("Cannot stop the server because it is not running")
+            return StatusMessage.FAILURE

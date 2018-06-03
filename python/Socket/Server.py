@@ -1,8 +1,6 @@
 import asyncio
-import threading
-import python.Protobuf.protobuf_utils as putils
+import socket
 import logging.handlers
-from python.StatusMessage import StatusMessage
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -41,7 +39,7 @@ async def receive_data(reader, writer):
         log.warning("Server was stopped while reading data.")
         writer.close()
 
-async def monitor(stop_server_event, server):
+async def _monitor(stop_server_event, server):
     log.debug("Start monitoring stop_server_event")
     await asyncio.get_event_loop().run_in_executor(None, func=stop_server_event.wait)
     log.debug("Stop_server_event was triggered. Proceed to close the server.")
@@ -59,7 +57,13 @@ def run_server(ip, port, stop_server_event, queue, main_loop):
 
     loop = asyncio.get_event_loop()
     factory = asyncio.start_server(receive_data, ip, port)
-    server = loop.run_until_complete(factory)
+    try:
+        server = loop.run_until_complete(factory)
+    except socket.error as error:
+        log.warning("Could not start the server: {}".format(error))
+
     log.debug("Starting up server on {}:{}".format(ip, port))
-    loop.run_until_complete(monitor(stop_server_event, server))
+    loop.run_until_complete(_monitor(stop_server_event, server))
     log.debug("Server event loop stopped running")
+    loop.close()
+
