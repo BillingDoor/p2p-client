@@ -22,7 +22,7 @@ class FileReader {
 
         List<byte[]> chunks = new ArrayList<>();
         FileInputStream fis = null;
-        long size = 0;
+        int size = 0;
         try {
             fis = new FileInputStream(path.toFile());
             byte[] buffer = new byte[chunkSize];
@@ -55,7 +55,7 @@ class FileReader {
                     break;
                 }
             }
-            int remaining = (int) (chunkedFile.size - read);
+            int remaining = (int) (chunkedFile.fileSize - read);
             fileOutputStream.write(chunkedFile.chunks.get(chunkedFile.chunks.size()-1), 0, remaining);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -68,6 +68,6 @@ class FileReader {
     @AllArgsConstructor
     class ChunkedFile {
         public List<byte[]> chunks;
-        public long size;
+        public int fileSize;
     }
 }

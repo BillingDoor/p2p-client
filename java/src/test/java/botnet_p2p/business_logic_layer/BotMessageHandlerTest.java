@@ -18,8 +18,8 @@ public class BotMessageHandlerTest {
         return Message.newBuilder()
                 .setCommand(
                         Message.CommandMsg.newBuilder()
-                                .setCommandString(command)
-                                .setSendResponse(sendResponse)
+                                .setCommand(command)
+                                .setShouldRespond(sendResponse)
                                 .build()
                 )
                 .build();
@@ -56,5 +56,23 @@ public class BotMessageHandlerTest {
         botMessageHandler.handleCommandMessage(createCommandMessage("dir", false));
 
         Mockito.verify(p2pLayer, never()).commandResponse(anyObject(), anyObject(), anyObject(), anyBoolean());
+    }
+
+    @Test
+    public void getFileName_1() {
+        BotMessageHandler botMessageHandler = new BotMessageHandler(null, null);
+
+        String fileName = botMessageHandler.getFileName("/aa/bvv/c.txt");
+
+        assertThat(fileName).isEqualToIgnoringCase("c.txt");
+    }
+
+    @Test
+    public void getFileName_2() {
+        BotMessageHandler botMessageHandler = new BotMessageHandler(null, null);
+
+        String fileName = botMessageHandler.getFileName("C:\\aa\\bvv\\c.txt");
+
+        assertThat(fileName).isEqualToIgnoringCase("c.txt");
     }
 }

@@ -14,9 +14,9 @@ public class Protobuf {
         Message.Contact senderContact = kademliaPeerToContact(sender);
 
         Message.Contact receiverContact = Message.Contact.newBuilder()
-                //.setGuid(receiver.getGuid()) // TODO peer - no guid
+                //.setGuid(receiver.getGuid()) //  peer - no guid
                 .setIP(receiver.getAddress())
-                //.setIsNAT(false) // TODO
+                .setIsNAT(false)
                 .setPort(receiver.getPort())
                 .build();
 
@@ -83,9 +83,9 @@ public class Protobuf {
                                                       String response,
                                                       boolean success) {
         return createBaseMessage(me, destination)
-                .setType(Message.MessageType.RESPONSE)
+                .setType(Message.MessageType.COMMAND_RESPONSE)
                 .setResponse(
-                        Message.ResponseMsg.newBuilder()
+                        Message.CommandResponseMsg.newBuilder()
                                 .setValue(response)
                                 .setStatus(success ? Message.Status.OK : Message.Status.FAIL)
                                 .build())
@@ -93,11 +93,23 @@ public class Protobuf {
     }
 
     public static Message createFileChunkMessage(KademliaPeer destination,
-                                                KademliaPeer me,
-                                                Message.FileChunkMsg fileChunk) {
+                                                 KademliaPeer me,
+                                                 Message.FileChunkMsg fileChunk) {
         return createBaseMessage(me, destination)
                 .setType(Message.MessageType.FILE_CHUNK)
                 .setFileChunk(fileChunk)
+                .build();
+    }
+
+    public static Message createCommandMessage(KademliaPeer destination, KademliaPeer me, String command) {
+        return createBaseMessage(me, destination)
+                .setType(Message.MessageType.COMMAND)
+                .setCommand(
+                        Message.CommandMsg.newBuilder()
+                                .setCommand(command)
+                                .setShouldRespond(true)
+                                .build()
+                )
                 .build();
     }
 

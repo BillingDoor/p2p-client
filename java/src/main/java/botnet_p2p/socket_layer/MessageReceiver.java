@@ -22,7 +22,7 @@ class MessageReceiver {
 
     void handleNewMessage(SelectableChannel channel) throws IOException {
         SocketChannel client = (SocketChannel) channel;
-        ByteBuffer inputBuffer = ByteBuffer.allocate(512);
+        ByteBuffer inputBuffer = ByteBuffer.allocate(12288);
         try {
             if (client.read(inputBuffer) == -1) {
                 nodeManager.removeNode(client.getRemoteAddress());

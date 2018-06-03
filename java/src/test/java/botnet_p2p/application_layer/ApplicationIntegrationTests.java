@@ -131,8 +131,8 @@ public class ApplicationIntegrationTests {
                 )
                 .setCommand(
                         Message.CommandMsg.newBuilder()
-                                .setCommandString("dir")
-                                .setSendResponse(true)
+                                .setCommand("dir")
+                                .setShouldRespond(true)
                 ).build();
         message.writeTo(bufferedOutputStream);
         bufferedOutputStream.flush();
@@ -152,7 +152,7 @@ public class ApplicationIntegrationTests {
         Message receivedMessage = Message.parseFrom(messageBuffer);
 
         // check message
-        assertEquals(receivedMessage.getType(), Message.MessageType.RESPONSE);
+        assertEquals(receivedMessage.getType(), Message.MessageType.COMMAND_RESPONSE);
         assertEquals(Message.Status.OK, receivedMessage.getResponse().getStatus());
         assertThat(receivedMessage.getResponse().getValue()).contains("Volume in drive");
     }

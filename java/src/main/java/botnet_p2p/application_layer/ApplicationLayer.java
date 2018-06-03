@@ -40,19 +40,28 @@ public class ApplicationLayer {
         );
     }
 
-    public void sendCommand(String command) {
-        businessLogicLayer.sendCommand(command);
-
+    public void sendCommand(String command, String id) {
+        businessLogicLayer.sendCommand(command, id);
     }
 
     private void readUserCommands() {
+        // commands:
+        // print r - print routing table
+        // command <command> <peer id> - send command to peer
         Scanner scanner = new Scanner(System.in);
 
         while (true) {
             try {
                 String command = scanner.nextLine();
-                if ("p".equals(command)) {
+                if ("print r".equals(command)) {
                     this.printRoutingTable();
+                } else if(command.startsWith("command")) {
+                    String[] split = command.split(" ");
+                    if(split.length != 3) {
+                        logger.error("invalid command");
+                        continue;
+                    }
+                    businessLogicLayer.sendCommand(split[1], split[2]);
                 }
             } catch(Exception ignored) {
 

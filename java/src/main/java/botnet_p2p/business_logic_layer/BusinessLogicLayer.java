@@ -67,6 +67,11 @@ public class BusinessLogicLayer extends Thread {
         this.start();
     }
 
+    public void sendCommand(String command, String id) {
+        KademliaPeer destination = p2pLayer.getPeer(id);
+        p2pLayer.command(me, destination,command);
+    }
+
     @Override
     public void run() {
         if (doBootstrap) {
@@ -162,6 +167,12 @@ public class BusinessLogicLayer extends Thread {
                         break;
                     case COMMAND:
                         botMessageHandler.handleCommandMessage(messsage);
+                        break;
+                    case COMMAND_RESPONSE:
+                        botMessageHandler.handleCommandResponseMessage(messsage);
+                        break;
+                    case FILE_REQUEST:
+                        botMessageHandler.handleFileRequestMessage(messsage);
                         break;
                     default:
                         logger.error("unsupported message type:" + messsage.getType());
