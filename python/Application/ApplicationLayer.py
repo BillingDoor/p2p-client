@@ -37,8 +37,6 @@ class Application:
             task.cancel()
             loop.run_until_complete(task)
 
-
-
     def _print_main_menu(self):
         print("="*25)
         print("{:^25}".format('P2P Application'))
@@ -62,6 +60,19 @@ class Application:
                 if connected:
                     self._print_connected_menu()
                     line = (await asyncio.get_event_loop().run_in_executor(None, sys.stdin.readline)).strip().lower()
+                    if line == '1':
+                        # Print routing table
+                        pass
+                    elif line == '2':
+                        pass
+                    elif line == '3':
+                        pass
+                    elif line == 'quit':
+                        await self._lower_layer.stop_server()
+                        break
+                else:
+                    self._print_not_connected_menu()
+                    line = (await asyncio.get_event_loop().run_in_executor(None, sys.stdin.readline)).strip().lower()
                     print("Typed: {}".format(line))
                     if line == '1':
                         print("=" * 25)
@@ -80,29 +91,15 @@ class Application:
                             if re.match(
                                     r'^([0-9]{1,4}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])$',
                                     port.strip()):
-                                await self._lower_layer.join_network((ip.strip(), int(port.strip())))
+                                status = await self._lower_layer.join_network((ip.strip(), int(port.strip())))
+                                if status is StatusMessage.SUCCESS:
+                                    connected = True
                             else:
                                 print("Invalid port number: {}".format(port.strip()))
                         else:
                             print("Invalid ip address {}".format(ip.strip()))
                     if line == 'quit':
-                        status = await self._lower_layer.stop_server()
-                        if status is StatusMessage.SUCCESS:
-                            connected = True
-                else:
-                    self._print_not_connected_menu()
-                    line = (await asyncio.get_event_loop().run_in_executor(None, sys.stdin.readline)).strip().lower()
-                    if line == '1':
-                        #Print routing table
-                        pass
-                    elif line == '2':
-                        pass
-                    elif line == '3':
-                        pass
-                    elif line == 'quit':
-                        status = await self._lower_layer.stop_server()
-                        if status is StatusMessage.SUCCESS:
-                            connected = True
-
+                        await self._lower_layer.stop_server()
+                        break
         except asyncio.CancelledError:
             return
