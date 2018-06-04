@@ -224,8 +224,6 @@ public class SocketLayerTest {
         socketLayer.shutdown();
         assertThat(receivedData).isNotNull();
 
-        receivedData.position(4);
-        receivedData.limit(44);
         Message receivedMessage = Message.parseFrom(receivedData);
         assertThat(receivedMessage).isEqualTo(communicationMessage.getData());
     }

@@ -19,18 +19,10 @@ class MessageReceiver {
     private NodeManager nodeManager;
     private Map<SocketAddress, PartialMessage> partialMessages = new HashMap<>();
 
-    @AllArgsConstructor
-    class PartialMessage {
-        public ByteBuffer data;
-        public int msgSize;
-        public int storedBytes;
-    }
-
     MessageReceiver(BlockingQueue<ByteBuffer> receivedMessages, NodeManager nodeManager) {
         this.receivedMessages = receivedMessages;
         this.nodeManager = nodeManager;
     }
-
 
     void handleNewMessage(SelectableChannel channel) throws IOException {
         SocketChannel client = (SocketChannel) channel;
@@ -53,8 +45,6 @@ class MessageReceiver {
             }
         }
 
-        // TODO getRemoteAddress ?
-
         inputBuffer.rewind();
         int bytesReadFromInput = 0;
         while (bytesReadFromInput < bytesReceived) {
@@ -66,9 +56,9 @@ class MessageReceiver {
                     partialMessage.data.put(inputBuffer.array(), 0, partialMessage.msgSize - partialMessage.storedBytes);
                     bytesReadFromInput += (partialMessage.msgSize - partialMessage.storedBytes);
 
+                    partialMessage.data.limit(partialMessage.msgSize);
                     partialMessage.data.position(0);
                     this.receivedMessages.offer(partialMessage.data);
-                    partialMessage.data.clear();
                     this.partialMessages.remove(client.getRemoteAddress());
                 } else {
                     // not enough, just add
@@ -78,7 +68,7 @@ class MessageReceiver {
                 }
             }
 
-            if(bytesReadFromInput >= bytesReceived) {
+            if (bytesReadFromInput >= bytesReceived) {
                 return;
             }
 
@@ -92,8 +82,8 @@ class MessageReceiver {
                 }
             } else {
                 ByteBuffer remainingData = ByteBuffer.allocate(12288);
-                remainingData.put(inputBuffer.array(), bytesReadFromInput-4, bytesReceived);
-                // remainingData.position(bytesReceived - bytesReadFromInput);
+                remainingData.put(inputBuffer.array(), bytesReadFromInput, bytesReceived);
+                remainingData.position(bytesReceived - bytesReadFromInput);
                 partialMessages.put(client.getRemoteAddress(),
                         new PartialMessage(remainingData, msgSize, bytesReceived - bytesReadFromInput));
                 logger.debug("did not read whole message");
@@ -105,8 +95,14 @@ class MessageReceiver {
         inputBuffer.clear();
     }
 
-
     private void readMessageFromFile() {
 
+    }
+
+    @AllArgsConstructor
+    class PartialMessage {
+        public ByteBuffer data;
+        public int msgSize;
+        public int storedBytes;
     }
 }
