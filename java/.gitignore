@@ -3,5 +3,6 @@
 target/
 !/.mvn/wrapper/maven-wrapper.jar
 
-resources/dummy2_out.txt
-src/test/resources/tests/
+src/main/resources/*_out.txt
+src/test/resources/tests/*
+!src/test/resources/tests/.gitkeep
