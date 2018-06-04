@@ -31,10 +31,10 @@ export class BusinessLayer {
             this.worker.routingTable.removeNode(node)
           );
           this.pingedNodes = [];
-          this.worker.command({
-            command: 'ls',
-            to: new Contact({ address: bootstrapNode })
-          });
+          // this.worker.command({
+          //   command: 'ls',
+          //   to: new Contact({ address: bootstrapNode })
+          // });
         })
       )
       .subscribe();

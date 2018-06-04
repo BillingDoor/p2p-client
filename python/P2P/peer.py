@@ -14,7 +14,7 @@ class Peer(object):
         self.is_NAT = is_NAT
 
     def __eq__(self, other):
-        return self.get_info() == other.get_info()
+        return self.get_info()[1:4] == other.get_info()[1:4]
 
     def get_info(self):
         return (self.id, self.ip, self.port, self.is_NAT)

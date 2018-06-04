@@ -58,19 +58,6 @@ def create_command_response_message(sender, receiver, command, value, status):
     msg.response.status = status
     return msg
 
-def create_find_value_message(sender_id, target_id, address, port):
-    """
-    Creates protobuf message of FindValue type and returns it as a serialized string of bytes
-    :param sender_id: ID of source peer
-    :param target_id: ID to find
-    :return: String message of bytes
-    """
-    msg = _prepare_base_message(sender_id, address, port)
-    msg.pFindValue.guid = target_id
-    msg.type = msg.FIND_VALUE
-
-    return msg.SerializeToString()
-
 def create_found_nodes_message(sender, receiver, nearest_peers):
     """
     Returns new FOUND_NODES message containing nearest_peers informations
@@ -138,6 +125,8 @@ def create_peer_from_contact(contact):
     """
     id = int(contact.guid)
     ip = contact.IP
+    if ip == 'localhost':
+        ip = "127.0.0.1"
     port = contact.port
     is_NAT = contact.isNAT
     return python.P2P.peer.Peer(id, ip, port, is_NAT)
