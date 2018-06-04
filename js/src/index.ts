@@ -13,7 +13,7 @@ const nodes = [spawnNode(1338), spawnNode(1339), spawnNode(1340)];
 nodes.forEach((node) =>
  node.launch({
    host: 'localhost',
-   port: 1337
+   port: 1336
  })
 );
 

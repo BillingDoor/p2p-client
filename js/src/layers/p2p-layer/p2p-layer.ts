@@ -49,10 +49,10 @@ export class P2PLayer {
   //   );
   // }
 
-  findNode(config: { to: Address; guid?: string }) {
+  findNode(config: { to: Address; guid?: string }): Promise<void> {
     const { to, guid = this.me.guid } = config;
     logger.info('P2P layer: Creating findNode message');
-    this.worker.send(
+    return this.worker.send(
       utils.prepareFindNodeMessage({
         node: guid,
         sender: this.me,
