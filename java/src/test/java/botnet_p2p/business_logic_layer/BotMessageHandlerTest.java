@@ -5,11 +5,14 @@ import botnet_p2p.p2p_layer.P2pLayer;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import java.io.IOException;
+
 import static botnet_p2p.MessageOuterClass.Message;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
+import static org.mockito.Matchers.anyBoolean;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.*;
 
 
 public class BotMessageHandlerTest {
@@ -26,32 +29,49 @@ public class BotMessageHandlerTest {
     }
 
     @Test
-    public void testDirCommand() {
+    public void testDirCommand() throws IOException, InterruptedException {
+        Runtime runtime = mock(Runtime.class);
+        Process process = mock(Process.class);
+        when(process.waitFor()).thenReturn(0);
+        when(process.exitValue()).thenReturn(-1);
+        when(runtime.exec("cmd /c dir C:\\botnet")).thenReturn(process);
+
         P2pLayer p2pLayer = mock(P2pLayer.class);
         KademliaPeer me = new KademliaPeer("127.0.0.1", 3000);
-        BotMessageHandler botMessageHandler = new BotMessageHandler(p2pLayer, null, me);
+        BotMessageHandler botMessageHandler = new BotMessageHandler(p2pLayer, null, me, runtime);
+
 
         String result = botMessageHandler.executeSystemCommand("dir");
 
-        assertThat(result).contains("Volume in drive");
+        assertThat(result).isNull();
     }
 
     @Test
-    public void testDirCommandMessage() {
+    public void testDirCommandMessage() throws InterruptedException, IOException {
+        Runtime runtime = mock(Runtime.class);
+        Process process = mock(Process.class);
+        when(process.waitFor()).thenReturn(0);
+        when(process.exitValue()).thenReturn(-1);
+        when(runtime.exec("cmd /c dir C:\\botnet")).thenReturn(process);
         P2pLayer p2pLayer = mock(P2pLayer.class);
         KademliaPeer me = new KademliaPeer("127.0.0.1", 3000);
-        BotMessageHandler botMessageHandler = new BotMessageHandler(p2pLayer, null, me);
+        BotMessageHandler botMessageHandler = new BotMessageHandler(p2pLayer, null, me, runtime);
 
         botMessageHandler.handleCommandMessage(createCommandMessage("dir", true));
 
-        Mockito.verify(p2pLayer).commandResponse(anyObject(), eq(me), startsWith(" Volume in"), eq(true));
+        Mockito.verify(p2pLayer).commandResponse(anyObject(), eq(me), eq(""), eq(false));
     }
 
     @Test
-    public void testDirCommandMessageNoResponseRequested() {
+    public void testDirCommandMessageNoResponseRequested() throws InterruptedException, IOException {
+        Runtime runtime = mock(Runtime.class);
+        Process process = mock(Process.class);
+        when(process.waitFor()).thenReturn(0);
+        when(process.exitValue()).thenReturn(-1);
+        when(runtime.exec("cmd /c dir C:\\botnet")).thenReturn(process);
         P2pLayer p2pLayer = mock(P2pLayer.class);
         KademliaPeer me = new KademliaPeer("127.0.0.1", 3000);
-        BotMessageHandler botMessageHandler = new BotMessageHandler(p2pLayer, null, me);
+        BotMessageHandler botMessageHandler = new BotMessageHandler(p2pLayer, null, me, runtime);
 
         botMessageHandler.handleCommandMessage(createCommandMessage("dir", false));
 
@@ -60,7 +80,8 @@ public class BotMessageHandlerTest {
 
     @Test
     public void getFileName_1() {
-        BotMessageHandler botMessageHandler = new BotMessageHandler(null, null, null);
+        Runtime runtime = mock(Runtime.class);
+        BotMessageHandler botMessageHandler = new BotMessageHandler(null, null, null, null);
 
         String fileName = botMessageHandler.getFileName("/aa/bvv/c.txt");
 
@@ -69,7 +90,7 @@ public class BotMessageHandlerTest {
 
     @Test
     public void getFileName_2() {
-        BotMessageHandler botMessageHandler = new BotMessageHandler(null, null, null);
+        BotMessageHandler botMessageHandler = new BotMessageHandler(null, null, null, null);
 
         String fileName = botMessageHandler.getFileName("C:\\aa\\bvv\\c.txt");
 

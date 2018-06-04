@@ -26,7 +26,7 @@ public class Config {
 
     @Bean
     public BotMessageHandler botMessageHandler() {
-        return new BotMessageHandler(p2pLayer, chunkReader(null), me);
+        return new BotMessageHandler(p2pLayer, chunkReader(null), me, Runtime.getRuntime());
     }
 
     @Bean
