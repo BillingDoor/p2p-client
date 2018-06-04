@@ -53,7 +53,7 @@ public class SocketLayer extends Thread {
         );
 
         int size = communication.getData().limit();
-        ByteBuffer data = ByteBuffer.allocate(size + 4);
+        ByteBuffer data = ByteBuffer.allocate(size + Integer.BYTES);
         data.putInt(size);
         data.put(communication.getData());
         data.rewind();

@@ -40,7 +40,9 @@ class MessageReceiver {
             }
         }
 
-        ByteBuffer messageBuffer = ByteBuffer.wrap(inputBuffer.array(), 0, inputBuffer.position());
+        inputBuffer.rewind();
+        int size = inputBuffer.getInt();// TODO check size
+        ByteBuffer messageBuffer = ByteBuffer.wrap(inputBuffer.array(), Integer.BYTES, size);
         if (!this.receivedMessages.offer(messageBuffer)) {
             logger.error("queue is full!");
         }
