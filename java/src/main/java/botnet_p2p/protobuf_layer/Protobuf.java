@@ -113,6 +113,16 @@ public class Protobuf {
                 .build();
     }
 
+    public static Message createFileRequestMessage(KademliaPeer destination, KademliaPeer me, String path) {
+        return createBaseMessage(me, destination)
+                .setType(Message.MessageType.FILE_REQUEST)
+                .setFileRequest(
+                        Message.FileRequestMsg.newBuilder()
+                                .setPath(path)
+                                .build()
+                ).build();
+    }
+
     private static Message.Contact kademliaPeerToContact(KademliaPeer peer) {
         return Message.Contact.newBuilder()
                 .setGuid(peer.getGuid())

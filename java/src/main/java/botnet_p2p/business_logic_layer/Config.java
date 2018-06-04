@@ -2,6 +2,7 @@ package botnet_p2p.business_logic_layer;
 
 import botnet_p2p.model.KademliaPeer;
 import botnet_p2p.p2p_layer.P2pLayer;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -25,11 +26,15 @@ public class Config {
 
     @Bean
     public BotMessageHandler botMessageHandler() {
-        return new BotMessageHandler(p2pLayer, me);
+        return new BotMessageHandler(p2pLayer, chunkReader(null), me);
     }
 
     @Bean
     public BusinessLogicLayer businessLogicLayer() {
         return new BusinessLogicLayer(p2pLayer, me, kadMessageHandler(), botMessageHandler());
+    }
+
+    @Bean ChunkReader chunkReader(@Value("${file_save.location:C:\\botnet\\}") String path) {
+        return new ChunkReader(path);
     }
 }

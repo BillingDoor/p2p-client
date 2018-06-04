@@ -2,10 +2,13 @@ package botnet_p2p.message_layer;
 
 import botnet_p2p.model.Communication;
 import botnet_p2p.socket_layer.SocketLayer;
+import com.google.protobuf.ByteOutput;
+import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.concurrent.BlockingQueue;
@@ -32,6 +35,8 @@ public class MessageLayer extends Thread {
 
 
     public void send(Communication<Message> message) {
+        //ByteArrayOutputStream byteArrayOutputStream  = new ByteArrayOutputStream();
+        //message.getData().writeDelimitedTo(byteArrayOutputStream);
         try {
             socketLayer.send(new Communication<>(
                     message.getData().toByteString().asReadOnlyByteBuffer(),

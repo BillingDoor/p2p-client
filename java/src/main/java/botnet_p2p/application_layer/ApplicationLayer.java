@@ -48,6 +48,7 @@ public class ApplicationLayer {
         // commands:
         // print r - print routing table
         // command <command> <peer id> - send command to peer
+        // file_request <path> <peer id> - request file from peer
         Scanner scanner = new Scanner(System.in);
 
         while (true) {
@@ -55,15 +56,22 @@ public class ApplicationLayer {
                 String command = scanner.nextLine();
                 if ("print r".equals(command)) {
                     this.printRoutingTable();
-                } else if(command.startsWith("command")) {
+                } else if (command.startsWith("command")) {
                     String[] split = command.split(" ");
-                    if(split.length != 3) {
+                    if (split.length != 3) {
                         logger.error("invalid command");
                         continue;
                     }
                     businessLogicLayer.sendCommand(split[1], split[2]);
+                } else if (command.startsWith("file_request")) {
+                    String[] split = command.split(" ");
+                    if (split.length != 3) {
+                        logger.error("invalid command");
+                        continue;
+                    }
+                    businessLogicLayer.requestFile(split[1], split[2]);
                 }
-            } catch(Exception ignored) {
+            } catch (Exception ignored) {
 
             }
         }

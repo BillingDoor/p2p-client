@@ -29,7 +29,7 @@ public class BotMessageHandlerTest {
     public void testDirCommand() {
         P2pLayer p2pLayer = mock(P2pLayer.class);
         KademliaPeer me = new KademliaPeer("127.0.0.1", 3000);
-        BotMessageHandler botMessageHandler = new BotMessageHandler(p2pLayer, me);
+        BotMessageHandler botMessageHandler = new BotMessageHandler(p2pLayer, null, me);
 
         String result = botMessageHandler.executeSystemCommand("dir");
 
@@ -40,7 +40,7 @@ public class BotMessageHandlerTest {
     public void testDirCommandMessage() {
         P2pLayer p2pLayer = mock(P2pLayer.class);
         KademliaPeer me = new KademliaPeer("127.0.0.1", 3000);
-        BotMessageHandler botMessageHandler = new BotMessageHandler(p2pLayer, me);
+        BotMessageHandler botMessageHandler = new BotMessageHandler(p2pLayer, null, me);
 
         botMessageHandler.handleCommandMessage(createCommandMessage("dir", true));
 
@@ -51,7 +51,7 @@ public class BotMessageHandlerTest {
     public void testDirCommandMessageNoResponseRequested() {
         P2pLayer p2pLayer = mock(P2pLayer.class);
         KademliaPeer me = new KademliaPeer("127.0.0.1", 3000);
-        BotMessageHandler botMessageHandler = new BotMessageHandler(p2pLayer, me);
+        BotMessageHandler botMessageHandler = new BotMessageHandler(p2pLayer, null, me);
 
         botMessageHandler.handleCommandMessage(createCommandMessage("dir", false));
 
@@ -60,7 +60,7 @@ public class BotMessageHandlerTest {
 
     @Test
     public void getFileName_1() {
-        BotMessageHandler botMessageHandler = new BotMessageHandler(null, null);
+        BotMessageHandler botMessageHandler = new BotMessageHandler(null, null, null);
 
         String fileName = botMessageHandler.getFileName("/aa/bvv/c.txt");
 
@@ -69,7 +69,7 @@ public class BotMessageHandlerTest {
 
     @Test
     public void getFileName_2() {
-        BotMessageHandler botMessageHandler = new BotMessageHandler(null, null);
+        BotMessageHandler botMessageHandler = new BotMessageHandler(null, null, null);
 
         String fileName = botMessageHandler.getFileName("C:\\aa\\bvv\\c.txt");
 

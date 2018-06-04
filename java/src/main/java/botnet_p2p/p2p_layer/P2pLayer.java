@@ -105,6 +105,14 @@ public class P2pLayer {
                 ));
     }
 
+    public void fileRequest(KademliaPeer me, KademliaPeer destination, String path) {
+        messageLayer.send(
+                new Communication<>(
+                        Protobuf.createFileRequestMessage(destination, me, path),
+                        destination.toPeer()
+                ));
+    }
+
     public void addToRoutingTable(KademliaPeer peer) {
         this.routingTable.insert(peer);
     }
