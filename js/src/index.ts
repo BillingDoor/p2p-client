@@ -50,6 +50,6 @@ function spawnNode(port: number) {
 }
 
 // TODO: pretty debug logs
+// TODO: divide protobuf/utils into separate files
 // TODO: handle errors
 // * bootstrapNode not listening / not available
-// TODO: repair ping nodes
