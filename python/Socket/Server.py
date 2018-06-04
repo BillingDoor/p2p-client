@@ -1,6 +1,7 @@
 import asyncio
 import socket
 import logging.handlers
+import struct
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -23,20 +24,39 @@ async def receive_data(reader, writer):
     try:
         address = writer.get_extra_info('peername')
         log.debug("connection with {} accepted".format(address))
-        while True:
-            data = await reader.read()
-            if data:
-                log.debug("received {!r}".format(data))
-                # create coroutine to put data into the queue
-                put_cor = QUEUE.put(data)
-                # send that coroutine to the main loop
-                asyncio.run_coroutine_threadsafe(put_cor, MAIN_LOOP)
-            else:
-                log.debug('closing connection with {}'.format(address))
+
+        # First we read length
+        message_length = 0
+        try:
+            data = await reader.readexactly(4)
+            if data == '':
+                log.warning("Connection with {} was unexpectedly closed".format(address))
                 writer.close()
                 return
+            else:
+                message_length = struct.unpack('>L', data)[0]
+
+                # Read proper message
+                data = await reader.readexactly(message_length)
+                if data:
+                    log.debug("received {!r}".format(data))
+                    # create coroutine to put data into the queue
+                    put_cor = QUEUE.put(data)
+                    # send that coroutine to the main loop
+                    asyncio.run_coroutine_threadsafe(put_cor, MAIN_LOOP)
+                else:
+                    log.warning("Connection with {} was unexpectedly closed".format(address))
+                    writer.close()
+                    return
+        except asyncio.IncompleteReadError:
+            log.warning("Connection with {} was closed before we got entire message".format(address))
+            writer.close()
+            return
+    except socket.error as error:
+        log.warning("Socket error: {}".format(error))
     except asyncio.CancelledError:
         log.warning("Server was stopped while reading data.")
+    finally:
         writer.close()
 
 async def _monitor(stop_server_event, server):

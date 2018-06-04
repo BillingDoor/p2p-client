@@ -5,6 +5,7 @@ from python.utils.StatusMessage import StatusMessage
 from python.Socket.Server import run_server
 from python.Socket.Client import client
 import os
+import struct
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -56,8 +57,18 @@ class SocketLayer:
         """
         peer_address = message[1]
         serialized_message = message[0]
-        status = await client(peer_address, serialized_message)
+        framed_message = self._frame_message(serialized_message)
+        status = await client(peer_address, framed_message)
         return status
+
+    def _frame_message(self, message):
+        """
+        Frames message by adding the beginning length of it
+        :param message: Message to frame
+        :return: Framed message
+        """
+        packed_len = struct.pack('>L', len(message))
+        return packed_len + message
 
     def start_server(self, ip, port):
         self.stop_server_event = threading.Event()

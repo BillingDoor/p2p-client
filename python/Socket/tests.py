@@ -72,9 +72,9 @@ class SocketsTests(unittest.TestCase):
         _run(self.higher[0].put((mess.SerializeToString(), address)))
         _run(self.higher[0].put((mess2.SerializeToString(), address2)))
 
+        # Get the message
         msg = _run(self.higher[1].get())
         msg2 = _run(self.higher[1].get())
-        # Get the message
         log.warning("Stop the server")
         status = _run(self.socket_layer.stop_server())
         self.assertIs(status, StatusMessage.SUCCESS)
@@ -127,13 +127,15 @@ class SocketsTests(unittest.TestCase):
         mess2 = putils.create_ping_message(sender2, receiver2)
 
         serialized = putils.serialize_message(mess)
+        framed = self.socket_layer._frame_message(serialized)
         serialized2 = putils.serialize_message(mess2)
+        framed2 = self.socket_layer._frame_message(serialized2)
 
         try:
             log.debug("Try to send the messages")
-            sock.send(serialized)
+            sock.send(framed)
             log.debug("Try to send next messages")
-            sock2.send(serialized2)
+            sock2.send(framed2)
         except socket.error as msg:
             log.warning("Could not send the message: {}".format(msg))
             sock.close()
