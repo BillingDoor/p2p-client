@@ -34,39 +34,43 @@ func InitLayer(selfNode models.Node, messageChannel chan models.Message, termina
 }
 
 func Ping(selfNode, targetNode models.Node) error {
-	return message_layer.Ping(selfNode, targetNode)
+	return message_layer.Ping(targetNode)
 }
 
 func PingResponse(selfNode, targetNode models.Node) error {
-	return message_layer.PingResponse(selfNode, targetNode)
+	return message_layer.PingResponse(targetNode)
 }
 
 func FindNode(selfNode, targetNode models.Node, guid models.UUID) error {
-	return message_layer.FindNode(selfNode, targetNode, guid)
+	return message_layer.FindNode(targetNode, guid)
 }
 
 func FoundNodes(selfNode, targetNode models.Node, guid models.UUID) error {
 	mutex.Lock()
 	nodes := routingTable.NearestNodes(guid, 100)
 	mutex.Unlock()
-	return message_layer.FoundNodes(selfNode, targetNode, nodes)
+	return message_layer.FoundNodes(targetNode, nodes)
 }
 
 func LeaveNetwork() error {
 	var err error
 	nodes := routingTable.GetAllNodes()
 	for _, node := range nodes {
-		err = message_layer.LeaveNetwork(myNode, node)
+		err = message_layer.LeaveNetwork(node)
 	}
 	return err
 }
 
 func Command(sender, target models.Node, command string, shouldRespond bool) error {
-	return message_layer.Command(sender, target, command, shouldRespond)
+	return message_layer.Command(target, command, shouldRespond)
 }
 
 func CommandResponse(selfNode, targetNode models.Node, command, response string) error {
-	return message_layer.CommandResponse(selfNode, targetNode, command, response)
+	return message_layer.CommandResponse(targetNode, command, response)
+}
+
+func FileChunk(target models.Node, uuid models.UUID, name string, size, number uint32, data []byte) error {
+	return message_layer.FileChunk(target, uuid, name, size, number, data)
 }
 
 func AddNodeToRoutingTable(node models.Node) {

@@ -77,8 +77,8 @@ func sendMessage(target models.Node, msg models.Message) error {
 	return err
 }
 
-func FindNode(sender, receiver models.Node, guid models.UUID) error {
-	message := createBaseMessage(sender, receiver, models.Message_FIND_NODE)
+func FindNode(receiver models.Node, guid models.UUID) error {
+	message := createBaseMessage(myNode, receiver, models.Message_FIND_NODE)
 	message.Payload = &models.Message_FindNode{
 		FindNode: &models.Message_FindNodeMsg{
 			Guid: guid.String(),
@@ -87,7 +87,7 @@ func FindNode(sender, receiver models.Node, guid models.UUID) error {
 	return sendMessage(receiver, message)
 }
 
-func FoundNodes(sender, receiver models.Node, nodes []models.Node) error {
+func FoundNodes(receiver models.Node, nodes []models.Node) error {
 	nodesMessages := make([]*models.Message_Contact, 0)
 
 	for _, n := range nodes {
@@ -99,7 +99,7 @@ func FoundNodes(sender, receiver models.Node, nodes []models.Node) error {
 		})
 	}
 
-	message := createBaseMessage(sender, receiver, models.Message_FOUND_NODES)
+	message := createBaseMessage(myNode, receiver, models.Message_FOUND_NODES)
 	message.Payload = &models.Message_FoundNodes{
 		FoundNodes: &models.Message_FoundNodesMsg{
 			Nodes: nodesMessages,
@@ -108,37 +108,51 @@ func FoundNodes(sender, receiver models.Node, nodes []models.Node) error {
 	return sendMessage(receiver, message)
 }
 
-func Ping(sender, receiver models.Node) error {
-	message := createBaseMessage(sender, receiver, models.Message_PING)
+func Ping(receiver models.Node) error {
+	message := createBaseMessage(myNode, receiver, models.Message_PING)
 	return sendMessage(receiver, message)
 }
 
-func PingResponse(sender, receiver models.Node) error {
-	message := createBaseMessage(sender, receiver, models.Message_PING_RESPONSE)
+func PingResponse(receiver models.Node) error {
+	message := createBaseMessage(myNode, receiver, models.Message_PING_RESPONSE)
 	return sendMessage(receiver, message)
 }
 
-func LeaveNetwork(sender, receiver models.Node) error {
-	message := createBaseMessage(sender, receiver, models.Message_LEAVE)
+func LeaveNetwork(receiver models.Node) error {
+	message := createBaseMessage(myNode, receiver, models.Message_LEAVE)
 	return sendMessage(receiver, message)
 }
 
-func Command(sender, target models.Node, command string, shouldRespond bool) error {
-	message := createBaseMessage(sender, target, models.Message_COMMAND)
+func Command(target models.Node, command string, shouldRespond bool) error {
+	message := createBaseMessage(myNode, target, models.Message_COMMAND)
 	message.Payload = &models.Message_Command{
 		Command: &models.Message_CommandMsg{
-			CommandString: command,
-			SendResponse:  shouldRespond,
+			Command: command,
+			ShouldRespond:  shouldRespond,
 		},
 	}
 	return sendMessage(target, message)
 }
 
-func CommandResponse(sender, target models.Node, command, response string) error {
-	message := createBaseMessage(sender, target, models.Message_RESPONSE)
+func CommandResponse(target models.Node, command, response string) error {
+	message := createBaseMessage(myNode, target, models.Message_COMMAND_RESPONSE)
 	message.Payload = &models.Message_Response{
-		Response: &models.Message_ResponseMsg{
+		Response: &models.Message_CommandResponseMsg{
 			Value: response,
+		},
+	}
+	return sendMessage(target, message)
+}
+
+func FileChunk(target models.Node, uuid models.UUID, name string, size, number uint32, data []byte) error {
+	message := createBaseMessage(myNode, target, models.Message_FILE_CHUNK)
+	message.Payload = &models.Message_FileChunk{
+		FileChunk: &models.Message_FileChunkMsg{
+			Uuid: uuid.String(),
+			FileName: name,
+			FileSize: size,
+			Ordinal: uint32(number),
+			Data: data,
 		},
 	}
 	return sendMessage(target, message)

