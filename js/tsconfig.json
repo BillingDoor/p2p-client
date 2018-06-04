@@ -6,7 +6,8 @@
       "@models": ["models"],
       "@models*": ["models*"],
       "@layers*": ["layers*"],
-      "@protobuf*": ["protobuf*"]
+      "@protobuf*": ["protobuf*"],
+      "@utils*": ["utils*"]
     },
     "target": "es6",
     "lib": ["es2016"],

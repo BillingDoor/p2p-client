@@ -12,6 +12,7 @@ import {
 } from 'ramda';
 
 import { Contact } from '@models/contact';
+import logger from '@utils/logging';
 
 export class RoutingTable {
   private buckets: Contact[][];
@@ -30,15 +31,26 @@ export class RoutingTable {
     const bucketNotFull = this.buckets[bucket].length < RoutingTable.bucketSize;
 
     if (notSelf && bucketNotFull) {
-      console.log(`P2P layer: Adding node ${node.guid} to routing table`);
+      logger.info(`P2P layer: Adding node ${node.guid} to routing table`);
       this.buckets[bucket] = [...this.buckets[bucket], node];
-      console.dir(this.buckets.filter((x) => x.length));
+      logger.info(
+        `RoutingTable: ${JSON.stringify(
+          this.buckets.filter((x) => x.length),
+          null,
+          2
+        )}`
+      );
     }
   }
 
   removeNode(node: Contact): void {
+    logger.info(`P2P layer: Removing node ${node.guid} from routing table`);
     let bucket = this.selectBucket(node.guid);
     this.buckets[bucket] = reject(equals(node), this.buckets[bucket]);
+  }
+
+  getAllNodes(): Contact[] {
+    return flatten(this.buckets);
   }
 
   getNodeByGUID(guid: string): Contact | undefined {

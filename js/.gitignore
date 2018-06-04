@@ -1,2 +1,4 @@
 node_modules
 dist
+src/protobuf/Message_pb.d.ts
+src/protobuf/Message_pb.js

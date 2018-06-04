@@ -134,6 +134,64 @@ describe('RoutingTable', () => {
     });
   });
 
+  describe('Method: "getAllNodes"', () => {
+    let node: Contact;
+    let nodes: Contact[];
+
+    beforeEach(() => {
+      node = new Contact({
+        address: {
+          host: 'bar',
+          port: 2345
+        }
+      });
+      nodes = [
+        new Contact({
+          address: {
+            host: 'baz',
+            port: 3456
+          }
+        }),
+        new Contact({
+          address: {
+            host: 'bis',
+            port: 4567
+          }
+        })
+      ];
+    });
+
+    it('should exist', () => {
+      const result = typeof routingTable.getAllNodes === 'function';
+      expect(result).toBe(true);
+    });
+
+    describe('When: one node is added', () => {
+      beforeEach(() => {
+        routingTable.addNode(node);
+      });
+
+      it('should return that node', () => {
+        const nearestNodes = routingTable.getNearestNodes(node.guid);
+        const result = nearestNodes.includes(node);
+        expect(result).toBe(false);
+      });
+    });
+
+    describe('When: multiple nodes are added', () => {
+      beforeEach(() => {
+        [...nodes, node].forEach((node) => routingTable.addNode(node));
+      });
+
+      it('should return that nodes', () => {
+        const allNodes = routingTable.getAllNodes();
+        const result = sortBy<Contact>(prop('guid'), allNodes);
+        const expected = sortBy<Contact>(prop('guid'), [...nodes, node]);
+        expect(result).toEqual(expected);
+      });
+    });
+  });
+
   describe('Method: "getNearestNodes"', () => {
     let node: Contact;
     let nodes: Contact[];

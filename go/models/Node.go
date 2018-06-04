@@ -3,6 +3,7 @@ package models
 import (
 	"math/rand"
 	"strconv"
+	"fmt"
 )
 
 type UUID uint64
@@ -35,16 +36,16 @@ func (a UUID) largestDifferingBit(b UUID) int {
 	return 0
 }
 
-func (a *UUID) String() string {
-	return strconv.Itoa(int(*a))
+func (a UUID) String() string {
+	return fmt.Sprint(uint64(a))
 }
 
 func GuidFromString(str string) UUID {
-	val, err := strconv.ParseUint(str, 10, 32)
+	val, err := strconv.ParseUint(str, 10, 64)
 	if err != nil {
 		val = 0
 	}
-	return UUID(uint32(val))
+	return UUID(uint64(val))
 }
 
 func (a *Node) Equals(b Node) bool {

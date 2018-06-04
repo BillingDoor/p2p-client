@@ -3,18 +3,15 @@ package botnet_p2p;
 
 message Message {
     enum MessageType {
-        UNDEFINED = 0;
-        COMMAND = 1;
-        COMMAND_RESPONSE = 2;
-        FILE_REQUEST = 3;
-        FILE_CHUNK = 4;
-        NAT_REQUEST = 5;
-        NAT_CHECK = 6;
-        PING = 7;
-        PING_RESPONSE = 8;
-        LEAVE = 9;
-        FIND_NODE = 10;
-        FOUND_NODES = 11;
+        COMMAND = 0;
+        COMMAND_RESPONSE = 1;
+        FILE_REQUEST = 2;
+        FILE_CHUNK = 3;
+        PING = 4;
+        PING_RESPONSE = 5;
+        LEAVE = 6;
+        FIND_NODE = 7;
+        FOUND_NODES = 8;
     }
 
     enum Status {
@@ -37,26 +34,19 @@ message Message {
     message CommandResponseMsg {
         string value = 1;
         Status status = 2;
+        string command = 3;
     }
 
     message FileRequestMsg {
         string path = 1;
     }
-    
+
     message FileChunkMsg {
         string uuid = 1;
         string fileName = 2;
         uint32 fileSize = 3;
         uint32 ordinal = 4;
         bytes data = 5;
-    }
-
-    message NATRequestMsg {
-        string guid = 1;
-    }
-
-    message NATCheckMsg {
-        string guid = 1;
     }
     
     message FindNodeMsg {
@@ -71,16 +61,13 @@ message Message {
     MessageType type = 2;
     Contact sender = 3;
     Contact receiver = 4;
-    bool propagation = 5;
-    bytes signature = 6;
+    bool propagate = 5;
     oneof payload {
-        CommandMsg command = 7;
-        CommandResponseMsg response = 8;
-        FileRequestMsg fileRequest = 9;
-        FileChunkMsg fileChunk = 10;
-        NATRequestMsg NATRequest = 11;
-        NATCheckMsg NATCheck = 12;
-        FindNodeMsg findNode = 13;
-        FoundNodesMsg foundNodes = 14;          
+        CommandMsg command = 6;
+        CommandResponseMsg response = 7;
+        FileRequestMsg fileRequest = 8;
+        FileChunkMsg fileChunk = 9;
+        FindNodeMsg findNode = 10;
+        FoundNodesMsg foundNodes = 11;
     }
 }
