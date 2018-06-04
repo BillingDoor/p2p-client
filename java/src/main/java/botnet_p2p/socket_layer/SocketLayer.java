@@ -51,7 +51,13 @@ public class SocketLayer extends Thread {
                 + ":"
                 + communication.getPeer().getPort()
         );
-        this._send(communication.getData(), communication.getPeer());
+
+        int size = communication.getData().limit();
+        ByteBuffer data = ByteBuffer.allocate(size + 4);
+        data.putInt(size);
+        data.put(communication.getData());
+        data.rewind();
+        this._send(data, communication.getPeer());
     }
 
     @Override

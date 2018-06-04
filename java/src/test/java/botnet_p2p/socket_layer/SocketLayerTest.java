@@ -11,6 +11,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Semaphore;
 
 import static botnet_p2p.MessageOuterClass.Message;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -30,24 +31,30 @@ public class SocketLayerTest {
             dstPeer
     );
 
-    Communication<ByteBuffer> communicationByteBuffer = new Communication<>(
+    private final Communication<ByteBuffer> communicationByteBuffer = new Communication<>(
             communicationMessage.getData().toByteString().asReadOnlyByteBuffer(),
             dstPeer
     );
 
     @Test
     public void sendMessage() throws IOException, InterruptedException {
-        new Thread(() -> {
+        Semaphore received = new Semaphore(0);
+        Thread socketsThread = new Thread(() -> {
             CountDownLatch initLatch = new CountDownLatch(1);
             SocketLayer socketLayer = new SocketLayer(null, initLatch, PORT_SENDER);
             socketLayer.start();
             try {
                 initLatch.await();
                 socketLayer.send(communicationByteBuffer);
-            } catch (InterruptedException | IOException e) {
+                received.acquire();
+                socketLayer.shutdown();
+            } catch (InterruptedException e) {
+                socketLayer.shutdown();
+            } catch (IOException e) {
                 e.printStackTrace();
             }
-        }).start();
+        });
+        socketsThread.start();
 
         // wait for connection from node
         ServerSocket serverSocket = new ServerSocket();
@@ -59,10 +66,13 @@ public class SocketLayerTest {
         byte[] buffer = new byte[2048];
         int read = bufferedInputStream.read(buffer);
         ByteBuffer messageBuffer = ByteBuffer.wrap(buffer, 0, read);
+        int size = messageBuffer.getInt();
         Message receivedMessage = Message.parseFrom(messageBuffer);
 
         assertThat(receivedMessage).isNotNull();
         assertThat(receivedMessage).isEqualTo(communicationMessage.getData());
+        assertThat(size).isEqualTo(communicationMessage.getData().getSerializedSize());
+        received.release();
     }
 
 
