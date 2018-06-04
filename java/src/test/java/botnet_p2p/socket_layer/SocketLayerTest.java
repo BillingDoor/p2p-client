@@ -12,7 +12,6 @@ import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.ByteBuffer;
-import java.util.UUID;
 import java.util.concurrent.*;
 
 import static botnet_p2p.MessageOuterClass.Message;
@@ -28,7 +27,8 @@ public class SocketLayerTest {
     private final Communication<Message> communicationMessage = new Communication<>(
             Message.newBuilder()
                     .setType(Message.MessageType.PING)
-                    .setUuid(UUID.randomUUID().toString())
+                    // .setUuid(UUID.randomUUID().toString())
+                    .setUuid("7515e584-c727-4218-ad23-37d9aa497898")
                     .build(),
             dstPeer
     );
@@ -148,5 +148,85 @@ public class SocketLayerTest {
         assertThat(receivedMessage).isEqualTo(communicationMessage.getData());
 
         socketsThread.join();
+    }
+
+    @Test
+    public void receiveMoreMessagesAtOnce() throws IOException, InterruptedException {
+        BlockingQueue<ByteBuffer> receivedMessages = new LinkedBlockingQueue<>();
+        CountDownLatch initLatch = new CountDownLatch(1);
+        SocketLayer socketLayer = new SocketLayer(receivedMessages, initLatch, PORT_SENDER);
+        socketLayer.start();
+        initLatch.await();
+
+        // socket that sends command
+        Socket socket = new Socket();
+        socket.connect(new InetSocketAddress("127.0.0.1", PORT_SENDER));
+        BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(socket.getOutputStream());
+
+        // initialize test peer and send message
+        int size = communicationByteBuffer.getData().limit();
+        ByteBuffer data = ByteBuffer.allocate(size + 4);
+        data.putInt(size);
+        data.put(communicationByteBuffer.getData());
+
+        bufferedOutputStream.write(data.array());
+        bufferedOutputStream.write(data.array());
+        bufferedOutputStream.flush();
+
+
+        Thread.sleep(800);
+        assertThat(receivedMessages.size()).isEqualTo(2);
+
+        ByteBuffer receivedData = receivedMessages.poll(1, TimeUnit.SECONDS);
+        socketLayer.shutdown();
+        assertThat(receivedData).isNotNull();
+
+        Message receivedMessage = Message.parseFrom(receivedData);
+        assertThat(receivedMessage).isEqualTo(communicationMessage.getData());
+    }
+
+    @Test
+    public void receiveMessagesSentInParts() throws IOException, InterruptedException {
+        BlockingQueue<ByteBuffer> receivedMessages = new LinkedBlockingQueue<>();
+        CountDownLatch initLatch = new CountDownLatch(1);
+        SocketLayer socketLayer = new SocketLayer(receivedMessages, initLatch, PORT_SENDER);
+        socketLayer.start();
+        initLatch.await();
+
+        // socket that sends command
+        Socket socket = new Socket();
+        socket.connect(new InetSocketAddress("127.0.0.1", PORT_SENDER));
+        BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(socket.getOutputStream());
+
+        // initialize test peer and send message
+        int size = communicationByteBuffer.getData().limit();
+        ByteBuffer data = ByteBuffer.allocate(size + 4);
+        data.putInt(size);
+        data.put(communicationByteBuffer.getData());
+
+        byte[] part1 = new byte[20];
+        byte[] part2 = new byte[24];
+        data.rewind();
+        data.get(part1, 0, 20);
+
+        data.get(part2, 0, 24);
+        bufferedOutputStream.write(part1);
+        bufferedOutputStream.flush();
+        Thread.sleep(500);
+        bufferedOutputStream.write(part2);
+        // bufferedOutputStream.write(data.array());
+        bufferedOutputStream.flush();
+
+        Thread.sleep(2000);
+        assertThat(receivedMessages.size()).isEqualTo(1);
+
+        ByteBuffer receivedData = receivedMessages.poll(1, TimeUnit.SECONDS);
+        socketLayer.shutdown();
+        assertThat(receivedData).isNotNull();
+
+        receivedData.position(4);
+        receivedData.limit(44);
+        Message receivedMessage = Message.parseFrom(receivedData);
+        assertThat(receivedMessage).isEqualTo(communicationMessage.getData());
     }
 }
