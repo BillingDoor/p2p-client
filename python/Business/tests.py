@@ -1,15 +1,13 @@
 import unittest.mock
 import asyncio
-import threading
 import python.Protobuf.protobuf_utils as putils
 from python.Socket.SocketLayer import SocketLayer
 from python.Message.MessageLayer import MessageLayer
 from python.P2P.P2PLayer import P2PLayer
 from python.Business.BusinessLogicLayer import BusinessLogicLayer
-from python.StatusMessage import StatusMessage
 from python.Protobuf.Message_pb2 import Message
 from python.P2P.peer import Peer
-from python.StatusMessage import StatusMessage
+from python.utils.StatusMessage import StatusMessage
 
 def _run(cor):
     return asyncio.get_event_loop().run_until_complete(cor)

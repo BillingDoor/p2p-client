@@ -6,7 +6,7 @@ import python.Protobuf.protobuf_utils as putils
 from python.P2P.peer import Peer
 import logging
 import sys
-from python.StatusMessage import StatusMessage
+from python.utils.StatusMessage import StatusMessage
 
 logging.basicConfig(format="%(name)s %(message)s", stream=sys.stderr, level=logging.DEBUG)
 log = logging.getLogger('Socket-tests')

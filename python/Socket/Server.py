@@ -7,7 +7,7 @@ logging.basicConfig(
     format='%(name)s: %(message)s',
 )
 handler = logging.handlers.RotatingFileHandler(
-    "server_log.txt",
+    "./logs/server_log.txt",
     maxBytes=65536,
     backupCount=10,
 )

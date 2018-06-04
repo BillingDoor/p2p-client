@@ -1,13 +1,14 @@
 import asyncio
 import python.Protobuf.protobuf_utils as putils
 import logging.handlers
+import os
 
 logging.basicConfig(
     level=logging.DEBUG,
     format='%(name)s: %(message)s',
 )
 handler = logging.handlers.RotatingFileHandler(
-    "log.txt",
+    os.path.abspath("./logs/log.txt"),
     maxBytes=65536,
     backupCount=10,
 )

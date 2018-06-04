@@ -1,17 +1,17 @@
 import asyncio
 import threading
-import python.Protobuf.protobuf_utils as putils
 import logging.handlers
-from python.StatusMessage import StatusMessage
+from python.utils.StatusMessage import StatusMessage
 from python.Socket.Server import run_server
 from python.Socket.Client import client
+import os
 
 logging.basicConfig(
     level=logging.DEBUG,
     format='%(name)s: %(message)s',
 )
 handler = logging.handlers.RotatingFileHandler(
-    "log.txt",
+    os.path.abspath("./logs/log.txt"),
     maxBytes=65536,
     backupCount=10,
 )

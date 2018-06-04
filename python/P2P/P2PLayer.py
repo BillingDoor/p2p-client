@@ -1,20 +1,15 @@
-from python.Socket.SocketLayer import SocketLayer
-import python.Protobuf.protobuf_utils as putils
-from python.Message.MessageLayer import MessageLayer
-from python.Business.BusinessLogicLayer import BusinessLogicLayer
 from python.P2P.BucketList import BucketList
 from python.P2P.peer import Peer
-from python.StatusMessage import StatusMessage
-import random
 import logging.handlers
 import asyncio
+import os
 
 logging.basicConfig(
     level=logging.DEBUG,
     format='%(name)s: %(message)s',
 )
 handler = logging.handlers.RotatingFileHandler(
-    "log.txt",
+    os.path.abspath("./logs/log.txt"),
     maxBytes=65536,
     backupCount=10
 )

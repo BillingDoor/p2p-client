@@ -1,13 +1,13 @@
 import asyncio
 import logging.handlers
-from python.StatusMessage import StatusMessage
+from python.utils.StatusMessage import StatusMessage
 
 logging.basicConfig(
     level=logging.DEBUG,
     format='%(name)s: %(message)s',
 )
 handler = logging.handlers.RotatingFileHandler(
-    "client_log.txt",
+    "./logs/client_log.txt",
     maxBytes=65536,
     backupCount=10,
 )
