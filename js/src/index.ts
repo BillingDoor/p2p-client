@@ -45,11 +45,11 @@ function spawnNode(port: number) {
   const socketLayer = new SocketLayer(me.address.port);
   const messageLayer = new MessageLayer(socketLayer);
   const p2pLayer = new P2PLayer(messageLayer, me);
-  const businessLayer = new BusinessLayer(p2pLayer, me);
+  const businessLayer = new BusinessLayer(p2pLayer);
   return new ApplicationLayer(businessLayer);
 }
 
 // TODO: pretty debug logs
-// TODO: divide protobuf/utils into separate files
 // TODO: handle errors
 // * bootstrapNode not listening / not available
+// TODO: repair ping nodes

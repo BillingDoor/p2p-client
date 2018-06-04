@@ -12,15 +12,15 @@ export function prepareCommandMessage(config: {
   const { command, shouldRespond, sender, receiver } = config;
 
   const commandMsg = new Message.CommandMsg();
-  commandMsg.setCommandstring(command);
-  commandMsg.setSendresponse(shouldRespond);
+  commandMsg.setCommand(command);
+  commandMsg.setShouldrespond(shouldRespond);
 
   const msg = prepareBaseMessage({
-    type: Message.MessageType.FIND_NODE,
+    type: Message.MessageType.COMMAND,
     sender,
     receiver
   });
-  msg.setFindnode(commandMsg);
+  msg.setCommand(commandMsg);
 
   return msg;
 }

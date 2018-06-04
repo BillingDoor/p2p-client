@@ -23,8 +23,34 @@ export class P2PLayer {
     this.worker.close();
   }
 
-  findNode(config: { to: Address; guid: string }) {
-    const { to, guid } = config;
+  command(config: { to: Contact; command: string; shouldRespond?: boolean }) {
+    const { to, command, shouldRespond = false } = config;
+    logger.info('P2P layer: Creating command message');
+    this.worker.send(
+      utils.prepareCommandMessage({
+        command,
+        shouldRespond,
+        sender: this.me,
+        receiver: to
+      })
+    );
+  }
+
+  // commandResponse(config: { to: Contact; value: string; shouldRespond?: boolean }) {
+  //   const { to, command, shouldRespond = false } = config;
+  //   logger.info('P2P layer: Creating command message');
+  //   this.worker.send(
+  //     utils.prepareCommandMessage({
+  //       command,
+  //       shouldRespond,
+  //       sender: this.me,
+  //       receiver: to
+  //     })
+  //   );
+  // }
+
+  findNode(config: { to: Address; guid?: string }) {
+    const { to, guid = this.me.guid } = config;
     logger.info('P2P layer: Creating findNode message');
     this.worker.send(
       utils.prepareFindNodeMessage({
