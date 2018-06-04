@@ -14,8 +14,8 @@ export class BusinessLayer {
     this.handleMessages();
   }
 
-  joinNetwork(bootstrapNode: Address) {
-    this.worker.findNode({
+  async joinNetwork(bootstrapNode: Address) {
+    await this.worker.findNode({
       to: bootstrapNode
     });
 

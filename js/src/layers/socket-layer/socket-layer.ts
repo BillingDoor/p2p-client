@@ -1,17 +1,16 @@
 import * as net from 'net';
-import { compose, equals, nth, reject } from 'ramda';
+import { compose, equals, nth, reject as ramdaReject } from 'ramda';
 import { Subject, Observable } from 'rxjs';
-import { tap, finalize } from 'rxjs/operators';
 
 import { Address, Communication } from '@models';
 import logger from '@utils/logging';
 
 export class SocketLayer {
+  static readonly PREFIX_BYTES = 4;
+
   private server: net.Server = {} as net.Server;
   private connections: [Address, net.Socket][] = [];
   private receivedMessages$: Subject<Buffer>;
-
-  static readonly PREFIX_BYTES = 4;
 
   constructor(private port: number) {
     this.receivedMessages$ = new Subject();
@@ -22,26 +21,14 @@ export class SocketLayer {
     logger.info('Socket layer: closing connections.');
     this.server.close();
     this.receivedMessages$.complete();
+    this.connections.forEach(([address, socket]) => socket.destroy());
   }
 
   getReceivedMessagesStream(): Observable<Buffer> {
     return this.receivedMessages$.asObservable();
   }
 
-  setMessagesToSendStream(messagesToSend$: Observable<Communication<Buffer>>) {
-    messagesToSend$
-      .pipe(
-        tap((msg) => this.send(msg)),
-        finalize(() =>
-          this.connections.forEach(([address, connection]) =>
-            connection.destroy()
-          )
-        )
-      )
-      .subscribe();
-  }
-
-  private send(config: Communication<Buffer>): void {
+  send(config: Communication<Buffer>): Promise<void> {
     const { data, address } = config;
     const { host, port } = address;
 
@@ -50,27 +37,36 @@ export class SocketLayer {
     let client: net.Socket;
 
     const connected = this.connections.find(compose(equals(address), nth(1)));
-    if (connected) {
-      [, client] = connected;
-      client.write(prefixedData);
-    } else {
-      client = new net.Socket();
-      logger.info(`Socket layer: Connecting to ${host}:${port}...`);
-      client.connect(port, host);
 
-      client.on('connect', () => {
-        logger.info(`Socket layer: Connected to ${host}:${port}!`);
-        this.connections = [...this.connections, [address, client]];
+    return new Promise((resolve, reject) => {
+      if (connected) {
+        [, client] = connected;
         client.write(prefixedData);
-      });
+      } else {
+        client = new net.Socket();
+        logger.info(`Socket layer: Connecting to ${host}:${port}...`);
+        client.connect(port, host);
 
-      client.on('close', () => {
-        this.connections = reject(
-          compose(equals(address), nth(1)),
-          this.connections
-        );
-      });
-    }
+        client.on('connect', () => {
+          logger.info(`Socket layer: Connected to ${host}:${port}!`);
+          this.connections = [...this.connections, [address, client]];
+          client.write(prefixedData);
+        });
+
+        client.on('close', () => {
+          this.connections = ramdaReject(
+            compose(equals(address), nth(1)),
+            this.connections
+          );
+        });
+
+        client.on('drain', resolve);
+
+        client.on('error', () => {
+          reject();
+        });
+      }
+    });
   }
 
   private handleReceivedMessages(): void {

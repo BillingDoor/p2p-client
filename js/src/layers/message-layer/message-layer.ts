@@ -13,7 +13,6 @@ export class MessageLayer {
   constructor(private worker: SocketLayer) {
     this.messagesToSend$ = new Subject();
     this.messages$ = this.handleReceivedMessages();
-    this.worker.setMessagesToSendStream(this.messagesToSend$.asObservable());
   }
 
   close() {
@@ -25,7 +24,7 @@ export class MessageLayer {
     return this.messages$.pipe(filter((msg) => msg.getType() === type));
   }
 
-  send(msg: Message) {
+  send(msg: Message): Promise<void> {
     const sender = msg.getSender();
     const receiver = msg.getReceiver();
 
@@ -41,7 +40,7 @@ export class MessageLayer {
       throw new Error('Message layer: Cannot send message to self.');
     }
 
-    this.messagesToSend$.next({ data: encodeMessage(msg), address });
+    return this.worker.send({ data: encodeMessage(msg), address });
   }
 
   private handleReceivedMessages() {
