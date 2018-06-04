@@ -31,7 +31,7 @@ func RunApplication(listenPort uint32, connectPort uint32) {
 		log.Printf("[AL] Could not join network, error: %v\nAssuming this is bootstrap node", err)
 
 	}
-	business_logic_layer.SendFile(bootstrapNode, "./Main.go", "./xDDDD.txt")
+	business_logic_layer.RequestFile(bootstrapNode, "./Main.go")
 	go func() {
 		for {
 			reader := bufio.NewReader(os.Stdin)

@@ -86,7 +86,9 @@ func messageHandlerLoop() {
 				break
 			case models.Message_FILE_CHUNK:
 				go handleFileChunk(msg)
-			}
+			case models.Message_FILE_REQUEST:
+				go handleFileRequest(msg)
+		}
 		case <-mainTerminateChannel:
 			return
 		}
@@ -137,6 +139,11 @@ func SendFile(target models.Node, path, targetPath string) error {
 
 	return err
 }
+
+func RequestFile(target models.Node, path string) {
+	p2p_layer.RequestFile(target, path)
+}
+
 
 func handleFoundNodes(msg models.Message) {
 	foundNodesMsg := msg.GetFoundNodes().Nodes
@@ -247,11 +254,15 @@ func handleFileChunk(msg models.Message) {
 	}
 	file.WriteAt(data, int64(number*chunkSize))
 	if int(number) == chunks-1 {
-		log.Printf("[BL] Got all chunks of file %v, closing file.\n", uuid)
+		log.Printf("[BL] Got all chunks of file %v %v, closing file.\n", uuid, name)
 		file.Close()
 		delete(filesToBeWritten, uuid)
 	}
 
+}
+
+func handleFileRequest(msg models.Message) {
+	SendFile(msg.Sender.ToNode(), msg.GetFileRequest().Path, msg.GetFileRequest().Path + "." + myNode.Guid.String())
 }
 
 func generateSelfNode(port uint32) (models.Node, error) {

@@ -157,3 +157,14 @@ func FileChunk(target models.Node, uuid models.UUID, name string, size, number u
 	}
 	return sendMessage(target, message)
 }
+
+
+func RequestFile(target models.Node, path string) error {
+	message := createBaseMessage(myNode, target, models.Message_FILE_REQUEST)
+	message.Payload = &models.Message_FileRequest{
+		FileRequest: &models.Message_FileRequestMsg{
+			Path:path,
+		},
+	}
+	return sendMessage(target, message)
+}

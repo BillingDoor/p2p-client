@@ -73,6 +73,10 @@ func FileChunk(target models.Node, uuid models.UUID, name string, size, number u
 	return message_layer.FileChunk(target, uuid, name, size, number, data)
 }
 
+func RequestFile(target models.Node, path string) error {
+	return message_layer.RequestFile(target, path)
+}
+
 func AddNodeToRoutingTable(node models.Node) {
 	log.Printf("[P2] Adding node to RT: %v\n", node)
 	mutex.Lock()
