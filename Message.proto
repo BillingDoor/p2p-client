@@ -34,12 +34,13 @@ message Message {
     message CommandResponseMsg {
         string value = 1;
         Status status = 2;
+        string command = 3;
     }
 
     message FileRequestMsg {
         string path = 1;
     }
-    
+
     message FileChunkMsg {
         string uuid = 1;
         string fileName = 2;
@@ -67,6 +68,6 @@ message Message {
         FileRequestMsg fileRequest = 8;
         FileChunkMsg fileChunk = 9;
         FindNodeMsg findNode = 10;
-        FoundNodesMsg foundNodes = 11;          
+        FoundNodesMsg foundNodes = 11;
     }
 }
