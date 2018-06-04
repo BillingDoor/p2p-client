@@ -64,116 +64,85 @@ public final class MessageOuterClass {
     Message.ContactOrBuilder getReceiverOrBuilder();
 
     /**
-     * <code>bool propagation = 5;</code>
+     * <code>bool propagate = 5;</code>
      */
-    boolean getPropagation();
+    boolean getPropagate();
 
     /**
-     * <code>bytes signature = 6;</code>
-     */
-    com.google.protobuf.ByteString getSignature();
-
-    /**
-     * <code>.botnet_p2p.Message.CommandMsg command = 7;</code>
+     * <code>.botnet_p2p.Message.CommandMsg command = 6;</code>
      */
     boolean hasCommand();
     /**
-     * <code>.botnet_p2p.Message.CommandMsg command = 7;</code>
+     * <code>.botnet_p2p.Message.CommandMsg command = 6;</code>
      */
     Message.CommandMsg getCommand();
     /**
-     * <code>.botnet_p2p.Message.CommandMsg command = 7;</code>
+     * <code>.botnet_p2p.Message.CommandMsg command = 6;</code>
      */
     Message.CommandMsgOrBuilder getCommandOrBuilder();
 
     /**
-     * <code>.botnet_p2p.Message.CommandResponseMsg response = 8;</code>
+     * <code>.botnet_p2p.Message.CommandResponseMsg response = 7;</code>
      */
     boolean hasResponse();
     /**
-     * <code>.botnet_p2p.Message.CommandResponseMsg response = 8;</code>
+     * <code>.botnet_p2p.Message.CommandResponseMsg response = 7;</code>
      */
     Message.CommandResponseMsg getResponse();
     /**
-     * <code>.botnet_p2p.Message.CommandResponseMsg response = 8;</code>
+     * <code>.botnet_p2p.Message.CommandResponseMsg response = 7;</code>
      */
     Message.CommandResponseMsgOrBuilder getResponseOrBuilder();
 
     /**
-     * <code>.botnet_p2p.Message.FileRequestMsg fileRequest = 9;</code>
+     * <code>.botnet_p2p.Message.FileRequestMsg fileRequest = 8;</code>
      */
     boolean hasFileRequest();
     /**
-     * <code>.botnet_p2p.Message.FileRequestMsg fileRequest = 9;</code>
+     * <code>.botnet_p2p.Message.FileRequestMsg fileRequest = 8;</code>
      */
     Message.FileRequestMsg getFileRequest();
     /**
-     * <code>.botnet_p2p.Message.FileRequestMsg fileRequest = 9;</code>
+     * <code>.botnet_p2p.Message.FileRequestMsg fileRequest = 8;</code>
      */
     Message.FileRequestMsgOrBuilder getFileRequestOrBuilder();
 
     /**
-     * <code>.botnet_p2p.Message.FileChunkMsg fileChunk = 10;</code>
+     * <code>.botnet_p2p.Message.FileChunkMsg fileChunk = 9;</code>
      */
     boolean hasFileChunk();
     /**
-     * <code>.botnet_p2p.Message.FileChunkMsg fileChunk = 10;</code>
+     * <code>.botnet_p2p.Message.FileChunkMsg fileChunk = 9;</code>
      */
     Message.FileChunkMsg getFileChunk();
     /**
-     * <code>.botnet_p2p.Message.FileChunkMsg fileChunk = 10;</code>
+     * <code>.botnet_p2p.Message.FileChunkMsg fileChunk = 9;</code>
      */
     Message.FileChunkMsgOrBuilder getFileChunkOrBuilder();
 
     /**
-     * <code>.botnet_p2p.Message.NATRequestMsg NATRequest = 11;</code>
-     */
-    boolean hasNATRequest();
-    /**
-     * <code>.botnet_p2p.Message.NATRequestMsg NATRequest = 11;</code>
-     */
-    Message.NATRequestMsg getNATRequest();
-    /**
-     * <code>.botnet_p2p.Message.NATRequestMsg NATRequest = 11;</code>
-     */
-    Message.NATRequestMsgOrBuilder getNATRequestOrBuilder();
-
-    /**
-     * <code>.botnet_p2p.Message.NATCheckMsg NATCheck = 12;</code>
-     */
-    boolean hasNATCheck();
-    /**
-     * <code>.botnet_p2p.Message.NATCheckMsg NATCheck = 12;</code>
-     */
-    Message.NATCheckMsg getNATCheck();
-    /**
-     * <code>.botnet_p2p.Message.NATCheckMsg NATCheck = 12;</code>
-     */
-    Message.NATCheckMsgOrBuilder getNATCheckOrBuilder();
-
-    /**
-     * <code>.botnet_p2p.Message.FindNodeMsg findNode = 13;</code>
+     * <code>.botnet_p2p.Message.FindNodeMsg findNode = 10;</code>
      */
     boolean hasFindNode();
     /**
-     * <code>.botnet_p2p.Message.FindNodeMsg findNode = 13;</code>
+     * <code>.botnet_p2p.Message.FindNodeMsg findNode = 10;</code>
      */
     Message.FindNodeMsg getFindNode();
     /**
-     * <code>.botnet_p2p.Message.FindNodeMsg findNode = 13;</code>
+     * <code>.botnet_p2p.Message.FindNodeMsg findNode = 10;</code>
      */
     Message.FindNodeMsgOrBuilder getFindNodeOrBuilder();
 
     /**
-     * <code>.botnet_p2p.Message.FoundNodesMsg foundNodes = 14;</code>
+     * <code>.botnet_p2p.Message.FoundNodesMsg foundNodes = 11;</code>
      */
     boolean hasFoundNodes();
     /**
-     * <code>.botnet_p2p.Message.FoundNodesMsg foundNodes = 14;</code>
+     * <code>.botnet_p2p.Message.FoundNodesMsg foundNodes = 11;</code>
      */
     Message.FoundNodesMsg getFoundNodes();
     /**
-     * <code>.botnet_p2p.Message.FoundNodesMsg foundNodes = 14;</code>
+     * <code>.botnet_p2p.Message.FoundNodesMsg foundNodes = 11;</code>
      */
     Message.FoundNodesMsgOrBuilder getFoundNodesOrBuilder();
 
@@ -194,8 +163,7 @@ public final class MessageOuterClass {
     private Message() {
       uuid_ = "";
       type_ = 0;
-      propagation_ = false;
-      signature_ = com.google.protobuf.ByteString.EMPTY;
+      propagate_ = false;
     }
 
     @Override
@@ -269,17 +237,12 @@ public final class MessageOuterClass {
             }
             case 40: {
 
-              propagation_ = input.readBool();
+              propagate_ = input.readBool();
               break;
             }
             case 50: {
-
-              signature_ = input.readBytes();
-              break;
-            }
-            case 58: {
               CommandMsg.Builder subBuilder = null;
-              if (payloadCase_ == 7) {
+              if (payloadCase_ == 6) {
                 subBuilder = ((CommandMsg) payload_).toBuilder();
               }
               payload_ =
@@ -288,12 +251,12 @@ public final class MessageOuterClass {
                 subBuilder.mergeFrom((CommandMsg) payload_);
                 payload_ = subBuilder.buildPartial();
               }
-              payloadCase_ = 7;
+              payloadCase_ = 6;
               break;
             }
-            case 66: {
+            case 58: {
               CommandResponseMsg.Builder subBuilder = null;
-              if (payloadCase_ == 8) {
+              if (payloadCase_ == 7) {
                 subBuilder = ((CommandResponseMsg) payload_).toBuilder();
               }
               payload_ =
@@ -302,12 +265,12 @@ public final class MessageOuterClass {
                 subBuilder.mergeFrom((CommandResponseMsg) payload_);
                 payload_ = subBuilder.buildPartial();
               }
-              payloadCase_ = 8;
+              payloadCase_ = 7;
               break;
             }
-            case 74: {
+            case 66: {
               FileRequestMsg.Builder subBuilder = null;
-              if (payloadCase_ == 9) {
+              if (payloadCase_ == 8) {
                 subBuilder = ((FileRequestMsg) payload_).toBuilder();
               }
               payload_ =
@@ -316,12 +279,12 @@ public final class MessageOuterClass {
                 subBuilder.mergeFrom((FileRequestMsg) payload_);
                 payload_ = subBuilder.buildPartial();
               }
-              payloadCase_ = 9;
+              payloadCase_ = 8;
               break;
             }
-            case 82: {
+            case 74: {
               FileChunkMsg.Builder subBuilder = null;
-              if (payloadCase_ == 10) {
+              if (payloadCase_ == 9) {
                 subBuilder = ((FileChunkMsg) payload_).toBuilder();
               }
               payload_ =
@@ -330,40 +293,12 @@ public final class MessageOuterClass {
                 subBuilder.mergeFrom((FileChunkMsg) payload_);
                 payload_ = subBuilder.buildPartial();
               }
-              payloadCase_ = 10;
+              payloadCase_ = 9;
               break;
             }
-            case 90: {
-              NATRequestMsg.Builder subBuilder = null;
-              if (payloadCase_ == 11) {
-                subBuilder = ((NATRequestMsg) payload_).toBuilder();
-              }
-              payload_ =
-                  input.readMessage(NATRequestMsg.parser(), extensionRegistry);
-              if (subBuilder != null) {
-                subBuilder.mergeFrom((NATRequestMsg) payload_);
-                payload_ = subBuilder.buildPartial();
-              }
-              payloadCase_ = 11;
-              break;
-            }
-            case 98: {
-              NATCheckMsg.Builder subBuilder = null;
-              if (payloadCase_ == 12) {
-                subBuilder = ((NATCheckMsg) payload_).toBuilder();
-              }
-              payload_ =
-                  input.readMessage(NATCheckMsg.parser(), extensionRegistry);
-              if (subBuilder != null) {
-                subBuilder.mergeFrom((NATCheckMsg) payload_);
-                payload_ = subBuilder.buildPartial();
-              }
-              payloadCase_ = 12;
-              break;
-            }
-            case 106: {
+            case 82: {
               FindNodeMsg.Builder subBuilder = null;
-              if (payloadCase_ == 13) {
+              if (payloadCase_ == 10) {
                 subBuilder = ((FindNodeMsg) payload_).toBuilder();
               }
               payload_ =
@@ -372,12 +307,12 @@ public final class MessageOuterClass {
                 subBuilder.mergeFrom((FindNodeMsg) payload_);
                 payload_ = subBuilder.buildPartial();
               }
-              payloadCase_ = 13;
+              payloadCase_ = 10;
               break;
             }
-            case 114: {
+            case 90: {
               FoundNodesMsg.Builder subBuilder = null;
-              if (payloadCase_ == 14) {
+              if (payloadCase_ == 11) {
                 subBuilder = ((FoundNodesMsg) payload_).toBuilder();
               }
               payload_ =
@@ -386,7 +321,7 @@ public final class MessageOuterClass {
                 subBuilder.mergeFrom((FoundNodesMsg) payload_);
                 payload_ = subBuilder.buildPartial();
               }
-              payloadCase_ = 14;
+              payloadCase_ = 11;
               break;
             }
           }
@@ -419,104 +354,80 @@ public final class MessageOuterClass {
     public enum MessageType
         implements com.google.protobuf.ProtocolMessageEnum {
       /**
-       * <code>UNDEFINED = 0;</code>
+       * <code>COMMAND = 0;</code>
        */
-      UNDEFINED(0),
+      COMMAND(0),
       /**
-       * <code>COMMAND = 1;</code>
+       * <code>COMMAND_RESPONSE = 1;</code>
        */
-      COMMAND(1),
+      COMMAND_RESPONSE(1),
       /**
-       * <code>COMMAND_RESPONSE = 2;</code>
+       * <code>FILE_REQUEST = 2;</code>
        */
-      COMMAND_RESPONSE(2),
+      FILE_REQUEST(2),
       /**
-       * <code>FILE_REQUEST = 3;</code>
+       * <code>FILE_CHUNK = 3;</code>
        */
-      FILE_REQUEST(3),
+      FILE_CHUNK(3),
       /**
-       * <code>FILE_CHUNK = 4;</code>
+       * <code>PING = 4;</code>
        */
-      FILE_CHUNK(4),
+      PING(4),
       /**
-       * <code>NAT_REQUEST = 5;</code>
+       * <code>PING_RESPONSE = 5;</code>
        */
-      NAT_REQUEST(5),
+      PING_RESPONSE(5),
       /**
-       * <code>NAT_CHECK = 6;</code>
+       * <code>LEAVE = 6;</code>
        */
-      NAT_CHECK(6),
+      LEAVE(6),
       /**
-       * <code>PING = 7;</code>
+       * <code>FIND_NODE = 7;</code>
        */
-      PING(7),
+      FIND_NODE(7),
       /**
-       * <code>PING_RESPONSE = 8;</code>
+       * <code>FOUND_NODES = 8;</code>
        */
-      PING_RESPONSE(8),
-      /**
-       * <code>LEAVE = 9;</code>
-       */
-      LEAVE(9),
-      /**
-       * <code>FIND_NODE = 10;</code>
-       */
-      FIND_NODE(10),
-      /**
-       * <code>FOUND_NODES = 11;</code>
-       */
-      FOUND_NODES(11),
+      FOUND_NODES(8),
       UNRECOGNIZED(-1),
       ;
 
       /**
-       * <code>UNDEFINED = 0;</code>
+       * <code>COMMAND = 0;</code>
        */
-      public static final int UNDEFINED_VALUE = 0;
+      public static final int COMMAND_VALUE = 0;
       /**
-       * <code>COMMAND = 1;</code>
+       * <code>COMMAND_RESPONSE = 1;</code>
        */
-      public static final int COMMAND_VALUE = 1;
+      public static final int COMMAND_RESPONSE_VALUE = 1;
       /**
-       * <code>COMMAND_RESPONSE = 2;</code>
+       * <code>FILE_REQUEST = 2;</code>
        */
-      public static final int COMMAND_RESPONSE_VALUE = 2;
+      public static final int FILE_REQUEST_VALUE = 2;
       /**
-       * <code>FILE_REQUEST = 3;</code>
+       * <code>FILE_CHUNK = 3;</code>
        */
-      public static final int FILE_REQUEST_VALUE = 3;
+      public static final int FILE_CHUNK_VALUE = 3;
       /**
-       * <code>FILE_CHUNK = 4;</code>
+       * <code>PING = 4;</code>
        */
-      public static final int FILE_CHUNK_VALUE = 4;
+      public static final int PING_VALUE = 4;
       /**
-       * <code>NAT_REQUEST = 5;</code>
+       * <code>PING_RESPONSE = 5;</code>
        */
-      public static final int NAT_REQUEST_VALUE = 5;
+      public static final int PING_RESPONSE_VALUE = 5;
       /**
-       * <code>NAT_CHECK = 6;</code>
+       * <code>LEAVE = 6;</code>
        */
-      public static final int NAT_CHECK_VALUE = 6;
+      public static final int LEAVE_VALUE = 6;
       /**
-       * <code>PING = 7;</code>
+       * <code>FIND_NODE = 7;</code>
        */
-      public static final int PING_VALUE = 7;
+      public static final int FIND_NODE_VALUE = 7;
       /**
-       * <code>PING_RESPONSE = 8;</code>
+       * <code>FOUND_NODES = 8;</code>
        */
-      public static final int PING_RESPONSE_VALUE = 8;
-      /**
-       * <code>LEAVE = 9;</code>
-       */
-      public static final int LEAVE_VALUE = 9;
-      /**
-       * <code>FIND_NODE = 10;</code>
-       */
-      public static final int FIND_NODE_VALUE = 10;
-      /**
-       * <code>FOUND_NODES = 11;</code>
-       */
-      public static final int FOUND_NODES_VALUE = 11;
+      public static final int FOUND_NODES_VALUE = 8;
 
 
       public final int getNumber() {
@@ -537,18 +448,15 @@ public final class MessageOuterClass {
 
       public static MessageType forNumber(int value) {
         switch (value) {
-          case 0: return UNDEFINED;
-          case 1: return COMMAND;
-          case 2: return COMMAND_RESPONSE;
-          case 3: return FILE_REQUEST;
-          case 4: return FILE_CHUNK;
-          case 5: return NAT_REQUEST;
-          case 6: return NAT_CHECK;
-          case 7: return PING;
-          case 8: return PING_RESPONSE;
-          case 9: return LEAVE;
-          case 10: return FIND_NODE;
-          case 11: return FOUND_NODES;
+          case 0: return COMMAND;
+          case 1: return COMMAND_RESPONSE;
+          case 2: return FILE_REQUEST;
+          case 3: return FILE_CHUNK;
+          case 4: return PING;
+          case 5: return PING_RESPONSE;
+          case 6: return LEAVE;
+          case 7: return FIND_NODE;
+          case 8: return FOUND_NODES;
           default: return null;
         }
       }
@@ -2099,6 +2007,16 @@ public final class MessageOuterClass {
        * <code>.botnet_p2p.Message.Status status = 2;</code>
        */
       Status getStatus();
+
+      /**
+       * <code>string command = 3;</code>
+       */
+      String getCommand();
+      /**
+       * <code>string command = 3;</code>
+       */
+      com.google.protobuf.ByteString
+          getCommandBytes();
     }
     /**
      * Protobuf type {@code botnet_p2p.Message.CommandResponseMsg}
@@ -2115,6 +2033,7 @@ public final class MessageOuterClass {
       private CommandResponseMsg() {
         value_ = "";
         status_ = 0;
+        command_ = "";
       }
 
       @Override
@@ -2158,6 +2077,12 @@ public final class MessageOuterClass {
                 int rawValue = input.readEnum();
 
                 status_ = rawValue;
+                break;
+              }
+              case 26: {
+                String s = input.readStringRequireUtf8();
+
+                command_ = s;
                 break;
               }
             }
@@ -2234,6 +2159,40 @@ public final class MessageOuterClass {
         return result == null ? Status.UNRECOGNIZED : result;
       }
 
+      public static final int COMMAND_FIELD_NUMBER = 3;
+      private volatile Object command_;
+      /**
+       * <code>string command = 3;</code>
+       */
+      public String getCommand() {
+        Object ref = command_;
+        if (ref instanceof String) {
+          return (String) ref;
+        } else {
+          com.google.protobuf.ByteString bs = 
+              (com.google.protobuf.ByteString) ref;
+          String s = bs.toStringUtf8();
+          command_ = s;
+          return s;
+        }
+      }
+      /**
+       * <code>string command = 3;</code>
+       */
+      public com.google.protobuf.ByteString
+          getCommandBytes() {
+        Object ref = command_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (String) ref);
+          command_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+
       private byte memoizedIsInitialized = -1;
       public final boolean isInitialized() {
         byte isInitialized = memoizedIsInitialized;
@@ -2252,6 +2211,9 @@ public final class MessageOuterClass {
         if (status_ != Status.FAIL.getNumber()) {
           output.writeEnum(2, status_);
         }
+        if (!getCommandBytes().isEmpty()) {
+          com.google.protobuf.GeneratedMessageV3.writeString(output, 3, command_);
+        }
         unknownFields.writeTo(output);
       }
 
@@ -2266,6 +2228,9 @@ public final class MessageOuterClass {
         if (status_ != Status.FAIL.getNumber()) {
           size += com.google.protobuf.CodedOutputStream
             .computeEnumSize(2, status_);
+        }
+        if (!getCommandBytes().isEmpty()) {
+          size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, command_);
         }
         size += unknownFields.getSerializedSize();
         memoizedSize = size;
@@ -2286,6 +2251,8 @@ public final class MessageOuterClass {
         result = result && getValue()
             .equals(other.getValue());
         result = result && status_ == other.status_;
+        result = result && getCommand()
+            .equals(other.getCommand());
         result = result && unknownFields.equals(other.unknownFields);
         return result;
       }
@@ -2301,6 +2268,8 @@ public final class MessageOuterClass {
         hash = (53 * hash) + getValue().hashCode();
         hash = (37 * hash) + STATUS_FIELD_NUMBER;
         hash = (53 * hash) + status_;
+        hash = (37 * hash) + COMMAND_FIELD_NUMBER;
+        hash = (53 * hash) + getCommand().hashCode();
         hash = (29 * hash) + unknownFields.hashCode();
         memoizedHashCode = hash;
         return hash;
@@ -2434,6 +2403,8 @@ public final class MessageOuterClass {
 
           status_ = 0;
 
+          command_ = "";
+
           return this;
         }
 
@@ -2458,6 +2429,7 @@ public final class MessageOuterClass {
           CommandResponseMsg result = new CommandResponseMsg(this);
           result.value_ = value_;
           result.status_ = status_;
+          result.command_ = command_;
           onBuilt();
           return result;
         }
@@ -2505,6 +2477,10 @@ public final class MessageOuterClass {
           }
           if (other.status_ != 0) {
             setStatusValue(other.getStatusValue());
+          }
+          if (!other.getCommand().isEmpty()) {
+            command_ = other.command_;
+            onChanged();
           }
           this.mergeUnknownFields(other.unknownFields);
           onChanged();
@@ -2642,6 +2618,75 @@ public final class MessageOuterClass {
         public Builder clearStatus() {
           
           status_ = 0;
+          onChanged();
+          return this;
+        }
+
+        private Object command_ = "";
+        /**
+         * <code>string command = 3;</code>
+         */
+        public String getCommand() {
+          Object ref = command_;
+          if (!(ref instanceof String)) {
+            com.google.protobuf.ByteString bs =
+                (com.google.protobuf.ByteString) ref;
+            String s = bs.toStringUtf8();
+            command_ = s;
+            return s;
+          } else {
+            return (String) ref;
+          }
+        }
+        /**
+         * <code>string command = 3;</code>
+         */
+        public com.google.protobuf.ByteString
+            getCommandBytes() {
+          Object ref = command_;
+          if (ref instanceof String) {
+            com.google.protobuf.ByteString b = 
+                com.google.protobuf.ByteString.copyFromUtf8(
+                    (String) ref);
+            command_ = b;
+            return b;
+          } else {
+            return (com.google.protobuf.ByteString) ref;
+          }
+        }
+        /**
+         * <code>string command = 3;</code>
+         */
+        public Builder setCommand(
+            String value) {
+          if (value == null) {
+    throw new NullPointerException();
+  }
+  
+          command_ = value;
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>string command = 3;</code>
+         */
+        public Builder clearCommand() {
+          
+          command_ = getDefaultInstance().getCommand();
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>string command = 3;</code>
+         */
+        public Builder setCommandBytes(
+            com.google.protobuf.ByteString value) {
+          if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+          
+          command_ = value;
           onChanged();
           return this;
         }
@@ -4073,1056 +4118,6 @@ public final class MessageOuterClass {
 
     }
 
-    public interface NATRequestMsgOrBuilder extends
-        // @@protoc_insertion_point(interface_extends:botnet_p2p.Message.NATRequestMsg)
-        com.google.protobuf.MessageOrBuilder {
-
-      /**
-       * <code>string guid = 1;</code>
-       */
-      String getGuid();
-      /**
-       * <code>string guid = 1;</code>
-       */
-      com.google.protobuf.ByteString
-          getGuidBytes();
-    }
-    /**
-     * Protobuf type {@code botnet_p2p.Message.NATRequestMsg}
-     */
-    public  static final class NATRequestMsg extends
-        com.google.protobuf.GeneratedMessageV3 implements
-        // @@protoc_insertion_point(message_implements:botnet_p2p.Message.NATRequestMsg)
-        NATRequestMsgOrBuilder {
-    private static final long serialVersionUID = 0L;
-      // Use NATRequestMsg.newBuilder() to construct.
-      private NATRequestMsg(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
-        super(builder);
-      }
-      private NATRequestMsg() {
-        guid_ = "";
-      }
-
-      @Override
-      public final com.google.protobuf.UnknownFieldSet
-      getUnknownFields() {
-        return this.unknownFields;
-      }
-      private NATRequestMsg(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        this();
-        if (extensionRegistry == null) {
-          throw new NullPointerException();
-        }
-        int mutable_bitField0_ = 0;
-        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-            com.google.protobuf.UnknownFieldSet.newBuilder();
-        try {
-          boolean done = false;
-          while (!done) {
-            int tag = input.readTag();
-            switch (tag) {
-              case 0:
-                done = true;
-                break;
-              default: {
-                if (!parseUnknownFieldProto3(
-                    input, unknownFields, extensionRegistry, tag)) {
-                  done = true;
-                }
-                break;
-              }
-              case 10: {
-                String s = input.readStringRequireUtf8();
-
-                guid_ = s;
-                break;
-              }
-            }
-          }
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          throw e.setUnfinishedMessage(this);
-        } catch (java.io.IOException e) {
-          throw new com.google.protobuf.InvalidProtocolBufferException(
-              e).setUnfinishedMessage(this);
-        } finally {
-          this.unknownFields = unknownFields.build();
-          makeExtensionsImmutable();
-        }
-      }
-      public static final com.google.protobuf.Descriptors.Descriptor
-          getDescriptor() {
-        return MessageOuterClass.internal_static_botnet_p2p_Message_NATRequestMsg_descriptor;
-      }
-
-      protected FieldAccessorTable
-          internalGetFieldAccessorTable() {
-        return MessageOuterClass.internal_static_botnet_p2p_Message_NATRequestMsg_fieldAccessorTable
-            .ensureFieldAccessorsInitialized(
-                NATRequestMsg.class, Builder.class);
-      }
-
-      public static final int GUID_FIELD_NUMBER = 1;
-      private volatile Object guid_;
-      /**
-       * <code>string guid = 1;</code>
-       */
-      public String getGuid() {
-        Object ref = guid_;
-        if (ref instanceof String) {
-          return (String) ref;
-        } else {
-          com.google.protobuf.ByteString bs = 
-              (com.google.protobuf.ByteString) ref;
-          String s = bs.toStringUtf8();
-          guid_ = s;
-          return s;
-        }
-      }
-      /**
-       * <code>string guid = 1;</code>
-       */
-      public com.google.protobuf.ByteString
-          getGuidBytes() {
-        Object ref = guid_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (String) ref);
-          guid_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-
-      private byte memoizedIsInitialized = -1;
-      public final boolean isInitialized() {
-        byte isInitialized = memoizedIsInitialized;
-        if (isInitialized == 1) return true;
-        if (isInitialized == 0) return false;
-
-        memoizedIsInitialized = 1;
-        return true;
-      }
-
-      public void writeTo(com.google.protobuf.CodedOutputStream output)
-                          throws java.io.IOException {
-        if (!getGuidBytes().isEmpty()) {
-          com.google.protobuf.GeneratedMessageV3.writeString(output, 1, guid_);
-        }
-        unknownFields.writeTo(output);
-      }
-
-      public int getSerializedSize() {
-        int size = memoizedSize;
-        if (size != -1) return size;
-
-        size = 0;
-        if (!getGuidBytes().isEmpty()) {
-          size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, guid_);
-        }
-        size += unknownFields.getSerializedSize();
-        memoizedSize = size;
-        return size;
-      }
-
-      @Override
-      public boolean equals(final Object obj) {
-        if (obj == this) {
-         return true;
-        }
-        if (!(obj instanceof NATRequestMsg)) {
-          return super.equals(obj);
-        }
-        NATRequestMsg other = (NATRequestMsg) obj;
-
-        boolean result = true;
-        result = result && getGuid()
-            .equals(other.getGuid());
-        result = result && unknownFields.equals(other.unknownFields);
-        return result;
-      }
-
-      @Override
-      public int hashCode() {
-        if (memoizedHashCode != 0) {
-          return memoizedHashCode;
-        }
-        int hash = 41;
-        hash = (19 * hash) + getDescriptor().hashCode();
-        hash = (37 * hash) + GUID_FIELD_NUMBER;
-        hash = (53 * hash) + getGuid().hashCode();
-        hash = (29 * hash) + unknownFields.hashCode();
-        memoizedHashCode = hash;
-        return hash;
-      }
-
-      public static NATRequestMsg parseFrom(
-          java.nio.ByteBuffer data)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return PARSER.parseFrom(data);
-      }
-      public static NATRequestMsg parseFrom(
-          java.nio.ByteBuffer data,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return PARSER.parseFrom(data, extensionRegistry);
-      }
-      public static NATRequestMsg parseFrom(
-          com.google.protobuf.ByteString data)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return PARSER.parseFrom(data);
-      }
-      public static NATRequestMsg parseFrom(
-          com.google.protobuf.ByteString data,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return PARSER.parseFrom(data, extensionRegistry);
-      }
-      public static NATRequestMsg parseFrom(byte[] data)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return PARSER.parseFrom(data);
-      }
-      public static NATRequestMsg parseFrom(
-          byte[] data,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return PARSER.parseFrom(data, extensionRegistry);
-      }
-      public static NATRequestMsg parseFrom(java.io.InputStream input)
-          throws java.io.IOException {
-        return com.google.protobuf.GeneratedMessageV3
-            .parseWithIOException(PARSER, input);
-      }
-      public static NATRequestMsg parseFrom(
-          java.io.InputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws java.io.IOException {
-        return com.google.protobuf.GeneratedMessageV3
-            .parseWithIOException(PARSER, input, extensionRegistry);
-      }
-      public static NATRequestMsg parseDelimitedFrom(java.io.InputStream input)
-          throws java.io.IOException {
-        return com.google.protobuf.GeneratedMessageV3
-            .parseDelimitedWithIOException(PARSER, input);
-      }
-      public static NATRequestMsg parseDelimitedFrom(
-          java.io.InputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws java.io.IOException {
-        return com.google.protobuf.GeneratedMessageV3
-            .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
-      }
-      public static NATRequestMsg parseFrom(
-          com.google.protobuf.CodedInputStream input)
-          throws java.io.IOException {
-        return com.google.protobuf.GeneratedMessageV3
-            .parseWithIOException(PARSER, input);
-      }
-      public static NATRequestMsg parseFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws java.io.IOException {
-        return com.google.protobuf.GeneratedMessageV3
-            .parseWithIOException(PARSER, input, extensionRegistry);
-      }
-
-      public Builder newBuilderForType() { return newBuilder(); }
-      public static Builder newBuilder() {
-        return DEFAULT_INSTANCE.toBuilder();
-      }
-      public static Builder newBuilder(NATRequestMsg prototype) {
-        return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
-      }
-      public Builder toBuilder() {
-        return this == DEFAULT_INSTANCE
-            ? new Builder() : new Builder().mergeFrom(this);
-      }
-
-      @Override
-      protected Builder newBuilderForType(
-          BuilderParent parent) {
-        Builder builder = new Builder(parent);
-        return builder;
-      }
-      /**
-       * Protobuf type {@code botnet_p2p.Message.NATRequestMsg}
-       */
-      public static final class Builder extends
-          com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-          // @@protoc_insertion_point(builder_implements:botnet_p2p.Message.NATRequestMsg)
-          NATRequestMsgOrBuilder {
-        public static final com.google.protobuf.Descriptors.Descriptor
-            getDescriptor() {
-          return MessageOuterClass.internal_static_botnet_p2p_Message_NATRequestMsg_descriptor;
-        }
-
-        protected FieldAccessorTable
-            internalGetFieldAccessorTable() {
-          return MessageOuterClass.internal_static_botnet_p2p_Message_NATRequestMsg_fieldAccessorTable
-              .ensureFieldAccessorsInitialized(
-                  NATRequestMsg.class, Builder.class);
-        }
-
-        // Construct using botnet_p2p.MessageOuterClass.Message.NATRequestMsg.newBuilder()
-        private Builder() {
-          maybeForceBuilderInitialization();
-        }
-
-        private Builder(
-            BuilderParent parent) {
-          super(parent);
-          maybeForceBuilderInitialization();
-        }
-        private void maybeForceBuilderInitialization() {
-          if (com.google.protobuf.GeneratedMessageV3
-                  .alwaysUseFieldBuilders) {
-          }
-        }
-        public Builder clear() {
-          super.clear();
-          guid_ = "";
-
-          return this;
-        }
-
-        public com.google.protobuf.Descriptors.Descriptor
-            getDescriptorForType() {
-          return MessageOuterClass.internal_static_botnet_p2p_Message_NATRequestMsg_descriptor;
-        }
-
-        public NATRequestMsg getDefaultInstanceForType() {
-          return NATRequestMsg.getDefaultInstance();
-        }
-
-        public NATRequestMsg build() {
-          NATRequestMsg result = buildPartial();
-          if (!result.isInitialized()) {
-            throw newUninitializedMessageException(result);
-          }
-          return result;
-        }
-
-        public NATRequestMsg buildPartial() {
-          NATRequestMsg result = new NATRequestMsg(this);
-          result.guid_ = guid_;
-          onBuilt();
-          return result;
-        }
-
-        public Builder clone() {
-          return (Builder) super.clone();
-        }
-        public Builder setField(
-            com.google.protobuf.Descriptors.FieldDescriptor field,
-            Object value) {
-          return (Builder) super.setField(field, value);
-        }
-        public Builder clearField(
-            com.google.protobuf.Descriptors.FieldDescriptor field) {
-          return (Builder) super.clearField(field);
-        }
-        public Builder clearOneof(
-            com.google.protobuf.Descriptors.OneofDescriptor oneof) {
-          return (Builder) super.clearOneof(oneof);
-        }
-        public Builder setRepeatedField(
-            com.google.protobuf.Descriptors.FieldDescriptor field,
-            int index, Object value) {
-          return (Builder) super.setRepeatedField(field, index, value);
-        }
-        public Builder addRepeatedField(
-            com.google.protobuf.Descriptors.FieldDescriptor field,
-            Object value) {
-          return (Builder) super.addRepeatedField(field, value);
-        }
-        public Builder mergeFrom(com.google.protobuf.Message other) {
-          if (other instanceof NATRequestMsg) {
-            return mergeFrom((NATRequestMsg)other);
-          } else {
-            super.mergeFrom(other);
-            return this;
-          }
-        }
-
-        public Builder mergeFrom(NATRequestMsg other) {
-          if (other == NATRequestMsg.getDefaultInstance()) return this;
-          if (!other.getGuid().isEmpty()) {
-            guid_ = other.guid_;
-            onChanged();
-          }
-          this.mergeUnknownFields(other.unknownFields);
-          onChanged();
-          return this;
-        }
-
-        public final boolean isInitialized() {
-          return true;
-        }
-
-        public Builder mergeFrom(
-            com.google.protobuf.CodedInputStream input,
-            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-            throws java.io.IOException {
-          NATRequestMsg parsedMessage = null;
-          try {
-            parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
-          } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-            parsedMessage = (NATRequestMsg) e.getUnfinishedMessage();
-            throw e.unwrapIOException();
-          } finally {
-            if (parsedMessage != null) {
-              mergeFrom(parsedMessage);
-            }
-          }
-          return this;
-        }
-
-        private Object guid_ = "";
-        /**
-         * <code>string guid = 1;</code>
-         */
-        public String getGuid() {
-          Object ref = guid_;
-          if (!(ref instanceof String)) {
-            com.google.protobuf.ByteString bs =
-                (com.google.protobuf.ByteString) ref;
-            String s = bs.toStringUtf8();
-            guid_ = s;
-            return s;
-          } else {
-            return (String) ref;
-          }
-        }
-        /**
-         * <code>string guid = 1;</code>
-         */
-        public com.google.protobuf.ByteString
-            getGuidBytes() {
-          Object ref = guid_;
-          if (ref instanceof String) {
-            com.google.protobuf.ByteString b = 
-                com.google.protobuf.ByteString.copyFromUtf8(
-                    (String) ref);
-            guid_ = b;
-            return b;
-          } else {
-            return (com.google.protobuf.ByteString) ref;
-          }
-        }
-        /**
-         * <code>string guid = 1;</code>
-         */
-        public Builder setGuid(
-            String value) {
-          if (value == null) {
-    throw new NullPointerException();
-  }
-  
-          guid_ = value;
-          onChanged();
-          return this;
-        }
-        /**
-         * <code>string guid = 1;</code>
-         */
-        public Builder clearGuid() {
-          
-          guid_ = getDefaultInstance().getGuid();
-          onChanged();
-          return this;
-        }
-        /**
-         * <code>string guid = 1;</code>
-         */
-        public Builder setGuidBytes(
-            com.google.protobuf.ByteString value) {
-          if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-          
-          guid_ = value;
-          onChanged();
-          return this;
-        }
-        public final Builder setUnknownFields(
-            final com.google.protobuf.UnknownFieldSet unknownFields) {
-          return super.setUnknownFieldsProto3(unknownFields);
-        }
-
-        public final Builder mergeUnknownFields(
-            final com.google.protobuf.UnknownFieldSet unknownFields) {
-          return super.mergeUnknownFields(unknownFields);
-        }
-
-
-        // @@protoc_insertion_point(builder_scope:botnet_p2p.Message.NATRequestMsg)
-      }
-
-      // @@protoc_insertion_point(class_scope:botnet_p2p.Message.NATRequestMsg)
-      private static final NATRequestMsg DEFAULT_INSTANCE;
-      static {
-        DEFAULT_INSTANCE = new NATRequestMsg();
-      }
-
-      public static NATRequestMsg getDefaultInstance() {
-        return DEFAULT_INSTANCE;
-      }
-
-      private static final com.google.protobuf.Parser<NATRequestMsg>
-          PARSER = new com.google.protobuf.AbstractParser<NATRequestMsg>() {
-        public NATRequestMsg parsePartialFrom(
-            com.google.protobuf.CodedInputStream input,
-            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-            throws com.google.protobuf.InvalidProtocolBufferException {
-          return new NATRequestMsg(input, extensionRegistry);
-        }
-      };
-
-      public static com.google.protobuf.Parser<NATRequestMsg> parser() {
-        return PARSER;
-      }
-
-      @Override
-      public com.google.protobuf.Parser<NATRequestMsg> getParserForType() {
-        return PARSER;
-      }
-
-      public NATRequestMsg getDefaultInstanceForType() {
-        return DEFAULT_INSTANCE;
-      }
-
-    }
-
-    public interface NATCheckMsgOrBuilder extends
-        // @@protoc_insertion_point(interface_extends:botnet_p2p.Message.NATCheckMsg)
-        com.google.protobuf.MessageOrBuilder {
-
-      /**
-       * <code>string guid = 1;</code>
-       */
-      String getGuid();
-      /**
-       * <code>string guid = 1;</code>
-       */
-      com.google.protobuf.ByteString
-          getGuidBytes();
-    }
-    /**
-     * Protobuf type {@code botnet_p2p.Message.NATCheckMsg}
-     */
-    public  static final class NATCheckMsg extends
-        com.google.protobuf.GeneratedMessageV3 implements
-        // @@protoc_insertion_point(message_implements:botnet_p2p.Message.NATCheckMsg)
-        NATCheckMsgOrBuilder {
-    private static final long serialVersionUID = 0L;
-      // Use NATCheckMsg.newBuilder() to construct.
-      private NATCheckMsg(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
-        super(builder);
-      }
-      private NATCheckMsg() {
-        guid_ = "";
-      }
-
-      @Override
-      public final com.google.protobuf.UnknownFieldSet
-      getUnknownFields() {
-        return this.unknownFields;
-      }
-      private NATCheckMsg(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        this();
-        if (extensionRegistry == null) {
-          throw new NullPointerException();
-        }
-        int mutable_bitField0_ = 0;
-        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-            com.google.protobuf.UnknownFieldSet.newBuilder();
-        try {
-          boolean done = false;
-          while (!done) {
-            int tag = input.readTag();
-            switch (tag) {
-              case 0:
-                done = true;
-                break;
-              default: {
-                if (!parseUnknownFieldProto3(
-                    input, unknownFields, extensionRegistry, tag)) {
-                  done = true;
-                }
-                break;
-              }
-              case 10: {
-                String s = input.readStringRequireUtf8();
-
-                guid_ = s;
-                break;
-              }
-            }
-          }
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          throw e.setUnfinishedMessage(this);
-        } catch (java.io.IOException e) {
-          throw new com.google.protobuf.InvalidProtocolBufferException(
-              e).setUnfinishedMessage(this);
-        } finally {
-          this.unknownFields = unknownFields.build();
-          makeExtensionsImmutable();
-        }
-      }
-      public static final com.google.protobuf.Descriptors.Descriptor
-          getDescriptor() {
-        return MessageOuterClass.internal_static_botnet_p2p_Message_NATCheckMsg_descriptor;
-      }
-
-      protected FieldAccessorTable
-          internalGetFieldAccessorTable() {
-        return MessageOuterClass.internal_static_botnet_p2p_Message_NATCheckMsg_fieldAccessorTable
-            .ensureFieldAccessorsInitialized(
-                NATCheckMsg.class, Builder.class);
-      }
-
-      public static final int GUID_FIELD_NUMBER = 1;
-      private volatile Object guid_;
-      /**
-       * <code>string guid = 1;</code>
-       */
-      public String getGuid() {
-        Object ref = guid_;
-        if (ref instanceof String) {
-          return (String) ref;
-        } else {
-          com.google.protobuf.ByteString bs = 
-              (com.google.protobuf.ByteString) ref;
-          String s = bs.toStringUtf8();
-          guid_ = s;
-          return s;
-        }
-      }
-      /**
-       * <code>string guid = 1;</code>
-       */
-      public com.google.protobuf.ByteString
-          getGuidBytes() {
-        Object ref = guid_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (String) ref);
-          guid_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-
-      private byte memoizedIsInitialized = -1;
-      public final boolean isInitialized() {
-        byte isInitialized = memoizedIsInitialized;
-        if (isInitialized == 1) return true;
-        if (isInitialized == 0) return false;
-
-        memoizedIsInitialized = 1;
-        return true;
-      }
-
-      public void writeTo(com.google.protobuf.CodedOutputStream output)
-                          throws java.io.IOException {
-        if (!getGuidBytes().isEmpty()) {
-          com.google.protobuf.GeneratedMessageV3.writeString(output, 1, guid_);
-        }
-        unknownFields.writeTo(output);
-      }
-
-      public int getSerializedSize() {
-        int size = memoizedSize;
-        if (size != -1) return size;
-
-        size = 0;
-        if (!getGuidBytes().isEmpty()) {
-          size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, guid_);
-        }
-        size += unknownFields.getSerializedSize();
-        memoizedSize = size;
-        return size;
-      }
-
-      @Override
-      public boolean equals(final Object obj) {
-        if (obj == this) {
-         return true;
-        }
-        if (!(obj instanceof NATCheckMsg)) {
-          return super.equals(obj);
-        }
-        NATCheckMsg other = (NATCheckMsg) obj;
-
-        boolean result = true;
-        result = result && getGuid()
-            .equals(other.getGuid());
-        result = result && unknownFields.equals(other.unknownFields);
-        return result;
-      }
-
-      @Override
-      public int hashCode() {
-        if (memoizedHashCode != 0) {
-          return memoizedHashCode;
-        }
-        int hash = 41;
-        hash = (19 * hash) + getDescriptor().hashCode();
-        hash = (37 * hash) + GUID_FIELD_NUMBER;
-        hash = (53 * hash) + getGuid().hashCode();
-        hash = (29 * hash) + unknownFields.hashCode();
-        memoizedHashCode = hash;
-        return hash;
-      }
-
-      public static NATCheckMsg parseFrom(
-          java.nio.ByteBuffer data)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return PARSER.parseFrom(data);
-      }
-      public static NATCheckMsg parseFrom(
-          java.nio.ByteBuffer data,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return PARSER.parseFrom(data, extensionRegistry);
-      }
-      public static NATCheckMsg parseFrom(
-          com.google.protobuf.ByteString data)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return PARSER.parseFrom(data);
-      }
-      public static NATCheckMsg parseFrom(
-          com.google.protobuf.ByteString data,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return PARSER.parseFrom(data, extensionRegistry);
-      }
-      public static NATCheckMsg parseFrom(byte[] data)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return PARSER.parseFrom(data);
-      }
-      public static NATCheckMsg parseFrom(
-          byte[] data,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return PARSER.parseFrom(data, extensionRegistry);
-      }
-      public static NATCheckMsg parseFrom(java.io.InputStream input)
-          throws java.io.IOException {
-        return com.google.protobuf.GeneratedMessageV3
-            .parseWithIOException(PARSER, input);
-      }
-      public static NATCheckMsg parseFrom(
-          java.io.InputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws java.io.IOException {
-        return com.google.protobuf.GeneratedMessageV3
-            .parseWithIOException(PARSER, input, extensionRegistry);
-      }
-      public static NATCheckMsg parseDelimitedFrom(java.io.InputStream input)
-          throws java.io.IOException {
-        return com.google.protobuf.GeneratedMessageV3
-            .parseDelimitedWithIOException(PARSER, input);
-      }
-      public static NATCheckMsg parseDelimitedFrom(
-          java.io.InputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws java.io.IOException {
-        return com.google.protobuf.GeneratedMessageV3
-            .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
-      }
-      public static NATCheckMsg parseFrom(
-          com.google.protobuf.CodedInputStream input)
-          throws java.io.IOException {
-        return com.google.protobuf.GeneratedMessageV3
-            .parseWithIOException(PARSER, input);
-      }
-      public static NATCheckMsg parseFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws java.io.IOException {
-        return com.google.protobuf.GeneratedMessageV3
-            .parseWithIOException(PARSER, input, extensionRegistry);
-      }
-
-      public Builder newBuilderForType() { return newBuilder(); }
-      public static Builder newBuilder() {
-        return DEFAULT_INSTANCE.toBuilder();
-      }
-      public static Builder newBuilder(NATCheckMsg prototype) {
-        return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
-      }
-      public Builder toBuilder() {
-        return this == DEFAULT_INSTANCE
-            ? new Builder() : new Builder().mergeFrom(this);
-      }
-
-      @Override
-      protected Builder newBuilderForType(
-          BuilderParent parent) {
-        Builder builder = new Builder(parent);
-        return builder;
-      }
-      /**
-       * Protobuf type {@code botnet_p2p.Message.NATCheckMsg}
-       */
-      public static final class Builder extends
-          com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-          // @@protoc_insertion_point(builder_implements:botnet_p2p.Message.NATCheckMsg)
-          NATCheckMsgOrBuilder {
-        public static final com.google.protobuf.Descriptors.Descriptor
-            getDescriptor() {
-          return MessageOuterClass.internal_static_botnet_p2p_Message_NATCheckMsg_descriptor;
-        }
-
-        protected FieldAccessorTable
-            internalGetFieldAccessorTable() {
-          return MessageOuterClass.internal_static_botnet_p2p_Message_NATCheckMsg_fieldAccessorTable
-              .ensureFieldAccessorsInitialized(
-                  NATCheckMsg.class, Builder.class);
-        }
-
-        // Construct using botnet_p2p.MessageOuterClass.Message.NATCheckMsg.newBuilder()
-        private Builder() {
-          maybeForceBuilderInitialization();
-        }
-
-        private Builder(
-            BuilderParent parent) {
-          super(parent);
-          maybeForceBuilderInitialization();
-        }
-        private void maybeForceBuilderInitialization() {
-          if (com.google.protobuf.GeneratedMessageV3
-                  .alwaysUseFieldBuilders) {
-          }
-        }
-        public Builder clear() {
-          super.clear();
-          guid_ = "";
-
-          return this;
-        }
-
-        public com.google.protobuf.Descriptors.Descriptor
-            getDescriptorForType() {
-          return MessageOuterClass.internal_static_botnet_p2p_Message_NATCheckMsg_descriptor;
-        }
-
-        public NATCheckMsg getDefaultInstanceForType() {
-          return NATCheckMsg.getDefaultInstance();
-        }
-
-        public NATCheckMsg build() {
-          NATCheckMsg result = buildPartial();
-          if (!result.isInitialized()) {
-            throw newUninitializedMessageException(result);
-          }
-          return result;
-        }
-
-        public NATCheckMsg buildPartial() {
-          NATCheckMsg result = new NATCheckMsg(this);
-          result.guid_ = guid_;
-          onBuilt();
-          return result;
-        }
-
-        public Builder clone() {
-          return (Builder) super.clone();
-        }
-        public Builder setField(
-            com.google.protobuf.Descriptors.FieldDescriptor field,
-            Object value) {
-          return (Builder) super.setField(field, value);
-        }
-        public Builder clearField(
-            com.google.protobuf.Descriptors.FieldDescriptor field) {
-          return (Builder) super.clearField(field);
-        }
-        public Builder clearOneof(
-            com.google.protobuf.Descriptors.OneofDescriptor oneof) {
-          return (Builder) super.clearOneof(oneof);
-        }
-        public Builder setRepeatedField(
-            com.google.protobuf.Descriptors.FieldDescriptor field,
-            int index, Object value) {
-          return (Builder) super.setRepeatedField(field, index, value);
-        }
-        public Builder addRepeatedField(
-            com.google.protobuf.Descriptors.FieldDescriptor field,
-            Object value) {
-          return (Builder) super.addRepeatedField(field, value);
-        }
-        public Builder mergeFrom(com.google.protobuf.Message other) {
-          if (other instanceof NATCheckMsg) {
-            return mergeFrom((NATCheckMsg)other);
-          } else {
-            super.mergeFrom(other);
-            return this;
-          }
-        }
-
-        public Builder mergeFrom(NATCheckMsg other) {
-          if (other == NATCheckMsg.getDefaultInstance()) return this;
-          if (!other.getGuid().isEmpty()) {
-            guid_ = other.guid_;
-            onChanged();
-          }
-          this.mergeUnknownFields(other.unknownFields);
-          onChanged();
-          return this;
-        }
-
-        public final boolean isInitialized() {
-          return true;
-        }
-
-        public Builder mergeFrom(
-            com.google.protobuf.CodedInputStream input,
-            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-            throws java.io.IOException {
-          NATCheckMsg parsedMessage = null;
-          try {
-            parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
-          } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-            parsedMessage = (NATCheckMsg) e.getUnfinishedMessage();
-            throw e.unwrapIOException();
-          } finally {
-            if (parsedMessage != null) {
-              mergeFrom(parsedMessage);
-            }
-          }
-          return this;
-        }
-
-        private Object guid_ = "";
-        /**
-         * <code>string guid = 1;</code>
-         */
-        public String getGuid() {
-          Object ref = guid_;
-          if (!(ref instanceof String)) {
-            com.google.protobuf.ByteString bs =
-                (com.google.protobuf.ByteString) ref;
-            String s = bs.toStringUtf8();
-            guid_ = s;
-            return s;
-          } else {
-            return (String) ref;
-          }
-        }
-        /**
-         * <code>string guid = 1;</code>
-         */
-        public com.google.protobuf.ByteString
-            getGuidBytes() {
-          Object ref = guid_;
-          if (ref instanceof String) {
-            com.google.protobuf.ByteString b = 
-                com.google.protobuf.ByteString.copyFromUtf8(
-                    (String) ref);
-            guid_ = b;
-            return b;
-          } else {
-            return (com.google.protobuf.ByteString) ref;
-          }
-        }
-        /**
-         * <code>string guid = 1;</code>
-         */
-        public Builder setGuid(
-            String value) {
-          if (value == null) {
-    throw new NullPointerException();
-  }
-  
-          guid_ = value;
-          onChanged();
-          return this;
-        }
-        /**
-         * <code>string guid = 1;</code>
-         */
-        public Builder clearGuid() {
-          
-          guid_ = getDefaultInstance().getGuid();
-          onChanged();
-          return this;
-        }
-        /**
-         * <code>string guid = 1;</code>
-         */
-        public Builder setGuidBytes(
-            com.google.protobuf.ByteString value) {
-          if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-          
-          guid_ = value;
-          onChanged();
-          return this;
-        }
-        public final Builder setUnknownFields(
-            final com.google.protobuf.UnknownFieldSet unknownFields) {
-          return super.setUnknownFieldsProto3(unknownFields);
-        }
-
-        public final Builder mergeUnknownFields(
-            final com.google.protobuf.UnknownFieldSet unknownFields) {
-          return super.mergeUnknownFields(unknownFields);
-        }
-
-
-        // @@protoc_insertion_point(builder_scope:botnet_p2p.Message.NATCheckMsg)
-      }
-
-      // @@protoc_insertion_point(class_scope:botnet_p2p.Message.NATCheckMsg)
-      private static final NATCheckMsg DEFAULT_INSTANCE;
-      static {
-        DEFAULT_INSTANCE = new NATCheckMsg();
-      }
-
-      public static NATCheckMsg getDefaultInstance() {
-        return DEFAULT_INSTANCE;
-      }
-
-      private static final com.google.protobuf.Parser<NATCheckMsg>
-          PARSER = new com.google.protobuf.AbstractParser<NATCheckMsg>() {
-        public NATCheckMsg parsePartialFrom(
-            com.google.protobuf.CodedInputStream input,
-            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-            throws com.google.protobuf.InvalidProtocolBufferException {
-          return new NATCheckMsg(input, extensionRegistry);
-        }
-      };
-
-      public static com.google.protobuf.Parser<NATCheckMsg> parser() {
-        return PARSER;
-      }
-
-      @Override
-      public com.google.protobuf.Parser<NATCheckMsg> getParserForType() {
-        return PARSER;
-      }
-
-      public NATCheckMsg getDefaultInstanceForType() {
-        return DEFAULT_INSTANCE;
-      }
-
-    }
-
     public interface FindNodeMsgOrBuilder extends
         // @@protoc_insertion_point(interface_extends:botnet_p2p.Message.FindNodeMsg)
         com.google.protobuf.MessageOrBuilder {
@@ -6409,14 +5404,12 @@ public final class MessageOuterClass {
     private Object payload_;
     public enum PayloadCase
         implements com.google.protobuf.Internal.EnumLite {
-      COMMAND(7),
-      RESPONSE(8),
-      FILEREQUEST(9),
-      FILECHUNK(10),
-      NATREQUEST(11),
-      NATCHECK(12),
-      FINDNODE(13),
-      FOUNDNODES(14),
+      COMMAND(6),
+      RESPONSE(7),
+      FILEREQUEST(8),
+      FILECHUNK(9),
+      FINDNODE(10),
+      FOUNDNODES(11),
       PAYLOAD_NOT_SET(0);
       private final int value;
       private PayloadCase(int value) {
@@ -6432,14 +5425,12 @@ public final class MessageOuterClass {
 
       public static PayloadCase forNumber(int value) {
         switch (value) {
-          case 7: return COMMAND;
-          case 8: return RESPONSE;
-          case 9: return FILEREQUEST;
-          case 10: return FILECHUNK;
-          case 11: return NATREQUEST;
-          case 12: return NATCHECK;
-          case 13: return FINDNODE;
-          case 14: return FOUNDNODES;
+          case 6: return COMMAND;
+          case 7: return RESPONSE;
+          case 8: return FILEREQUEST;
+          case 9: return FILECHUNK;
+          case 10: return FINDNODE;
+          case 11: return FOUNDNODES;
           case 0: return PAYLOAD_NOT_SET;
           default: return null;
         }
@@ -6547,227 +5538,166 @@ public final class MessageOuterClass {
       return getReceiver();
     }
 
-    public static final int PROPAGATION_FIELD_NUMBER = 5;
-    private boolean propagation_;
+    public static final int PROPAGATE_FIELD_NUMBER = 5;
+    private boolean propagate_;
     /**
-     * <code>bool propagation = 5;</code>
+     * <code>bool propagate = 5;</code>
      */
-    public boolean getPropagation() {
-      return propagation_;
+    public boolean getPropagate() {
+      return propagate_;
     }
 
-    public static final int SIGNATURE_FIELD_NUMBER = 6;
-    private com.google.protobuf.ByteString signature_;
+    public static final int COMMAND_FIELD_NUMBER = 6;
     /**
-     * <code>bytes signature = 6;</code>
-     */
-    public com.google.protobuf.ByteString getSignature() {
-      return signature_;
-    }
-
-    public static final int COMMAND_FIELD_NUMBER = 7;
-    /**
-     * <code>.botnet_p2p.Message.CommandMsg command = 7;</code>
+     * <code>.botnet_p2p.Message.CommandMsg command = 6;</code>
      */
     public boolean hasCommand() {
+      return payloadCase_ == 6;
+    }
+    /**
+     * <code>.botnet_p2p.Message.CommandMsg command = 6;</code>
+     */
+    public CommandMsg getCommand() {
+      if (payloadCase_ == 6) {
+         return (CommandMsg) payload_;
+      }
+      return CommandMsg.getDefaultInstance();
+    }
+    /**
+     * <code>.botnet_p2p.Message.CommandMsg command = 6;</code>
+     */
+    public CommandMsgOrBuilder getCommandOrBuilder() {
+      if (payloadCase_ == 6) {
+         return (CommandMsg) payload_;
+      }
+      return CommandMsg.getDefaultInstance();
+    }
+
+    public static final int RESPONSE_FIELD_NUMBER = 7;
+    /**
+     * <code>.botnet_p2p.Message.CommandResponseMsg response = 7;</code>
+     */
+    public boolean hasResponse() {
       return payloadCase_ == 7;
     }
     /**
-     * <code>.botnet_p2p.Message.CommandMsg command = 7;</code>
+     * <code>.botnet_p2p.Message.CommandResponseMsg response = 7;</code>
      */
-    public CommandMsg getCommand() {
+    public CommandResponseMsg getResponse() {
       if (payloadCase_ == 7) {
-         return (CommandMsg) payload_;
+         return (CommandResponseMsg) payload_;
       }
-      return CommandMsg.getDefaultInstance();
+      return CommandResponseMsg.getDefaultInstance();
     }
     /**
-     * <code>.botnet_p2p.Message.CommandMsg command = 7;</code>
+     * <code>.botnet_p2p.Message.CommandResponseMsg response = 7;</code>
      */
-    public CommandMsgOrBuilder getCommandOrBuilder() {
+    public CommandResponseMsgOrBuilder getResponseOrBuilder() {
       if (payloadCase_ == 7) {
-         return (CommandMsg) payload_;
+         return (CommandResponseMsg) payload_;
       }
-      return CommandMsg.getDefaultInstance();
+      return CommandResponseMsg.getDefaultInstance();
     }
 
-    public static final int RESPONSE_FIELD_NUMBER = 8;
+    public static final int FILEREQUEST_FIELD_NUMBER = 8;
     /**
-     * <code>.botnet_p2p.Message.CommandResponseMsg response = 8;</code>
+     * <code>.botnet_p2p.Message.FileRequestMsg fileRequest = 8;</code>
      */
-    public boolean hasResponse() {
+    public boolean hasFileRequest() {
       return payloadCase_ == 8;
     }
     /**
-     * <code>.botnet_p2p.Message.CommandResponseMsg response = 8;</code>
+     * <code>.botnet_p2p.Message.FileRequestMsg fileRequest = 8;</code>
      */
-    public CommandResponseMsg getResponse() {
+    public FileRequestMsg getFileRequest() {
       if (payloadCase_ == 8) {
-         return (CommandResponseMsg) payload_;
+         return (FileRequestMsg) payload_;
       }
-      return CommandResponseMsg.getDefaultInstance();
+      return FileRequestMsg.getDefaultInstance();
     }
     /**
-     * <code>.botnet_p2p.Message.CommandResponseMsg response = 8;</code>
+     * <code>.botnet_p2p.Message.FileRequestMsg fileRequest = 8;</code>
      */
-    public CommandResponseMsgOrBuilder getResponseOrBuilder() {
+    public FileRequestMsgOrBuilder getFileRequestOrBuilder() {
       if (payloadCase_ == 8) {
-         return (CommandResponseMsg) payload_;
+         return (FileRequestMsg) payload_;
       }
-      return CommandResponseMsg.getDefaultInstance();
+      return FileRequestMsg.getDefaultInstance();
     }
 
-    public static final int FILEREQUEST_FIELD_NUMBER = 9;
+    public static final int FILECHUNK_FIELD_NUMBER = 9;
     /**
-     * <code>.botnet_p2p.Message.FileRequestMsg fileRequest = 9;</code>
+     * <code>.botnet_p2p.Message.FileChunkMsg fileChunk = 9;</code>
      */
-    public boolean hasFileRequest() {
+    public boolean hasFileChunk() {
       return payloadCase_ == 9;
     }
     /**
-     * <code>.botnet_p2p.Message.FileRequestMsg fileRequest = 9;</code>
+     * <code>.botnet_p2p.Message.FileChunkMsg fileChunk = 9;</code>
      */
-    public FileRequestMsg getFileRequest() {
+    public FileChunkMsg getFileChunk() {
       if (payloadCase_ == 9) {
-         return (FileRequestMsg) payload_;
+         return (FileChunkMsg) payload_;
       }
-      return FileRequestMsg.getDefaultInstance();
+      return FileChunkMsg.getDefaultInstance();
     }
     /**
-     * <code>.botnet_p2p.Message.FileRequestMsg fileRequest = 9;</code>
+     * <code>.botnet_p2p.Message.FileChunkMsg fileChunk = 9;</code>
      */
-    public FileRequestMsgOrBuilder getFileRequestOrBuilder() {
+    public FileChunkMsgOrBuilder getFileChunkOrBuilder() {
       if (payloadCase_ == 9) {
-         return (FileRequestMsg) payload_;
+         return (FileChunkMsg) payload_;
       }
-      return FileRequestMsg.getDefaultInstance();
+      return FileChunkMsg.getDefaultInstance();
     }
 
-    public static final int FILECHUNK_FIELD_NUMBER = 10;
+    public static final int FINDNODE_FIELD_NUMBER = 10;
     /**
-     * <code>.botnet_p2p.Message.FileChunkMsg fileChunk = 10;</code>
+     * <code>.botnet_p2p.Message.FindNodeMsg findNode = 10;</code>
      */
-    public boolean hasFileChunk() {
+    public boolean hasFindNode() {
       return payloadCase_ == 10;
     }
     /**
-     * <code>.botnet_p2p.Message.FileChunkMsg fileChunk = 10;</code>
+     * <code>.botnet_p2p.Message.FindNodeMsg findNode = 10;</code>
      */
-    public FileChunkMsg getFileChunk() {
+    public FindNodeMsg getFindNode() {
       if (payloadCase_ == 10) {
-         return (FileChunkMsg) payload_;
+         return (FindNodeMsg) payload_;
       }
-      return FileChunkMsg.getDefaultInstance();
+      return FindNodeMsg.getDefaultInstance();
     }
     /**
-     * <code>.botnet_p2p.Message.FileChunkMsg fileChunk = 10;</code>
+     * <code>.botnet_p2p.Message.FindNodeMsg findNode = 10;</code>
      */
-    public FileChunkMsgOrBuilder getFileChunkOrBuilder() {
+    public FindNodeMsgOrBuilder getFindNodeOrBuilder() {
       if (payloadCase_ == 10) {
-         return (FileChunkMsg) payload_;
+         return (FindNodeMsg) payload_;
       }
-      return FileChunkMsg.getDefaultInstance();
+      return FindNodeMsg.getDefaultInstance();
     }
 
-    public static final int NATREQUEST_FIELD_NUMBER = 11;
+    public static final int FOUNDNODES_FIELD_NUMBER = 11;
     /**
-     * <code>.botnet_p2p.Message.NATRequestMsg NATRequest = 11;</code>
+     * <code>.botnet_p2p.Message.FoundNodesMsg foundNodes = 11;</code>
      */
-    public boolean hasNATRequest() {
+    public boolean hasFoundNodes() {
       return payloadCase_ == 11;
     }
     /**
-     * <code>.botnet_p2p.Message.NATRequestMsg NATRequest = 11;</code>
-     */
-    public NATRequestMsg getNATRequest() {
-      if (payloadCase_ == 11) {
-         return (NATRequestMsg) payload_;
-      }
-      return NATRequestMsg.getDefaultInstance();
-    }
-    /**
-     * <code>.botnet_p2p.Message.NATRequestMsg NATRequest = 11;</code>
-     */
-    public NATRequestMsgOrBuilder getNATRequestOrBuilder() {
-      if (payloadCase_ == 11) {
-         return (NATRequestMsg) payload_;
-      }
-      return NATRequestMsg.getDefaultInstance();
-    }
-
-    public static final int NATCHECK_FIELD_NUMBER = 12;
-    /**
-     * <code>.botnet_p2p.Message.NATCheckMsg NATCheck = 12;</code>
-     */
-    public boolean hasNATCheck() {
-      return payloadCase_ == 12;
-    }
-    /**
-     * <code>.botnet_p2p.Message.NATCheckMsg NATCheck = 12;</code>
-     */
-    public NATCheckMsg getNATCheck() {
-      if (payloadCase_ == 12) {
-         return (NATCheckMsg) payload_;
-      }
-      return NATCheckMsg.getDefaultInstance();
-    }
-    /**
-     * <code>.botnet_p2p.Message.NATCheckMsg NATCheck = 12;</code>
-     */
-    public NATCheckMsgOrBuilder getNATCheckOrBuilder() {
-      if (payloadCase_ == 12) {
-         return (NATCheckMsg) payload_;
-      }
-      return NATCheckMsg.getDefaultInstance();
-    }
-
-    public static final int FINDNODE_FIELD_NUMBER = 13;
-    /**
-     * <code>.botnet_p2p.Message.FindNodeMsg findNode = 13;</code>
-     */
-    public boolean hasFindNode() {
-      return payloadCase_ == 13;
-    }
-    /**
-     * <code>.botnet_p2p.Message.FindNodeMsg findNode = 13;</code>
-     */
-    public FindNodeMsg getFindNode() {
-      if (payloadCase_ == 13) {
-         return (FindNodeMsg) payload_;
-      }
-      return FindNodeMsg.getDefaultInstance();
-    }
-    /**
-     * <code>.botnet_p2p.Message.FindNodeMsg findNode = 13;</code>
-     */
-    public FindNodeMsgOrBuilder getFindNodeOrBuilder() {
-      if (payloadCase_ == 13) {
-         return (FindNodeMsg) payload_;
-      }
-      return FindNodeMsg.getDefaultInstance();
-    }
-
-    public static final int FOUNDNODES_FIELD_NUMBER = 14;
-    /**
-     * <code>.botnet_p2p.Message.FoundNodesMsg foundNodes = 14;</code>
-     */
-    public boolean hasFoundNodes() {
-      return payloadCase_ == 14;
-    }
-    /**
-     * <code>.botnet_p2p.Message.FoundNodesMsg foundNodes = 14;</code>
+     * <code>.botnet_p2p.Message.FoundNodesMsg foundNodes = 11;</code>
      */
     public FoundNodesMsg getFoundNodes() {
-      if (payloadCase_ == 14) {
+      if (payloadCase_ == 11) {
          return (FoundNodesMsg) payload_;
       }
       return FoundNodesMsg.getDefaultInstance();
     }
     /**
-     * <code>.botnet_p2p.Message.FoundNodesMsg foundNodes = 14;</code>
+     * <code>.botnet_p2p.Message.FoundNodesMsg foundNodes = 11;</code>
      */
     public FoundNodesMsgOrBuilder getFoundNodesOrBuilder() {
-      if (payloadCase_ == 14) {
+      if (payloadCase_ == 11) {
          return (FoundNodesMsg) payload_;
       }
       return FoundNodesMsg.getDefaultInstance();
@@ -6788,7 +5718,7 @@ public final class MessageOuterClass {
       if (!getUuidBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 1, uuid_);
       }
-      if (type_ != MessageType.UNDEFINED.getNumber()) {
+      if (type_ != MessageType.COMMAND.getNumber()) {
         output.writeEnum(2, type_);
       }
       if (sender_ != null) {
@@ -6797,35 +5727,26 @@ public final class MessageOuterClass {
       if (receiver_ != null) {
         output.writeMessage(4, getReceiver());
       }
-      if (propagation_ != false) {
-        output.writeBool(5, propagation_);
+      if (propagate_ != false) {
+        output.writeBool(5, propagate_);
       }
-      if (!signature_.isEmpty()) {
-        output.writeBytes(6, signature_);
+      if (payloadCase_ == 6) {
+        output.writeMessage(6, (CommandMsg) payload_);
       }
       if (payloadCase_ == 7) {
-        output.writeMessage(7, (CommandMsg) payload_);
+        output.writeMessage(7, (CommandResponseMsg) payload_);
       }
       if (payloadCase_ == 8) {
-        output.writeMessage(8, (CommandResponseMsg) payload_);
+        output.writeMessage(8, (FileRequestMsg) payload_);
       }
       if (payloadCase_ == 9) {
-        output.writeMessage(9, (FileRequestMsg) payload_);
+        output.writeMessage(9, (FileChunkMsg) payload_);
       }
       if (payloadCase_ == 10) {
-        output.writeMessage(10, (FileChunkMsg) payload_);
+        output.writeMessage(10, (FindNodeMsg) payload_);
       }
       if (payloadCase_ == 11) {
-        output.writeMessage(11, (NATRequestMsg) payload_);
-      }
-      if (payloadCase_ == 12) {
-        output.writeMessage(12, (NATCheckMsg) payload_);
-      }
-      if (payloadCase_ == 13) {
-        output.writeMessage(13, (FindNodeMsg) payload_);
-      }
-      if (payloadCase_ == 14) {
-        output.writeMessage(14, (FoundNodesMsg) payload_);
+        output.writeMessage(11, (FoundNodesMsg) payload_);
       }
       unknownFields.writeTo(output);
     }
@@ -6838,7 +5759,7 @@ public final class MessageOuterClass {
       if (!getUuidBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, uuid_);
       }
-      if (type_ != MessageType.UNDEFINED.getNumber()) {
+      if (type_ != MessageType.COMMAND.getNumber()) {
         size += com.google.protobuf.CodedOutputStream
           .computeEnumSize(2, type_);
       }
@@ -6850,45 +5771,33 @@ public final class MessageOuterClass {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(4, getReceiver());
       }
-      if (propagation_ != false) {
+      if (propagate_ != false) {
         size += com.google.protobuf.CodedOutputStream
-          .computeBoolSize(5, propagation_);
+          .computeBoolSize(5, propagate_);
       }
-      if (!signature_.isEmpty()) {
+      if (payloadCase_ == 6) {
         size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(6, signature_);
+          .computeMessageSize(6, (CommandMsg) payload_);
       }
       if (payloadCase_ == 7) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(7, (CommandMsg) payload_);
+          .computeMessageSize(7, (CommandResponseMsg) payload_);
       }
       if (payloadCase_ == 8) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(8, (CommandResponseMsg) payload_);
+          .computeMessageSize(8, (FileRequestMsg) payload_);
       }
       if (payloadCase_ == 9) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(9, (FileRequestMsg) payload_);
+          .computeMessageSize(9, (FileChunkMsg) payload_);
       }
       if (payloadCase_ == 10) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(10, (FileChunkMsg) payload_);
+          .computeMessageSize(10, (FindNodeMsg) payload_);
       }
       if (payloadCase_ == 11) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(11, (NATRequestMsg) payload_);
-      }
-      if (payloadCase_ == 12) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(12, (NATCheckMsg) payload_);
-      }
-      if (payloadCase_ == 13) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(13, (FindNodeMsg) payload_);
-      }
-      if (payloadCase_ == 14) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(14, (FoundNodesMsg) payload_);
+          .computeMessageSize(11, (FoundNodesMsg) payload_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -6919,43 +5828,33 @@ public final class MessageOuterClass {
         result = result && getReceiver()
             .equals(other.getReceiver());
       }
-      result = result && (getPropagation()
-          == other.getPropagation());
-      result = result && getSignature()
-          .equals(other.getSignature());
+      result = result && (getPropagate()
+          == other.getPropagate());
       result = result && getPayloadCase().equals(
           other.getPayloadCase());
       if (!result) return false;
       switch (payloadCase_) {
-        case 7:
+        case 6:
           result = result && getCommand()
               .equals(other.getCommand());
           break;
-        case 8:
+        case 7:
           result = result && getResponse()
               .equals(other.getResponse());
           break;
-        case 9:
+        case 8:
           result = result && getFileRequest()
               .equals(other.getFileRequest());
           break;
-        case 10:
+        case 9:
           result = result && getFileChunk()
               .equals(other.getFileChunk());
           break;
-        case 11:
-          result = result && getNATRequest()
-              .equals(other.getNATRequest());
-          break;
-        case 12:
-          result = result && getNATCheck()
-              .equals(other.getNATCheck());
-          break;
-        case 13:
+        case 10:
           result = result && getFindNode()
               .equals(other.getFindNode());
           break;
-        case 14:
+        case 11:
           result = result && getFoundNodes()
               .equals(other.getFoundNodes());
           break;
@@ -6985,41 +5884,31 @@ public final class MessageOuterClass {
         hash = (37 * hash) + RECEIVER_FIELD_NUMBER;
         hash = (53 * hash) + getReceiver().hashCode();
       }
-      hash = (37 * hash) + PROPAGATION_FIELD_NUMBER;
+      hash = (37 * hash) + PROPAGATE_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
-          getPropagation());
-      hash = (37 * hash) + SIGNATURE_FIELD_NUMBER;
-      hash = (53 * hash) + getSignature().hashCode();
+          getPropagate());
       switch (payloadCase_) {
-        case 7:
+        case 6:
           hash = (37 * hash) + COMMAND_FIELD_NUMBER;
           hash = (53 * hash) + getCommand().hashCode();
           break;
-        case 8:
+        case 7:
           hash = (37 * hash) + RESPONSE_FIELD_NUMBER;
           hash = (53 * hash) + getResponse().hashCode();
           break;
-        case 9:
+        case 8:
           hash = (37 * hash) + FILEREQUEST_FIELD_NUMBER;
           hash = (53 * hash) + getFileRequest().hashCode();
           break;
-        case 10:
+        case 9:
           hash = (37 * hash) + FILECHUNK_FIELD_NUMBER;
           hash = (53 * hash) + getFileChunk().hashCode();
           break;
-        case 11:
-          hash = (37 * hash) + NATREQUEST_FIELD_NUMBER;
-          hash = (53 * hash) + getNATRequest().hashCode();
-          break;
-        case 12:
-          hash = (37 * hash) + NATCHECK_FIELD_NUMBER;
-          hash = (53 * hash) + getNATCheck().hashCode();
-          break;
-        case 13:
+        case 10:
           hash = (37 * hash) + FINDNODE_FIELD_NUMBER;
           hash = (53 * hash) + getFindNode().hashCode();
           break;
-        case 14:
+        case 11:
           hash = (37 * hash) + FOUNDNODES_FIELD_NUMBER;
           hash = (53 * hash) + getFoundNodes().hashCode();
           break;
@@ -7171,9 +6060,7 @@ public final class MessageOuterClass {
           receiver_ = null;
           receiverBuilder_ = null;
         }
-        propagation_ = false;
-
-        signature_ = com.google.protobuf.ByteString.EMPTY;
+        propagate_ = false;
 
         payloadCase_ = 0;
         payload_ = null;
@@ -7211,58 +6098,43 @@ public final class MessageOuterClass {
         } else {
           result.receiver_ = receiverBuilder_.build();
         }
-        result.propagation_ = propagation_;
-        result.signature_ = signature_;
-        if (payloadCase_ == 7) {
+        result.propagate_ = propagate_;
+        if (payloadCase_ == 6) {
           if (commandBuilder_ == null) {
             result.payload_ = payload_;
           } else {
             result.payload_ = commandBuilder_.build();
           }
         }
-        if (payloadCase_ == 8) {
+        if (payloadCase_ == 7) {
           if (responseBuilder_ == null) {
             result.payload_ = payload_;
           } else {
             result.payload_ = responseBuilder_.build();
           }
         }
-        if (payloadCase_ == 9) {
+        if (payloadCase_ == 8) {
           if (fileRequestBuilder_ == null) {
             result.payload_ = payload_;
           } else {
             result.payload_ = fileRequestBuilder_.build();
           }
         }
-        if (payloadCase_ == 10) {
+        if (payloadCase_ == 9) {
           if (fileChunkBuilder_ == null) {
             result.payload_ = payload_;
           } else {
             result.payload_ = fileChunkBuilder_.build();
           }
         }
-        if (payloadCase_ == 11) {
-          if (nATRequestBuilder_ == null) {
-            result.payload_ = payload_;
-          } else {
-            result.payload_ = nATRequestBuilder_.build();
-          }
-        }
-        if (payloadCase_ == 12) {
-          if (nATCheckBuilder_ == null) {
-            result.payload_ = payload_;
-          } else {
-            result.payload_ = nATCheckBuilder_.build();
-          }
-        }
-        if (payloadCase_ == 13) {
+        if (payloadCase_ == 10) {
           if (findNodeBuilder_ == null) {
             result.payload_ = payload_;
           } else {
             result.payload_ = findNodeBuilder_.build();
           }
         }
-        if (payloadCase_ == 14) {
+        if (payloadCase_ == 11) {
           if (foundNodesBuilder_ == null) {
             result.payload_ = payload_;
           } else {
@@ -7324,11 +6196,8 @@ public final class MessageOuterClass {
         if (other.hasReceiver()) {
           mergeReceiver(other.getReceiver());
         }
-        if (other.getPropagation() != false) {
-          setPropagation(other.getPropagation());
-        }
-        if (other.getSignature() != com.google.protobuf.ByteString.EMPTY) {
-          setSignature(other.getSignature());
+        if (other.getPropagate() != false) {
+          setPropagate(other.getPropagate());
         }
         switch (other.getPayloadCase()) {
           case COMMAND: {
@@ -7345,14 +6214,6 @@ public final class MessageOuterClass {
           }
           case FILECHUNK: {
             mergeFileChunk(other.getFileChunk());
-            break;
-          }
-          case NATREQUEST: {
-            mergeNATRequest(other.getNATRequest());
-            break;
-          }
-          case NATCHECK: {
-            mergeNATCheck(other.getNATCheck());
             break;
           }
           case FINDNODE: {
@@ -7756,57 +6617,28 @@ public final class MessageOuterClass {
         return receiverBuilder_;
       }
 
-      private boolean propagation_ ;
+      private boolean propagate_ ;
       /**
-       * <code>bool propagation = 5;</code>
+       * <code>bool propagate = 5;</code>
        */
-      public boolean getPropagation() {
-        return propagation_;
+      public boolean getPropagate() {
+        return propagate_;
       }
       /**
-       * <code>bool propagation = 5;</code>
+       * <code>bool propagate = 5;</code>
        */
-      public Builder setPropagation(boolean value) {
+      public Builder setPropagate(boolean value) {
         
-        propagation_ = value;
+        propagate_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>bool propagation = 5;</code>
+       * <code>bool propagate = 5;</code>
        */
-      public Builder clearPropagation() {
+      public Builder clearPropagate() {
         
-        propagation_ = false;
-        onChanged();
-        return this;
-      }
-
-      private com.google.protobuf.ByteString signature_ = com.google.protobuf.ByteString.EMPTY;
-      /**
-       * <code>bytes signature = 6;</code>
-       */
-      public com.google.protobuf.ByteString getSignature() {
-        return signature_;
-      }
-      /**
-       * <code>bytes signature = 6;</code>
-       */
-      public Builder setSignature(com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  
-        signature_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>bytes signature = 6;</code>
-       */
-      public Builder clearSignature() {
-        
-        signature_ = getDefaultInstance().getSignature();
+        propagate_ = false;
         onChanged();
         return this;
       }
@@ -7814,29 +6646,29 @@ public final class MessageOuterClass {
       private com.google.protobuf.SingleFieldBuilderV3<
           CommandMsg, CommandMsg.Builder, CommandMsgOrBuilder> commandBuilder_;
       /**
-       * <code>.botnet_p2p.Message.CommandMsg command = 7;</code>
+       * <code>.botnet_p2p.Message.CommandMsg command = 6;</code>
        */
       public boolean hasCommand() {
-        return payloadCase_ == 7;
+        return payloadCase_ == 6;
       }
       /**
-       * <code>.botnet_p2p.Message.CommandMsg command = 7;</code>
+       * <code>.botnet_p2p.Message.CommandMsg command = 6;</code>
        */
       public CommandMsg getCommand() {
         if (commandBuilder_ == null) {
-          if (payloadCase_ == 7) {
+          if (payloadCase_ == 6) {
             return (CommandMsg) payload_;
           }
           return CommandMsg.getDefaultInstance();
         } else {
-          if (payloadCase_ == 7) {
+          if (payloadCase_ == 6) {
             return commandBuilder_.getMessage();
           }
           return CommandMsg.getDefaultInstance();
         }
       }
       /**
-       * <code>.botnet_p2p.Message.CommandMsg command = 7;</code>
+       * <code>.botnet_p2p.Message.CommandMsg command = 6;</code>
        */
       public Builder setCommand(CommandMsg value) {
         if (commandBuilder_ == null) {
@@ -7848,11 +6680,11 @@ public final class MessageOuterClass {
         } else {
           commandBuilder_.setMessage(value);
         }
-        payloadCase_ = 7;
+        payloadCase_ = 6;
         return this;
       }
       /**
-       * <code>.botnet_p2p.Message.CommandMsg command = 7;</code>
+       * <code>.botnet_p2p.Message.CommandMsg command = 6;</code>
        */
       public Builder setCommand(
           CommandMsg.Builder builderForValue) {
@@ -7862,15 +6694,15 @@ public final class MessageOuterClass {
         } else {
           commandBuilder_.setMessage(builderForValue.build());
         }
-        payloadCase_ = 7;
+        payloadCase_ = 6;
         return this;
       }
       /**
-       * <code>.botnet_p2p.Message.CommandMsg command = 7;</code>
+       * <code>.botnet_p2p.Message.CommandMsg command = 6;</code>
        */
       public Builder mergeCommand(CommandMsg value) {
         if (commandBuilder_ == null) {
-          if (payloadCase_ == 7 &&
+          if (payloadCase_ == 6 &&
               payload_ != CommandMsg.getDefaultInstance()) {
             payload_ = CommandMsg.newBuilder((CommandMsg) payload_)
                 .mergeFrom(value).buildPartial();
@@ -7879,26 +6711,26 @@ public final class MessageOuterClass {
           }
           onChanged();
         } else {
-          if (payloadCase_ == 7) {
+          if (payloadCase_ == 6) {
             commandBuilder_.mergeFrom(value);
           }
           commandBuilder_.setMessage(value);
         }
-        payloadCase_ = 7;
+        payloadCase_ = 6;
         return this;
       }
       /**
-       * <code>.botnet_p2p.Message.CommandMsg command = 7;</code>
+       * <code>.botnet_p2p.Message.CommandMsg command = 6;</code>
        */
       public Builder clearCommand() {
         if (commandBuilder_ == null) {
-          if (payloadCase_ == 7) {
+          if (payloadCase_ == 6) {
             payloadCase_ = 0;
             payload_ = null;
             onChanged();
           }
         } else {
-          if (payloadCase_ == 7) {
+          if (payloadCase_ == 6) {
             payloadCase_ = 0;
             payload_ = null;
           }
@@ -7907,32 +6739,32 @@ public final class MessageOuterClass {
         return this;
       }
       /**
-       * <code>.botnet_p2p.Message.CommandMsg command = 7;</code>
+       * <code>.botnet_p2p.Message.CommandMsg command = 6;</code>
        */
       public CommandMsg.Builder getCommandBuilder() {
         return getCommandFieldBuilder().getBuilder();
       }
       /**
-       * <code>.botnet_p2p.Message.CommandMsg command = 7;</code>
+       * <code>.botnet_p2p.Message.CommandMsg command = 6;</code>
        */
       public CommandMsgOrBuilder getCommandOrBuilder() {
-        if ((payloadCase_ == 7) && (commandBuilder_ != null)) {
+        if ((payloadCase_ == 6) && (commandBuilder_ != null)) {
           return commandBuilder_.getMessageOrBuilder();
         } else {
-          if (payloadCase_ == 7) {
+          if (payloadCase_ == 6) {
             return (CommandMsg) payload_;
           }
           return CommandMsg.getDefaultInstance();
         }
       }
       /**
-       * <code>.botnet_p2p.Message.CommandMsg command = 7;</code>
+       * <code>.botnet_p2p.Message.CommandMsg command = 6;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
           CommandMsg, CommandMsg.Builder, CommandMsgOrBuilder>
           getCommandFieldBuilder() {
         if (commandBuilder_ == null) {
-          if (!(payloadCase_ == 7)) {
+          if (!(payloadCase_ == 6)) {
             payload_ = CommandMsg.getDefaultInstance();
           }
           commandBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
@@ -7942,7 +6774,7 @@ public final class MessageOuterClass {
                   isClean());
           payload_ = null;
         }
-        payloadCase_ = 7;
+        payloadCase_ = 6;
         onChanged();;
         return commandBuilder_;
       }
@@ -7950,29 +6782,29 @@ public final class MessageOuterClass {
       private com.google.protobuf.SingleFieldBuilderV3<
           CommandResponseMsg, CommandResponseMsg.Builder, CommandResponseMsgOrBuilder> responseBuilder_;
       /**
-       * <code>.botnet_p2p.Message.CommandResponseMsg response = 8;</code>
+       * <code>.botnet_p2p.Message.CommandResponseMsg response = 7;</code>
        */
       public boolean hasResponse() {
-        return payloadCase_ == 8;
+        return payloadCase_ == 7;
       }
       /**
-       * <code>.botnet_p2p.Message.CommandResponseMsg response = 8;</code>
+       * <code>.botnet_p2p.Message.CommandResponseMsg response = 7;</code>
        */
       public CommandResponseMsg getResponse() {
         if (responseBuilder_ == null) {
-          if (payloadCase_ == 8) {
+          if (payloadCase_ == 7) {
             return (CommandResponseMsg) payload_;
           }
           return CommandResponseMsg.getDefaultInstance();
         } else {
-          if (payloadCase_ == 8) {
+          if (payloadCase_ == 7) {
             return responseBuilder_.getMessage();
           }
           return CommandResponseMsg.getDefaultInstance();
         }
       }
       /**
-       * <code>.botnet_p2p.Message.CommandResponseMsg response = 8;</code>
+       * <code>.botnet_p2p.Message.CommandResponseMsg response = 7;</code>
        */
       public Builder setResponse(CommandResponseMsg value) {
         if (responseBuilder_ == null) {
@@ -7984,11 +6816,11 @@ public final class MessageOuterClass {
         } else {
           responseBuilder_.setMessage(value);
         }
-        payloadCase_ = 8;
+        payloadCase_ = 7;
         return this;
       }
       /**
-       * <code>.botnet_p2p.Message.CommandResponseMsg response = 8;</code>
+       * <code>.botnet_p2p.Message.CommandResponseMsg response = 7;</code>
        */
       public Builder setResponse(
           CommandResponseMsg.Builder builderForValue) {
@@ -7998,15 +6830,15 @@ public final class MessageOuterClass {
         } else {
           responseBuilder_.setMessage(builderForValue.build());
         }
-        payloadCase_ = 8;
+        payloadCase_ = 7;
         return this;
       }
       /**
-       * <code>.botnet_p2p.Message.CommandResponseMsg response = 8;</code>
+       * <code>.botnet_p2p.Message.CommandResponseMsg response = 7;</code>
        */
       public Builder mergeResponse(CommandResponseMsg value) {
         if (responseBuilder_ == null) {
-          if (payloadCase_ == 8 &&
+          if (payloadCase_ == 7 &&
               payload_ != CommandResponseMsg.getDefaultInstance()) {
             payload_ = CommandResponseMsg.newBuilder((CommandResponseMsg) payload_)
                 .mergeFrom(value).buildPartial();
@@ -8015,26 +6847,26 @@ public final class MessageOuterClass {
           }
           onChanged();
         } else {
-          if (payloadCase_ == 8) {
+          if (payloadCase_ == 7) {
             responseBuilder_.mergeFrom(value);
           }
           responseBuilder_.setMessage(value);
         }
-        payloadCase_ = 8;
+        payloadCase_ = 7;
         return this;
       }
       /**
-       * <code>.botnet_p2p.Message.CommandResponseMsg response = 8;</code>
+       * <code>.botnet_p2p.Message.CommandResponseMsg response = 7;</code>
        */
       public Builder clearResponse() {
         if (responseBuilder_ == null) {
-          if (payloadCase_ == 8) {
+          if (payloadCase_ == 7) {
             payloadCase_ = 0;
             payload_ = null;
             onChanged();
           }
         } else {
-          if (payloadCase_ == 8) {
+          if (payloadCase_ == 7) {
             payloadCase_ = 0;
             payload_ = null;
           }
@@ -8043,32 +6875,32 @@ public final class MessageOuterClass {
         return this;
       }
       /**
-       * <code>.botnet_p2p.Message.CommandResponseMsg response = 8;</code>
+       * <code>.botnet_p2p.Message.CommandResponseMsg response = 7;</code>
        */
       public CommandResponseMsg.Builder getResponseBuilder() {
         return getResponseFieldBuilder().getBuilder();
       }
       /**
-       * <code>.botnet_p2p.Message.CommandResponseMsg response = 8;</code>
+       * <code>.botnet_p2p.Message.CommandResponseMsg response = 7;</code>
        */
       public CommandResponseMsgOrBuilder getResponseOrBuilder() {
-        if ((payloadCase_ == 8) && (responseBuilder_ != null)) {
+        if ((payloadCase_ == 7) && (responseBuilder_ != null)) {
           return responseBuilder_.getMessageOrBuilder();
         } else {
-          if (payloadCase_ == 8) {
+          if (payloadCase_ == 7) {
             return (CommandResponseMsg) payload_;
           }
           return CommandResponseMsg.getDefaultInstance();
         }
       }
       /**
-       * <code>.botnet_p2p.Message.CommandResponseMsg response = 8;</code>
+       * <code>.botnet_p2p.Message.CommandResponseMsg response = 7;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
           CommandResponseMsg, CommandResponseMsg.Builder, CommandResponseMsgOrBuilder>
           getResponseFieldBuilder() {
         if (responseBuilder_ == null) {
-          if (!(payloadCase_ == 8)) {
+          if (!(payloadCase_ == 7)) {
             payload_ = CommandResponseMsg.getDefaultInstance();
           }
           responseBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
@@ -8078,7 +6910,7 @@ public final class MessageOuterClass {
                   isClean());
           payload_ = null;
         }
-        payloadCase_ = 8;
+        payloadCase_ = 7;
         onChanged();;
         return responseBuilder_;
       }
@@ -8086,29 +6918,29 @@ public final class MessageOuterClass {
       private com.google.protobuf.SingleFieldBuilderV3<
           FileRequestMsg, FileRequestMsg.Builder, FileRequestMsgOrBuilder> fileRequestBuilder_;
       /**
-       * <code>.botnet_p2p.Message.FileRequestMsg fileRequest = 9;</code>
+       * <code>.botnet_p2p.Message.FileRequestMsg fileRequest = 8;</code>
        */
       public boolean hasFileRequest() {
-        return payloadCase_ == 9;
+        return payloadCase_ == 8;
       }
       /**
-       * <code>.botnet_p2p.Message.FileRequestMsg fileRequest = 9;</code>
+       * <code>.botnet_p2p.Message.FileRequestMsg fileRequest = 8;</code>
        */
       public FileRequestMsg getFileRequest() {
         if (fileRequestBuilder_ == null) {
-          if (payloadCase_ == 9) {
+          if (payloadCase_ == 8) {
             return (FileRequestMsg) payload_;
           }
           return FileRequestMsg.getDefaultInstance();
         } else {
-          if (payloadCase_ == 9) {
+          if (payloadCase_ == 8) {
             return fileRequestBuilder_.getMessage();
           }
           return FileRequestMsg.getDefaultInstance();
         }
       }
       /**
-       * <code>.botnet_p2p.Message.FileRequestMsg fileRequest = 9;</code>
+       * <code>.botnet_p2p.Message.FileRequestMsg fileRequest = 8;</code>
        */
       public Builder setFileRequest(FileRequestMsg value) {
         if (fileRequestBuilder_ == null) {
@@ -8120,11 +6952,11 @@ public final class MessageOuterClass {
         } else {
           fileRequestBuilder_.setMessage(value);
         }
-        payloadCase_ = 9;
+        payloadCase_ = 8;
         return this;
       }
       /**
-       * <code>.botnet_p2p.Message.FileRequestMsg fileRequest = 9;</code>
+       * <code>.botnet_p2p.Message.FileRequestMsg fileRequest = 8;</code>
        */
       public Builder setFileRequest(
           FileRequestMsg.Builder builderForValue) {
@@ -8134,15 +6966,15 @@ public final class MessageOuterClass {
         } else {
           fileRequestBuilder_.setMessage(builderForValue.build());
         }
-        payloadCase_ = 9;
+        payloadCase_ = 8;
         return this;
       }
       /**
-       * <code>.botnet_p2p.Message.FileRequestMsg fileRequest = 9;</code>
+       * <code>.botnet_p2p.Message.FileRequestMsg fileRequest = 8;</code>
        */
       public Builder mergeFileRequest(FileRequestMsg value) {
         if (fileRequestBuilder_ == null) {
-          if (payloadCase_ == 9 &&
+          if (payloadCase_ == 8 &&
               payload_ != FileRequestMsg.getDefaultInstance()) {
             payload_ = FileRequestMsg.newBuilder((FileRequestMsg) payload_)
                 .mergeFrom(value).buildPartial();
@@ -8151,26 +6983,26 @@ public final class MessageOuterClass {
           }
           onChanged();
         } else {
-          if (payloadCase_ == 9) {
+          if (payloadCase_ == 8) {
             fileRequestBuilder_.mergeFrom(value);
           }
           fileRequestBuilder_.setMessage(value);
         }
-        payloadCase_ = 9;
+        payloadCase_ = 8;
         return this;
       }
       /**
-       * <code>.botnet_p2p.Message.FileRequestMsg fileRequest = 9;</code>
+       * <code>.botnet_p2p.Message.FileRequestMsg fileRequest = 8;</code>
        */
       public Builder clearFileRequest() {
         if (fileRequestBuilder_ == null) {
-          if (payloadCase_ == 9) {
+          if (payloadCase_ == 8) {
             payloadCase_ = 0;
             payload_ = null;
             onChanged();
           }
         } else {
-          if (payloadCase_ == 9) {
+          if (payloadCase_ == 8) {
             payloadCase_ = 0;
             payload_ = null;
           }
@@ -8179,32 +7011,32 @@ public final class MessageOuterClass {
         return this;
       }
       /**
-       * <code>.botnet_p2p.Message.FileRequestMsg fileRequest = 9;</code>
+       * <code>.botnet_p2p.Message.FileRequestMsg fileRequest = 8;</code>
        */
       public FileRequestMsg.Builder getFileRequestBuilder() {
         return getFileRequestFieldBuilder().getBuilder();
       }
       /**
-       * <code>.botnet_p2p.Message.FileRequestMsg fileRequest = 9;</code>
+       * <code>.botnet_p2p.Message.FileRequestMsg fileRequest = 8;</code>
        */
       public FileRequestMsgOrBuilder getFileRequestOrBuilder() {
-        if ((payloadCase_ == 9) && (fileRequestBuilder_ != null)) {
+        if ((payloadCase_ == 8) && (fileRequestBuilder_ != null)) {
           return fileRequestBuilder_.getMessageOrBuilder();
         } else {
-          if (payloadCase_ == 9) {
+          if (payloadCase_ == 8) {
             return (FileRequestMsg) payload_;
           }
           return FileRequestMsg.getDefaultInstance();
         }
       }
       /**
-       * <code>.botnet_p2p.Message.FileRequestMsg fileRequest = 9;</code>
+       * <code>.botnet_p2p.Message.FileRequestMsg fileRequest = 8;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
           FileRequestMsg, FileRequestMsg.Builder, FileRequestMsgOrBuilder>
           getFileRequestFieldBuilder() {
         if (fileRequestBuilder_ == null) {
-          if (!(payloadCase_ == 9)) {
+          if (!(payloadCase_ == 8)) {
             payload_ = FileRequestMsg.getDefaultInstance();
           }
           fileRequestBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
@@ -8214,7 +7046,7 @@ public final class MessageOuterClass {
                   isClean());
           payload_ = null;
         }
-        payloadCase_ = 9;
+        payloadCase_ = 8;
         onChanged();;
         return fileRequestBuilder_;
       }
@@ -8222,29 +7054,29 @@ public final class MessageOuterClass {
       private com.google.protobuf.SingleFieldBuilderV3<
           FileChunkMsg, FileChunkMsg.Builder, FileChunkMsgOrBuilder> fileChunkBuilder_;
       /**
-       * <code>.botnet_p2p.Message.FileChunkMsg fileChunk = 10;</code>
+       * <code>.botnet_p2p.Message.FileChunkMsg fileChunk = 9;</code>
        */
       public boolean hasFileChunk() {
-        return payloadCase_ == 10;
+        return payloadCase_ == 9;
       }
       /**
-       * <code>.botnet_p2p.Message.FileChunkMsg fileChunk = 10;</code>
+       * <code>.botnet_p2p.Message.FileChunkMsg fileChunk = 9;</code>
        */
       public FileChunkMsg getFileChunk() {
         if (fileChunkBuilder_ == null) {
-          if (payloadCase_ == 10) {
+          if (payloadCase_ == 9) {
             return (FileChunkMsg) payload_;
           }
           return FileChunkMsg.getDefaultInstance();
         } else {
-          if (payloadCase_ == 10) {
+          if (payloadCase_ == 9) {
             return fileChunkBuilder_.getMessage();
           }
           return FileChunkMsg.getDefaultInstance();
         }
       }
       /**
-       * <code>.botnet_p2p.Message.FileChunkMsg fileChunk = 10;</code>
+       * <code>.botnet_p2p.Message.FileChunkMsg fileChunk = 9;</code>
        */
       public Builder setFileChunk(FileChunkMsg value) {
         if (fileChunkBuilder_ == null) {
@@ -8256,11 +7088,11 @@ public final class MessageOuterClass {
         } else {
           fileChunkBuilder_.setMessage(value);
         }
-        payloadCase_ = 10;
+        payloadCase_ = 9;
         return this;
       }
       /**
-       * <code>.botnet_p2p.Message.FileChunkMsg fileChunk = 10;</code>
+       * <code>.botnet_p2p.Message.FileChunkMsg fileChunk = 9;</code>
        */
       public Builder setFileChunk(
           FileChunkMsg.Builder builderForValue) {
@@ -8270,15 +7102,15 @@ public final class MessageOuterClass {
         } else {
           fileChunkBuilder_.setMessage(builderForValue.build());
         }
-        payloadCase_ = 10;
+        payloadCase_ = 9;
         return this;
       }
       /**
-       * <code>.botnet_p2p.Message.FileChunkMsg fileChunk = 10;</code>
+       * <code>.botnet_p2p.Message.FileChunkMsg fileChunk = 9;</code>
        */
       public Builder mergeFileChunk(FileChunkMsg value) {
         if (fileChunkBuilder_ == null) {
-          if (payloadCase_ == 10 &&
+          if (payloadCase_ == 9 &&
               payload_ != FileChunkMsg.getDefaultInstance()) {
             payload_ = FileChunkMsg.newBuilder((FileChunkMsg) payload_)
                 .mergeFrom(value).buildPartial();
@@ -8287,26 +7119,26 @@ public final class MessageOuterClass {
           }
           onChanged();
         } else {
-          if (payloadCase_ == 10) {
+          if (payloadCase_ == 9) {
             fileChunkBuilder_.mergeFrom(value);
           }
           fileChunkBuilder_.setMessage(value);
         }
-        payloadCase_ = 10;
+        payloadCase_ = 9;
         return this;
       }
       /**
-       * <code>.botnet_p2p.Message.FileChunkMsg fileChunk = 10;</code>
+       * <code>.botnet_p2p.Message.FileChunkMsg fileChunk = 9;</code>
        */
       public Builder clearFileChunk() {
         if (fileChunkBuilder_ == null) {
-          if (payloadCase_ == 10) {
+          if (payloadCase_ == 9) {
             payloadCase_ = 0;
             payload_ = null;
             onChanged();
           }
         } else {
-          if (payloadCase_ == 10) {
+          if (payloadCase_ == 9) {
             payloadCase_ = 0;
             payload_ = null;
           }
@@ -8315,32 +7147,32 @@ public final class MessageOuterClass {
         return this;
       }
       /**
-       * <code>.botnet_p2p.Message.FileChunkMsg fileChunk = 10;</code>
+       * <code>.botnet_p2p.Message.FileChunkMsg fileChunk = 9;</code>
        */
       public FileChunkMsg.Builder getFileChunkBuilder() {
         return getFileChunkFieldBuilder().getBuilder();
       }
       /**
-       * <code>.botnet_p2p.Message.FileChunkMsg fileChunk = 10;</code>
+       * <code>.botnet_p2p.Message.FileChunkMsg fileChunk = 9;</code>
        */
       public FileChunkMsgOrBuilder getFileChunkOrBuilder() {
-        if ((payloadCase_ == 10) && (fileChunkBuilder_ != null)) {
+        if ((payloadCase_ == 9) && (fileChunkBuilder_ != null)) {
           return fileChunkBuilder_.getMessageOrBuilder();
         } else {
-          if (payloadCase_ == 10) {
+          if (payloadCase_ == 9) {
             return (FileChunkMsg) payload_;
           }
           return FileChunkMsg.getDefaultInstance();
         }
       }
       /**
-       * <code>.botnet_p2p.Message.FileChunkMsg fileChunk = 10;</code>
+       * <code>.botnet_p2p.Message.FileChunkMsg fileChunk = 9;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
           FileChunkMsg, FileChunkMsg.Builder, FileChunkMsgOrBuilder>
           getFileChunkFieldBuilder() {
         if (fileChunkBuilder_ == null) {
-          if (!(payloadCase_ == 10)) {
+          if (!(payloadCase_ == 9)) {
             payload_ = FileChunkMsg.getDefaultInstance();
           }
           fileChunkBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
@@ -8350,309 +7182,37 @@ public final class MessageOuterClass {
                   isClean());
           payload_ = null;
         }
-        payloadCase_ = 10;
+        payloadCase_ = 9;
         onChanged();;
         return fileChunkBuilder_;
       }
 
       private com.google.protobuf.SingleFieldBuilderV3<
-          NATRequestMsg, NATRequestMsg.Builder, NATRequestMsgOrBuilder> nATRequestBuilder_;
-      /**
-       * <code>.botnet_p2p.Message.NATRequestMsg NATRequest = 11;</code>
-       */
-      public boolean hasNATRequest() {
-        return payloadCase_ == 11;
-      }
-      /**
-       * <code>.botnet_p2p.Message.NATRequestMsg NATRequest = 11;</code>
-       */
-      public NATRequestMsg getNATRequest() {
-        if (nATRequestBuilder_ == null) {
-          if (payloadCase_ == 11) {
-            return (NATRequestMsg) payload_;
-          }
-          return NATRequestMsg.getDefaultInstance();
-        } else {
-          if (payloadCase_ == 11) {
-            return nATRequestBuilder_.getMessage();
-          }
-          return NATRequestMsg.getDefaultInstance();
-        }
-      }
-      /**
-       * <code>.botnet_p2p.Message.NATRequestMsg NATRequest = 11;</code>
-       */
-      public Builder setNATRequest(NATRequestMsg value) {
-        if (nATRequestBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          payload_ = value;
-          onChanged();
-        } else {
-          nATRequestBuilder_.setMessage(value);
-        }
-        payloadCase_ = 11;
-        return this;
-      }
-      /**
-       * <code>.botnet_p2p.Message.NATRequestMsg NATRequest = 11;</code>
-       */
-      public Builder setNATRequest(
-          NATRequestMsg.Builder builderForValue) {
-        if (nATRequestBuilder_ == null) {
-          payload_ = builderForValue.build();
-          onChanged();
-        } else {
-          nATRequestBuilder_.setMessage(builderForValue.build());
-        }
-        payloadCase_ = 11;
-        return this;
-      }
-      /**
-       * <code>.botnet_p2p.Message.NATRequestMsg NATRequest = 11;</code>
-       */
-      public Builder mergeNATRequest(NATRequestMsg value) {
-        if (nATRequestBuilder_ == null) {
-          if (payloadCase_ == 11 &&
-              payload_ != NATRequestMsg.getDefaultInstance()) {
-            payload_ = NATRequestMsg.newBuilder((NATRequestMsg) payload_)
-                .mergeFrom(value).buildPartial();
-          } else {
-            payload_ = value;
-          }
-          onChanged();
-        } else {
-          if (payloadCase_ == 11) {
-            nATRequestBuilder_.mergeFrom(value);
-          }
-          nATRequestBuilder_.setMessage(value);
-        }
-        payloadCase_ = 11;
-        return this;
-      }
-      /**
-       * <code>.botnet_p2p.Message.NATRequestMsg NATRequest = 11;</code>
-       */
-      public Builder clearNATRequest() {
-        if (nATRequestBuilder_ == null) {
-          if (payloadCase_ == 11) {
-            payloadCase_ = 0;
-            payload_ = null;
-            onChanged();
-          }
-        } else {
-          if (payloadCase_ == 11) {
-            payloadCase_ = 0;
-            payload_ = null;
-          }
-          nATRequestBuilder_.clear();
-        }
-        return this;
-      }
-      /**
-       * <code>.botnet_p2p.Message.NATRequestMsg NATRequest = 11;</code>
-       */
-      public NATRequestMsg.Builder getNATRequestBuilder() {
-        return getNATRequestFieldBuilder().getBuilder();
-      }
-      /**
-       * <code>.botnet_p2p.Message.NATRequestMsg NATRequest = 11;</code>
-       */
-      public NATRequestMsgOrBuilder getNATRequestOrBuilder() {
-        if ((payloadCase_ == 11) && (nATRequestBuilder_ != null)) {
-          return nATRequestBuilder_.getMessageOrBuilder();
-        } else {
-          if (payloadCase_ == 11) {
-            return (NATRequestMsg) payload_;
-          }
-          return NATRequestMsg.getDefaultInstance();
-        }
-      }
-      /**
-       * <code>.botnet_p2p.Message.NATRequestMsg NATRequest = 11;</code>
-       */
-      private com.google.protobuf.SingleFieldBuilderV3<
-          NATRequestMsg, NATRequestMsg.Builder, NATRequestMsgOrBuilder>
-          getNATRequestFieldBuilder() {
-        if (nATRequestBuilder_ == null) {
-          if (!(payloadCase_ == 11)) {
-            payload_ = NATRequestMsg.getDefaultInstance();
-          }
-          nATRequestBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
-              NATRequestMsg, NATRequestMsg.Builder, NATRequestMsgOrBuilder>(
-                  (NATRequestMsg) payload_,
-                  getParentForChildren(),
-                  isClean());
-          payload_ = null;
-        }
-        payloadCase_ = 11;
-        onChanged();;
-        return nATRequestBuilder_;
-      }
-
-      private com.google.protobuf.SingleFieldBuilderV3<
-          NATCheckMsg, NATCheckMsg.Builder, NATCheckMsgOrBuilder> nATCheckBuilder_;
-      /**
-       * <code>.botnet_p2p.Message.NATCheckMsg NATCheck = 12;</code>
-       */
-      public boolean hasNATCheck() {
-        return payloadCase_ == 12;
-      }
-      /**
-       * <code>.botnet_p2p.Message.NATCheckMsg NATCheck = 12;</code>
-       */
-      public NATCheckMsg getNATCheck() {
-        if (nATCheckBuilder_ == null) {
-          if (payloadCase_ == 12) {
-            return (NATCheckMsg) payload_;
-          }
-          return NATCheckMsg.getDefaultInstance();
-        } else {
-          if (payloadCase_ == 12) {
-            return nATCheckBuilder_.getMessage();
-          }
-          return NATCheckMsg.getDefaultInstance();
-        }
-      }
-      /**
-       * <code>.botnet_p2p.Message.NATCheckMsg NATCheck = 12;</code>
-       */
-      public Builder setNATCheck(NATCheckMsg value) {
-        if (nATCheckBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          payload_ = value;
-          onChanged();
-        } else {
-          nATCheckBuilder_.setMessage(value);
-        }
-        payloadCase_ = 12;
-        return this;
-      }
-      /**
-       * <code>.botnet_p2p.Message.NATCheckMsg NATCheck = 12;</code>
-       */
-      public Builder setNATCheck(
-          NATCheckMsg.Builder builderForValue) {
-        if (nATCheckBuilder_ == null) {
-          payload_ = builderForValue.build();
-          onChanged();
-        } else {
-          nATCheckBuilder_.setMessage(builderForValue.build());
-        }
-        payloadCase_ = 12;
-        return this;
-      }
-      /**
-       * <code>.botnet_p2p.Message.NATCheckMsg NATCheck = 12;</code>
-       */
-      public Builder mergeNATCheck(NATCheckMsg value) {
-        if (nATCheckBuilder_ == null) {
-          if (payloadCase_ == 12 &&
-              payload_ != NATCheckMsg.getDefaultInstance()) {
-            payload_ = NATCheckMsg.newBuilder((NATCheckMsg) payload_)
-                .mergeFrom(value).buildPartial();
-          } else {
-            payload_ = value;
-          }
-          onChanged();
-        } else {
-          if (payloadCase_ == 12) {
-            nATCheckBuilder_.mergeFrom(value);
-          }
-          nATCheckBuilder_.setMessage(value);
-        }
-        payloadCase_ = 12;
-        return this;
-      }
-      /**
-       * <code>.botnet_p2p.Message.NATCheckMsg NATCheck = 12;</code>
-       */
-      public Builder clearNATCheck() {
-        if (nATCheckBuilder_ == null) {
-          if (payloadCase_ == 12) {
-            payloadCase_ = 0;
-            payload_ = null;
-            onChanged();
-          }
-        } else {
-          if (payloadCase_ == 12) {
-            payloadCase_ = 0;
-            payload_ = null;
-          }
-          nATCheckBuilder_.clear();
-        }
-        return this;
-      }
-      /**
-       * <code>.botnet_p2p.Message.NATCheckMsg NATCheck = 12;</code>
-       */
-      public NATCheckMsg.Builder getNATCheckBuilder() {
-        return getNATCheckFieldBuilder().getBuilder();
-      }
-      /**
-       * <code>.botnet_p2p.Message.NATCheckMsg NATCheck = 12;</code>
-       */
-      public NATCheckMsgOrBuilder getNATCheckOrBuilder() {
-        if ((payloadCase_ == 12) && (nATCheckBuilder_ != null)) {
-          return nATCheckBuilder_.getMessageOrBuilder();
-        } else {
-          if (payloadCase_ == 12) {
-            return (NATCheckMsg) payload_;
-          }
-          return NATCheckMsg.getDefaultInstance();
-        }
-      }
-      /**
-       * <code>.botnet_p2p.Message.NATCheckMsg NATCheck = 12;</code>
-       */
-      private com.google.protobuf.SingleFieldBuilderV3<
-          NATCheckMsg, NATCheckMsg.Builder, NATCheckMsgOrBuilder>
-          getNATCheckFieldBuilder() {
-        if (nATCheckBuilder_ == null) {
-          if (!(payloadCase_ == 12)) {
-            payload_ = NATCheckMsg.getDefaultInstance();
-          }
-          nATCheckBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
-              NATCheckMsg, NATCheckMsg.Builder, NATCheckMsgOrBuilder>(
-                  (NATCheckMsg) payload_,
-                  getParentForChildren(),
-                  isClean());
-          payload_ = null;
-        }
-        payloadCase_ = 12;
-        onChanged();;
-        return nATCheckBuilder_;
-      }
-
-      private com.google.protobuf.SingleFieldBuilderV3<
           FindNodeMsg, FindNodeMsg.Builder, FindNodeMsgOrBuilder> findNodeBuilder_;
       /**
-       * <code>.botnet_p2p.Message.FindNodeMsg findNode = 13;</code>
+       * <code>.botnet_p2p.Message.FindNodeMsg findNode = 10;</code>
        */
       public boolean hasFindNode() {
-        return payloadCase_ == 13;
+        return payloadCase_ == 10;
       }
       /**
-       * <code>.botnet_p2p.Message.FindNodeMsg findNode = 13;</code>
+       * <code>.botnet_p2p.Message.FindNodeMsg findNode = 10;</code>
        */
       public FindNodeMsg getFindNode() {
         if (findNodeBuilder_ == null) {
-          if (payloadCase_ == 13) {
+          if (payloadCase_ == 10) {
             return (FindNodeMsg) payload_;
           }
           return FindNodeMsg.getDefaultInstance();
         } else {
-          if (payloadCase_ == 13) {
+          if (payloadCase_ == 10) {
             return findNodeBuilder_.getMessage();
           }
           return FindNodeMsg.getDefaultInstance();
         }
       }
       /**
-       * <code>.botnet_p2p.Message.FindNodeMsg findNode = 13;</code>
+       * <code>.botnet_p2p.Message.FindNodeMsg findNode = 10;</code>
        */
       public Builder setFindNode(FindNodeMsg value) {
         if (findNodeBuilder_ == null) {
@@ -8664,11 +7224,11 @@ public final class MessageOuterClass {
         } else {
           findNodeBuilder_.setMessage(value);
         }
-        payloadCase_ = 13;
+        payloadCase_ = 10;
         return this;
       }
       /**
-       * <code>.botnet_p2p.Message.FindNodeMsg findNode = 13;</code>
+       * <code>.botnet_p2p.Message.FindNodeMsg findNode = 10;</code>
        */
       public Builder setFindNode(
           FindNodeMsg.Builder builderForValue) {
@@ -8678,15 +7238,15 @@ public final class MessageOuterClass {
         } else {
           findNodeBuilder_.setMessage(builderForValue.build());
         }
-        payloadCase_ = 13;
+        payloadCase_ = 10;
         return this;
       }
       /**
-       * <code>.botnet_p2p.Message.FindNodeMsg findNode = 13;</code>
+       * <code>.botnet_p2p.Message.FindNodeMsg findNode = 10;</code>
        */
       public Builder mergeFindNode(FindNodeMsg value) {
         if (findNodeBuilder_ == null) {
-          if (payloadCase_ == 13 &&
+          if (payloadCase_ == 10 &&
               payload_ != FindNodeMsg.getDefaultInstance()) {
             payload_ = FindNodeMsg.newBuilder((FindNodeMsg) payload_)
                 .mergeFrom(value).buildPartial();
@@ -8695,26 +7255,26 @@ public final class MessageOuterClass {
           }
           onChanged();
         } else {
-          if (payloadCase_ == 13) {
+          if (payloadCase_ == 10) {
             findNodeBuilder_.mergeFrom(value);
           }
           findNodeBuilder_.setMessage(value);
         }
-        payloadCase_ = 13;
+        payloadCase_ = 10;
         return this;
       }
       /**
-       * <code>.botnet_p2p.Message.FindNodeMsg findNode = 13;</code>
+       * <code>.botnet_p2p.Message.FindNodeMsg findNode = 10;</code>
        */
       public Builder clearFindNode() {
         if (findNodeBuilder_ == null) {
-          if (payloadCase_ == 13) {
+          if (payloadCase_ == 10) {
             payloadCase_ = 0;
             payload_ = null;
             onChanged();
           }
         } else {
-          if (payloadCase_ == 13) {
+          if (payloadCase_ == 10) {
             payloadCase_ = 0;
             payload_ = null;
           }
@@ -8723,32 +7283,32 @@ public final class MessageOuterClass {
         return this;
       }
       /**
-       * <code>.botnet_p2p.Message.FindNodeMsg findNode = 13;</code>
+       * <code>.botnet_p2p.Message.FindNodeMsg findNode = 10;</code>
        */
       public FindNodeMsg.Builder getFindNodeBuilder() {
         return getFindNodeFieldBuilder().getBuilder();
       }
       /**
-       * <code>.botnet_p2p.Message.FindNodeMsg findNode = 13;</code>
+       * <code>.botnet_p2p.Message.FindNodeMsg findNode = 10;</code>
        */
       public FindNodeMsgOrBuilder getFindNodeOrBuilder() {
-        if ((payloadCase_ == 13) && (findNodeBuilder_ != null)) {
+        if ((payloadCase_ == 10) && (findNodeBuilder_ != null)) {
           return findNodeBuilder_.getMessageOrBuilder();
         } else {
-          if (payloadCase_ == 13) {
+          if (payloadCase_ == 10) {
             return (FindNodeMsg) payload_;
           }
           return FindNodeMsg.getDefaultInstance();
         }
       }
       /**
-       * <code>.botnet_p2p.Message.FindNodeMsg findNode = 13;</code>
+       * <code>.botnet_p2p.Message.FindNodeMsg findNode = 10;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
           FindNodeMsg, FindNodeMsg.Builder, FindNodeMsgOrBuilder>
           getFindNodeFieldBuilder() {
         if (findNodeBuilder_ == null) {
-          if (!(payloadCase_ == 13)) {
+          if (!(payloadCase_ == 10)) {
             payload_ = FindNodeMsg.getDefaultInstance();
           }
           findNodeBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
@@ -8758,7 +7318,7 @@ public final class MessageOuterClass {
                   isClean());
           payload_ = null;
         }
-        payloadCase_ = 13;
+        payloadCase_ = 10;
         onChanged();;
         return findNodeBuilder_;
       }
@@ -8766,29 +7326,29 @@ public final class MessageOuterClass {
       private com.google.protobuf.SingleFieldBuilderV3<
           FoundNodesMsg, FoundNodesMsg.Builder, FoundNodesMsgOrBuilder> foundNodesBuilder_;
       /**
-       * <code>.botnet_p2p.Message.FoundNodesMsg foundNodes = 14;</code>
+       * <code>.botnet_p2p.Message.FoundNodesMsg foundNodes = 11;</code>
        */
       public boolean hasFoundNodes() {
-        return payloadCase_ == 14;
+        return payloadCase_ == 11;
       }
       /**
-       * <code>.botnet_p2p.Message.FoundNodesMsg foundNodes = 14;</code>
+       * <code>.botnet_p2p.Message.FoundNodesMsg foundNodes = 11;</code>
        */
       public FoundNodesMsg getFoundNodes() {
         if (foundNodesBuilder_ == null) {
-          if (payloadCase_ == 14) {
+          if (payloadCase_ == 11) {
             return (FoundNodesMsg) payload_;
           }
           return FoundNodesMsg.getDefaultInstance();
         } else {
-          if (payloadCase_ == 14) {
+          if (payloadCase_ == 11) {
             return foundNodesBuilder_.getMessage();
           }
           return FoundNodesMsg.getDefaultInstance();
         }
       }
       /**
-       * <code>.botnet_p2p.Message.FoundNodesMsg foundNodes = 14;</code>
+       * <code>.botnet_p2p.Message.FoundNodesMsg foundNodes = 11;</code>
        */
       public Builder setFoundNodes(FoundNodesMsg value) {
         if (foundNodesBuilder_ == null) {
@@ -8800,11 +7360,11 @@ public final class MessageOuterClass {
         } else {
           foundNodesBuilder_.setMessage(value);
         }
-        payloadCase_ = 14;
+        payloadCase_ = 11;
         return this;
       }
       /**
-       * <code>.botnet_p2p.Message.FoundNodesMsg foundNodes = 14;</code>
+       * <code>.botnet_p2p.Message.FoundNodesMsg foundNodes = 11;</code>
        */
       public Builder setFoundNodes(
           FoundNodesMsg.Builder builderForValue) {
@@ -8814,15 +7374,15 @@ public final class MessageOuterClass {
         } else {
           foundNodesBuilder_.setMessage(builderForValue.build());
         }
-        payloadCase_ = 14;
+        payloadCase_ = 11;
         return this;
       }
       /**
-       * <code>.botnet_p2p.Message.FoundNodesMsg foundNodes = 14;</code>
+       * <code>.botnet_p2p.Message.FoundNodesMsg foundNodes = 11;</code>
        */
       public Builder mergeFoundNodes(FoundNodesMsg value) {
         if (foundNodesBuilder_ == null) {
-          if (payloadCase_ == 14 &&
+          if (payloadCase_ == 11 &&
               payload_ != FoundNodesMsg.getDefaultInstance()) {
             payload_ = FoundNodesMsg.newBuilder((FoundNodesMsg) payload_)
                 .mergeFrom(value).buildPartial();
@@ -8831,26 +7391,26 @@ public final class MessageOuterClass {
           }
           onChanged();
         } else {
-          if (payloadCase_ == 14) {
+          if (payloadCase_ == 11) {
             foundNodesBuilder_.mergeFrom(value);
           }
           foundNodesBuilder_.setMessage(value);
         }
-        payloadCase_ = 14;
+        payloadCase_ = 11;
         return this;
       }
       /**
-       * <code>.botnet_p2p.Message.FoundNodesMsg foundNodes = 14;</code>
+       * <code>.botnet_p2p.Message.FoundNodesMsg foundNodes = 11;</code>
        */
       public Builder clearFoundNodes() {
         if (foundNodesBuilder_ == null) {
-          if (payloadCase_ == 14) {
+          if (payloadCase_ == 11) {
             payloadCase_ = 0;
             payload_ = null;
             onChanged();
           }
         } else {
-          if (payloadCase_ == 14) {
+          if (payloadCase_ == 11) {
             payloadCase_ = 0;
             payload_ = null;
           }
@@ -8859,32 +7419,32 @@ public final class MessageOuterClass {
         return this;
       }
       /**
-       * <code>.botnet_p2p.Message.FoundNodesMsg foundNodes = 14;</code>
+       * <code>.botnet_p2p.Message.FoundNodesMsg foundNodes = 11;</code>
        */
       public FoundNodesMsg.Builder getFoundNodesBuilder() {
         return getFoundNodesFieldBuilder().getBuilder();
       }
       /**
-       * <code>.botnet_p2p.Message.FoundNodesMsg foundNodes = 14;</code>
+       * <code>.botnet_p2p.Message.FoundNodesMsg foundNodes = 11;</code>
        */
       public FoundNodesMsgOrBuilder getFoundNodesOrBuilder() {
-        if ((payloadCase_ == 14) && (foundNodesBuilder_ != null)) {
+        if ((payloadCase_ == 11) && (foundNodesBuilder_ != null)) {
           return foundNodesBuilder_.getMessageOrBuilder();
         } else {
-          if (payloadCase_ == 14) {
+          if (payloadCase_ == 11) {
             return (FoundNodesMsg) payload_;
           }
           return FoundNodesMsg.getDefaultInstance();
         }
       }
       /**
-       * <code>.botnet_p2p.Message.FoundNodesMsg foundNodes = 14;</code>
+       * <code>.botnet_p2p.Message.FoundNodesMsg foundNodes = 11;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
           FoundNodesMsg, FoundNodesMsg.Builder, FoundNodesMsgOrBuilder>
           getFoundNodesFieldBuilder() {
         if (foundNodesBuilder_ == null) {
-          if (!(payloadCase_ == 14)) {
+          if (!(payloadCase_ == 11)) {
             payload_ = FoundNodesMsg.getDefaultInstance();
           }
           foundNodesBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
@@ -8894,7 +7454,7 @@ public final class MessageOuterClass {
                   isClean());
           payload_ = null;
         }
-        payloadCase_ = 14;
+        payloadCase_ = 11;
         onChanged();;
         return foundNodesBuilder_;
       }
@@ -8978,16 +7538,6 @@ public final class MessageOuterClass {
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_botnet_p2p_Message_FileChunkMsg_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_botnet_p2p_Message_NATRequestMsg_descriptor;
-  private static final 
-    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_botnet_p2p_Message_NATRequestMsg_fieldAccessorTable;
-  private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_botnet_p2p_Message_NATCheckMsg_descriptor;
-  private static final 
-    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_botnet_p2p_Message_NATCheckMsg_fieldAccessorTable;
-  private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_botnet_p2p_Message_FindNodeMsg_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -9006,42 +7556,36 @@ public final class MessageOuterClass {
       descriptor;
   static {
     String[] descriptorData = {
-      "\n\rMessage.proto\022\nbotnet_p2p\"\332\n\n\007Message\022" +
+      "\n\rMessage.proto\022\nbotnet_p2p\"\375\010\n\007Message\022" +
       "\014\n\004uuid\030\001 \001(\t\022-\n\004type\030\002 \001(\0162\037.botnet_p2p" +
       ".Message.MessageType\022+\n\006sender\030\003 \001(\0132\033.b" +
       "otnet_p2p.Message.Contact\022-\n\010receiver\030\004 " +
-      "\001(\0132\033.botnet_p2p.Message.Contact\022\023\n\013prop" +
-      "agation\030\005 \001(\010\022\021\n\tsignature\030\006 \001(\014\0221\n\007comm" +
-      "and\030\007 \001(\0132\036.botnet_p2p.Message.CommandMs" +
-      "gH\000\022:\n\010response\030\010 \001(\0132&.botnet_p2p.Messa" +
-      "ge.CommandResponseMsgH\000\0229\n\013fileRequest\030\t" +
-      " \001(\0132\".botnet_p2p.Message.FileRequestMsg" +
-      "H\000\0225\n\tfileChunk\030\n \001(\0132 .botnet_p2p.Messa" +
-      "ge.FileChunkMsgH\000\0227\n\nNATRequest\030\013 \001(\0132!." +
-      "botnet_p2p.Message.NATRequestMsgH\000\0223\n\010NA" +
-      "TCheck\030\014 \001(\0132\037.botnet_p2p.Message.NATChe" +
-      "ckMsgH\000\0223\n\010findNode\030\r \001(\0132\037.botnet_p2p.M" +
-      "essage.FindNodeMsgH\000\0227\n\nfoundNodes\030\016 \001(\013" +
-      "2!.botnet_p2p.Message.FoundNodesMsgH\000\032@\n" +
-      "\007Contact\022\014\n\004guid\030\001 \001(\t\022\n\n\002IP\030\002 \001(\t\022\014\n\004po" +
-      "rt\030\003 \001(\r\022\r\n\005isNAT\030\004 \001(\010\0324\n\nCommandMsg\022\017\n" +
-      "\007command\030\001 \001(\t\022\025\n\rshouldRespond\030\002 \001(\010\032O\n" +
-      "\022CommandResponseMsg\022\r\n\005value\030\001 \001(\t\022*\n\006st" +
-      "atus\030\002 \001(\0162\032.botnet_p2p.Message.Status\032\036" +
-      "\n\016FileRequestMsg\022\014\n\004path\030\001 \001(\t\032_\n\014FileCh" +
-      "unkMsg\022\014\n\004uuid\030\001 \001(\t\022\020\n\010fileName\030\002 \001(\t\022\020" +
-      "\n\010fileSize\030\003 \001(\r\022\017\n\007ordinal\030\004 \001(\r\022\014\n\004dat" +
-      "a\030\005 \001(\014\032\035\n\rNATRequestMsg\022\014\n\004guid\030\001 \001(\t\032\033" +
-      "\n\013NATCheckMsg\022\014\n\004guid\030\001 \001(\t\032\033\n\013FindNodeM" +
-      "sg\022\014\n\004guid\030\001 \001(\t\032;\n\rFoundNodesMsg\022*\n\005nod" +
-      "es\030\001 \003(\0132\033.botnet_p2p.Message.Contact\"\311\001" +
-      "\n\013MessageType\022\r\n\tUNDEFINED\020\000\022\013\n\007COMMAND\020" +
-      "\001\022\024\n\020COMMAND_RESPONSE\020\002\022\020\n\014FILE_REQUEST\020" +
-      "\003\022\016\n\nFILE_CHUNK\020\004\022\017\n\013NAT_REQUEST\020\005\022\r\n\tNA" +
-      "T_CHECK\020\006\022\010\n\004PING\020\007\022\021\n\rPING_RESPONSE\020\010\022\t" +
-      "\n\005LEAVE\020\t\022\r\n\tFIND_NODE\020\n\022\017\n\013FOUND_NODES\020" +
-      "\013\"\032\n\006Status\022\010\n\004FAIL\020\000\022\006\n\002OK\020\001B\t\n\007payload" +
-      "b\006proto3"
+      "\001(\0132\033.botnet_p2p.Message.Contact\022\021\n\tprop" +
+      "agate\030\005 \001(\010\0221\n\007command\030\006 \001(\0132\036.botnet_p2" +
+      "p.Message.CommandMsgH\000\022:\n\010response\030\007 \001(\013" +
+      "2&.botnet_p2p.Message.CommandResponseMsg" +
+      "H\000\0229\n\013fileRequest\030\010 \001(\0132\".botnet_p2p.Mes" +
+      "sage.FileRequestMsgH\000\0225\n\tfileChunk\030\t \001(\013" +
+      "2 .botnet_p2p.Message.FileChunkMsgH\000\0223\n\010" +
+      "findNode\030\n \001(\0132\037.botnet_p2p.Message.Find" +
+      "NodeMsgH\000\0227\n\nfoundNodes\030\013 \001(\0132!.botnet_p" +
+      "2p.Message.FoundNodesMsgH\000\032@\n\007Contact\022\014\n" +
+      "\004guid\030\001 \001(\t\022\n\n\002IP\030\002 \001(\t\022\014\n\004port\030\003 \001(\r\022\r\n" +
+      "\005isNAT\030\004 \001(\010\0324\n\nCommandMsg\022\017\n\007command\030\001 " +
+      "\001(\t\022\025\n\rshouldRespond\030\002 \001(\010\032`\n\022CommandRes" +
+      "ponseMsg\022\r\n\005value\030\001 \001(\t\022*\n\006status\030\002 \001(\0162" +
+      "\032.botnet_p2p.Message.Status\022\017\n\007command\030\003" +
+      " \001(\t\032\036\n\016FileRequestMsg\022\014\n\004path\030\001 \001(\t\032_\n\014" +
+      "FileChunkMsg\022\014\n\004uuid\030\001 \001(\t\022\020\n\010fileName\030\002" +
+      " \001(\t\022\020\n\010fileSize\030\003 \001(\r\022\017\n\007ordinal\030\004 \001(\r\022" +
+      "\014\n\004data\030\005 \001(\014\032\033\n\013FindNodeMsg\022\014\n\004guid\030\001 \001" +
+      "(\t\032;\n\rFoundNodesMsg\022*\n\005nodes\030\001 \003(\0132\033.bot" +
+      "net_p2p.Message.Contact\"\232\001\n\013MessageType\022" +
+      "\013\n\007COMMAND\020\000\022\024\n\020COMMAND_RESPONSE\020\001\022\020\n\014FI" +
+      "LE_REQUEST\020\002\022\016\n\nFILE_CHUNK\020\003\022\010\n\004PING\020\004\022\021" +
+      "\n\rPING_RESPONSE\020\005\022\t\n\005LEAVE\020\006\022\r\n\tFIND_NOD" +
+      "E\020\007\022\017\n\013FOUND_NODES\020\010\"\032\n\006Status\022\010\n\004FAIL\020\000" +
+      "\022\006\n\002OK\020\001B\t\n\007payloadb\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -9060,7 +7604,7 @@ public final class MessageOuterClass {
     internal_static_botnet_p2p_Message_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_botnet_p2p_Message_descriptor,
-        new String[] { "Uuid", "Type", "Sender", "Receiver", "Propagation", "Signature", "Command", "Response", "FileRequest", "FileChunk", "NATRequest", "NATCheck", "FindNode", "FoundNodes", "Payload", });
+        new String[] { "Uuid", "Type", "Sender", "Receiver", "Propagate", "Command", "Response", "FileRequest", "FileChunk", "FindNode", "FoundNodes", "Payload", });
     internal_static_botnet_p2p_Message_Contact_descriptor =
       internal_static_botnet_p2p_Message_descriptor.getNestedTypes().get(0);
     internal_static_botnet_p2p_Message_Contact_fieldAccessorTable = new
@@ -9078,7 +7622,7 @@ public final class MessageOuterClass {
     internal_static_botnet_p2p_Message_CommandResponseMsg_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_botnet_p2p_Message_CommandResponseMsg_descriptor,
-        new String[] { "Value", "Status", });
+        new String[] { "Value", "Status", "Command", });
     internal_static_botnet_p2p_Message_FileRequestMsg_descriptor =
       internal_static_botnet_p2p_Message_descriptor.getNestedTypes().get(3);
     internal_static_botnet_p2p_Message_FileRequestMsg_fieldAccessorTable = new
@@ -9091,26 +7635,14 @@ public final class MessageOuterClass {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_botnet_p2p_Message_FileChunkMsg_descriptor,
         new String[] { "Uuid", "FileName", "FileSize", "Ordinal", "Data", });
-    internal_static_botnet_p2p_Message_NATRequestMsg_descriptor =
-      internal_static_botnet_p2p_Message_descriptor.getNestedTypes().get(5);
-    internal_static_botnet_p2p_Message_NATRequestMsg_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_botnet_p2p_Message_NATRequestMsg_descriptor,
-        new String[] { "Guid", });
-    internal_static_botnet_p2p_Message_NATCheckMsg_descriptor =
-      internal_static_botnet_p2p_Message_descriptor.getNestedTypes().get(6);
-    internal_static_botnet_p2p_Message_NATCheckMsg_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_botnet_p2p_Message_NATCheckMsg_descriptor,
-        new String[] { "Guid", });
     internal_static_botnet_p2p_Message_FindNodeMsg_descriptor =
-      internal_static_botnet_p2p_Message_descriptor.getNestedTypes().get(7);
+      internal_static_botnet_p2p_Message_descriptor.getNestedTypes().get(5);
     internal_static_botnet_p2p_Message_FindNodeMsg_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_botnet_p2p_Message_FindNodeMsg_descriptor,
         new String[] { "Guid", });
     internal_static_botnet_p2p_Message_FoundNodesMsg_descriptor =
-      internal_static_botnet_p2p_Message_descriptor.getNestedTypes().get(8);
+      internal_static_botnet_p2p_Message_descriptor.getNestedTypes().get(6);
     internal_static_botnet_p2p_Message_FoundNodesMsg_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_botnet_p2p_Message_FoundNodesMsg_descriptor,
