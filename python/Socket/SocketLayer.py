@@ -21,6 +21,8 @@ log = logging.getLogger(__name__)
 log.addHandler(handler)
 
 class SocketLayer:
+    def __init__(self):
+        self.server_monitor = None
 
     async def add_layer_communication(self, higher):
         """
@@ -44,6 +46,7 @@ class SocketLayer:
 
         except asyncio.CancelledError:
             log.debug("Caught CancelledError: Stop handling input from higher layer")
+            return
 
     async def handle_message_from_higher_layer(self, message):
         """

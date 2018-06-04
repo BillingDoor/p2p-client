@@ -49,6 +49,7 @@ class P2PLayer:
                 log.debug("Message {!r} sent to the higher layer".format(message))
         except asyncio.CancelledError:
             log.debug("Caught CancelledError: Stop handling input from lower layer")
+            return
 
     async def _handle_higher_input(self):
         try:
@@ -60,6 +61,7 @@ class P2PLayer:
                 log.debug("Message {!r} sent to the lower layer".format(message))
         except asyncio.CancelledError:
             log.debug("Caught CancelledError: Stop handling input from higher layer")
+            return
 
 
     def start_server(self):

@@ -48,6 +48,7 @@ class MessageLayer:
 
         except asyncio.CancelledError:
             log.debug("Caught CancelledError: Stop handling input from lower layer")
+            return
 
     async def _handle_higher_input(self):
         try:
@@ -63,6 +64,7 @@ class MessageLayer:
 
         except asyncio.CancelledError:
             log.debug("Caught CancelledError: Stop handling input from higher layer")
+            return
 
     def handle_message_from_lower_layer(self, message):
         """

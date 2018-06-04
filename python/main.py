@@ -23,36 +23,29 @@ def _run(cor):
     return asyncio.get_event_loop().run_until_complete(cor)
 
 
-def run_client(ip, port, bootstrap_node):
-    asyncio.set_event_loop(asyncio.new_event_loop())
+def set_up_layers(ip, port):
+    socket_layer = SocketLayer()
+    message_layer = MessageLayer(socket_layer)
+    p2p_layer = P2PLayer(message_layer, ip, port)
+    business_logic_layer = BusinessLogicLayer(p2p_layer)
+    application_layer = Application(business_logic_layer)
+    return (socket_layer, message_layer, p2p_layer, business_logic_layer, application_layer)
+
+
+def set_up_layers_communications(socket_layer, message_layer, p2p_layer, business_logic_layer):
     mess_to_sock_queue = asyncio.Queue()
     sock_to_mess_queue = asyncio.Queue()
     mess_to_p2p_queue = asyncio.Queue()
     p2p_to_mess_queue = asyncio.Queue()
     bll_to_p2p_queue = asyncio.Queue()
     p2p_to_bll_queue = asyncio.Queue()
-
-    socket_layer = SocketLayer()
     _run(socket_layer.add_layer_communication(higher=(mess_to_sock_queue, sock_to_mess_queue)))
-
-    message_layer = MessageLayer(socket_layer)
     _run(message_layer.add_layer_communication(higher=(p2p_to_mess_queue, mess_to_p2p_queue),
                                                lower=(sock_to_mess_queue, mess_to_sock_queue)))
-
-    p2p_layer = P2PLayer(message_layer, ip, port)
     _run(p2p_layer.add_layer_communication(higher=(bll_to_p2p_queue, p2p_to_bll_queue),
                                            lower=(mess_to_p2p_queue, p2p_to_mess_queue)))
-
-    business_logic_layer = BusinessLogicLayer(p2p_layer)
     _run(business_logic_layer.add_layer_communication(lower=(p2p_to_bll_queue, bll_to_p2p_queue)))
-    _run(business_logic_layer.join_network(bootstrap_node))
-    _run(asyncio.sleep(25))
 
-    pending = asyncio.Task.all_tasks()
-    for task in pending:
-        task.cancel()
-        asyncio.get_event_loop().run_until_complete(task)
-    asyncio.get_event_loop().close()
 
 if __name__ == '__main__':
     ip = sys.argv[1]
@@ -62,4 +55,9 @@ if __name__ == '__main__':
         bootstrap_node = (bootstrap_node_ip, int(bootstrap_node_port))
     else:
         bootstrap_node = None
-    run_client(ip, port, bootstrap_node)
+
+    layers = set_up_layers(ip, port)
+    set_up_layers_communications(*layers[0:-1])
+
+    app = layers[-1]
+    app.run()
