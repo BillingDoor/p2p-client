@@ -1,3 +1,0 @@
-/home/filip/Work/cpp/botnet_p2p/cpp/CMakeFiles/rebuild_cache.dir
-/home/filip/Work/cpp/botnet_p2p/cpp/CMakeFiles/edit_cache.dir
-/home/filip/Work/cpp/botnet_p2p/cpp/CMakeFiles/cpp.dir
