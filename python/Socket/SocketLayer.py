@@ -38,7 +38,9 @@ class SocketLayer:
                 log.debug("Waiting for message from higher layer")
                 message = await self._higher[0].get()
                 log.debug("Got message {!r}; handling it and sending to the target receiver".format(message))
-                await self.handle_message_from_higher_layer(message)
+                status = await self.handle_message_from_higher_layer(message)
+                if status is StatusMessage.FAILURE:
+                    log.warning("Message {!r} was not handled properly".format(message))
 
         except asyncio.CancelledError:
             log.debug("Caught CancelledError: Stop handling input from higher layer")
@@ -57,7 +59,7 @@ class SocketLayer:
     def start_server(self, ip, port):
         self.stop_server_event = threading.Event()
         self.server_thread = threading.Thread(target=run_server,
-                                              name="Server Thread",
+                                              name="Server({}:{}) Thread".format(ip, port),
                                               args=(ip, port, self.stop_server_event,
                                                     self._higher[1], asyncio.get_event_loop())
                                               )

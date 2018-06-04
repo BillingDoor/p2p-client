@@ -82,6 +82,26 @@ class SocketsTests(unittest.TestCase):
         self.assertEqual(msg, mess.SerializeToString())
         self.assertEqual(msg2, mess2.SerializeToString())
 
+    def test_connecting_to_wrong_server(self):
+        self.socket_layer.start_server("127.0.0.1", 8080)
+
+        sender = Peer(33, "33.22.11.22", 9992, False)
+        sender2 = Peer(21, "23.45.67.86", 9393, False)
+        receiver = Peer(11, '127.0.0.1', 88, False)
+
+        mess = putils.create_ping_message(sender, receiver)
+        mess2 = putils.create_ping_message(sender2, receiver)
+
+        address = putils.get_receiver_address(mess)
+        address2 = putils.get_receiver_address(mess2)
+        _run(self.higher[0].put((mess.SerializeToString(), address)))
+        _run(self.higher[0].put((mess2.SerializeToString(), address2)))
+
+        self.assertEqual(self.higher[1].qsize(), 0)
+        # Get the message
+        log.warning("Stop the server")
+        status = _run(self.socket_layer.stop_server())
+        self.assertIs(status, StatusMessage.SUCCESS)
 
     def test_that_server_receives_messages(self):
         """
@@ -130,11 +150,8 @@ class SocketsTests(unittest.TestCase):
         status = _run(self.socket_layer.stop_server())
         self.assertIs(status, StatusMessage.SUCCESS)
         # And now we check if the message is correct
-        self.assertEqual(serialized2, msg2)
-        self.assertEqual(serialized, msg)
-
-
-
+        self.assertIn(serialized, [msg, msg2])
+        self.assertIn(serialized2, [msg, msg2])
 
 if __name__ == '__main__':
     unittest.main()

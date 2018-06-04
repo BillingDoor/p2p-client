@@ -23,11 +23,11 @@ def largest_differing_bit(value1, value2):
     :return: index(from 0 to 127) of largest differing bit.
     """
     distance = value1 ^ value2
-    length = 0
+    length = -1
     while (distance):
         distance >>= 1
         length += 1
-    return length
+    return max(0, length)
 
 class BucketList(object):
     """
@@ -91,6 +91,20 @@ class BucketList(object):
         if peer not in bucket:
             log.debug("Insert {!r} into bucket {!r}".format(peer.get_info(), bucket_number))
             bucket.append(peer)
+        else:
+            log.debug("Peer {} is already in bucket {}".format(peer.get_info(), bucket_number))
+        self.lock.release()
+
+    async def remove(self, peer):
+        if peer.id == self.id:
+            return
+
+        bucket_number = largest_differing_bit(self.id, peer.id)
+        bucket = self.buckets[bucket_number]
+
+        await self.lock.acquire()
+        log.debug("Removing peer {} from bucket {}".format(peer.get_info(), bucket_number))
+        bucket.remove(peer)
         self.lock.release()
 
     async def nearest_nodes(self, key, limit=None):

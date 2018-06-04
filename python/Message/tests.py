@@ -38,6 +38,11 @@ class MessageLayerTests(unittest.TestCase):
         deserialized = self.ml._deserialize_message(serialized)
         self.assertEqual(deserialized, mess)
 
+    def test_decoding_many_messages_in_the_stream(self):
+        mess = putils._prepare_base_message(self.sender, self.receiver)
+        mess2 = putils._prepare_base_message(self.sender, self.receiver)
+
+
 
     def test_passing_message(self):
         """

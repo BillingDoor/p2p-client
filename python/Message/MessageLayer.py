@@ -40,7 +40,7 @@ class MessageLayer:
 
                 message = await self._lower[0].get()
                 log.debug("Got message {!r}, handling it and sending it to higher layer".format(message))
-                message = self.deserialize_message(message)
+                message = self._deserialize_message(message)
 
                 await self._higher[1].put(message)
                 log.debug("Message {!r} sent to the higher layer".format(message))
@@ -70,6 +70,12 @@ class MessageLayer:
         :return: Message to pass on to higher layer
         """
         return self._deserialize_message(message)
+
+    def start_server(self, ip, port):
+        self.lower_layer.start_server(ip, port)
+
+    async def stop_server(self):
+        await self.lower_layer.stop_server()
 
     def handle_message_from_higher_layer(self, message):
         """

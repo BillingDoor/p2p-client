@@ -16,7 +16,7 @@ class P2PTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(self):
-        sl = SocketLayer()
+        sl = unittest.mock.MagicMock()
         ml =  MessageLayer(sl)
         self.p2pl = P2PLayer(ml, "127.0.0.1", 6666, 123)
         q1 = asyncio.Queue()
@@ -39,24 +39,6 @@ class P2PTest(unittest.TestCase):
         self.assertIs(self.p2pl._higher, self.higher)
         self.assertIs(self.p2pl._lower, self.lower)
 
-    def test_ping(self):
-        """
-        P2P layer creates ping message using protobuf_utils
-        and calls send() on MessageLayer
-        """
-        peer = Peer(2, "127.33.21.22", 3233, False)
-        _run(self.p2pl._routing_table.insert(peer))
-        status = _run(self.p2pl.ping(2))
-        self.assertIs(status, StatusMessage.SUCCESS)
-        message = _run(self.lower[1].get())
-        self.assertIsInstance(message, Message)
-
-        ping_message = putils.create_ping_message(self.p2pl.get_myself(), peer)
-        ping_message.uuid = message.uuid
-        self.assertEqual(message, ping_message)
-
-        status = _run(self.p2pl.ping(33))
-        self.assertIs(status, StatusMessage.FAILURE)
 
     def test_get_myself(self):
         myself = self.p2pl.get_myself()
@@ -74,6 +56,33 @@ class P2PTest(unittest.TestCase):
         self.assertEqual(peer.ip, "127.33.21.22")
         self.assertEqual(peer.port, 3233)
         self.assertEqual(peer.is_NAT, False)
+
+    def test_add_peer(self):
+        peer = Peer(999, "83.34.65.32", 90, False)
+        _run(self.p2pl.add_peer(peer))
+        self.assertIs(peer, _run(self.p2pl.get_peer_by_id(999)))
+
+    def test_remove_peer(self):
+        peer = Peer(1234, "23.32.45.22", 9033, False)
+        _run(self.p2pl.add_peer(peer))
+        self.assertIs(peer, _run(self.p2pl.get_peer_by_id(1234)))
+
+        _run(self.p2pl.remove_peer(peer))
+        self.assertIs(None, _run(self.p2pl.get_peer_by_id(1234)))
+
+
+    def test_passing_message(self):
+        """
+        P2P layer got some message from higher layer.
+        It passes it on to the lower layer using queue.
+        """
+        sender = Peer(123, '123.123.123.123', 8022, True)
+        receiver = Peer(11, '66.22.66.22', 9090, False)
+        mess = putils.create_ping_message(sender, receiver)
+        _run(self.higher[0].put(mess))
+        # wait a while for message to propagate through the layer
+        _run(asyncio.sleep(0.1))
+        self.assertEqual(_run(self.lower[1].get()), mess)
 
 
 if __name__ == '__main__':

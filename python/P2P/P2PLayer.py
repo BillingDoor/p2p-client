@@ -67,6 +67,26 @@ class P2PLayer:
             log.debug("Caught CancelledError: Stop handling input from higher layer")
 
 
+    def start_server(self):
+        self.lower_layer.start_server(self.get_myself().ip, self.get_myself().port)
+
+    async def stop_server(self):
+        await self.lower_layer.stop_server()
+
+    async def add_peer(self, peer):
+        """
+        Adds new peer to the routing table
+        :param peer: Peer to add
+        """
+        await self._routing_table.insert(peer)
+
+    async def remove_peer(self, peer):
+        """
+        Remove peer from the routing table
+        :param peer: Peer to remove
+        """
+        await self._routing_table.remove(peer)
+
     def get_myself(self):
         """
         Returns this_peer
@@ -82,26 +102,10 @@ class P2PLayer:
         """
         return await self._routing_table.get_peer_by_id(id)
 
-
-    async def ping(self, target_id):
+    async def get_nearest_peers(self, wanted_peer_id, limit=None):
         """
-        Sends ping message to peer with given target_id
-        :param target_id: id of target peer
-        :return: SUCCESS or ERROR
+        Return peers nearest to the one with wanted id
+        :param wanted_peer_id: Id of wanted peer
+        :return: List of nearest Peers
         """
-        peer = await self._routing_table.get_peer_by_id(target_id)
-        if peer is None:
-            return StatusMessage.FAILURE
-        message = putils.create_ping_message(sender=self._this_peer, receiver=peer)
-
-        self.log.debug("Putting message to Queue {!r}".format(self._lower[1]))
-        try:
-            await self._lower[1].put(message)
-            self.log.debug("Message {} put into Queue {}".format(message, self._lower[1]))
-            return StatusMessage.SUCCESS
-        except asyncio.CancelledError:
-            self.log.debug("Message {} has not been put onto {} because CancelledError was caught".format(
-                message,
-                self._lower[1]
-            ))
-            return StatusMessage.ERROR
+        return await self._routing_table.nearest_nodes(wanted_peer_id, limit=limit)
