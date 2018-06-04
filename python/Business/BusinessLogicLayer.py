@@ -180,6 +180,28 @@ class BusinessLogicLayer:
         except asyncio.CancelledError:
             log.debug("Peer {} responded. Cancel removal of him from the routing table.")
 
+    async def command(self, target_id, command, should_respond):
+        """
+        Sends command to target peer
+        :param target_id: id of targeted peer
+        :param command: command to send
+        :param should_response: True if receiver should respond to the command
+        :return:SUCCESS or FAILURE
+        """
+        peer = await self.lower_layer.get_peer_by_id(target_id)
+        if peer is None:
+            return StatusMessage.FAILURE
+        message = putils.create_command_message(sender=self.get_myself(),
+                                                receiver=peer,
+                                                command=command,
+                                                should_respond=should_respond
+                                                )
+        try:
+            status = await self._put_message_on_lower(message)
+            return status
+        except asyncio.CancelledError:
+            return StatusMessage.FAILURE
+
     async def ping(self, target_id):
         """
         Sends ping message to peer with given target_id
@@ -192,7 +214,7 @@ class BusinessLogicLayer:
         message = putils.create_ping_message(sender=self.get_myself(), receiver=peer)
         try:
             status = await self._put_message_on_lower(message)
-            self._pinged_peers.append((peer, asyncio.ensure_future(self._wait_for_ping_response(peer=peer, timeout=3))))
+            self._pinged_peers.append((peer, asyncio.ensure_future(self._wait_for_ping_response(peer=peer, timeout=10))))
             return status
         except asyncio.CancelledError:
             return StatusMessage.FAILURE

@@ -35,6 +35,21 @@ def create_ping_response_message(sender, receiver):
     msg.type = msg.PING_RESPONSE
     return msg
 
+def create_command_message(sender, receiver, command, should_respond=False):
+    """
+    Creates protobuf message of COMMAND type and returns it as a serialized string of bytes
+    :param sender: Sending Peer
+    :param receiver: Receiving Peer
+    :param command: Command to send
+    :param should_response: True i
+    :return:
+    """
+    msg = _prepare_base_message(sender, receiver)
+    msg.type = msg.COMMAND
+    msg.command.command = command
+    msg.command.shouldRespond = should_respond
+    return msg
+
 def create_find_value_message(sender_id, target_id, address, port):
     """
     Creates protobuf message of FindValue type and returns it as a serialized string of bytes

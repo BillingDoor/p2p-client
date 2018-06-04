@@ -5,15 +5,16 @@ message Message {
     enum MessageType {
         UNDEFINED = 0;
         COMMAND = 1;
-        RESPONSE = 2;
-        FILE_CHUNK = 3;
-        NAT_REQUEST = 4;
-        NAT_CHECK = 5;
-        PING = 6;
-        PING_RESPONSE = 7;
-        LEAVE = 8;
-        FIND_NODE = 9;
-        FOUND_NODES = 10;
+        COMMAND_RESPONSE = 2;
+        FILE_REQUEST = 3;
+        FILE_CHUNK = 4;
+        NAT_REQUEST = 5;
+        NAT_CHECK = 6;
+        PING = 7;
+        PING_RESPONSE = 8;
+        LEAVE = 9;
+        FIND_NODE = 10;
+        FOUND_NODES = 11;
     }
 
     enum Status {
@@ -29,22 +30,25 @@ message Message {
     }
 
     message CommandMsg {
-        string commandString = 1;
-        bool sendResponse = 2;
+        string command = 1;
+        bool shouldRespond = 2;
     }
 
-    message ResponseMsg {
+    message CommandResponseMsg {
         string value = 1;
         Status status = 2;
     }
 
-    message FileChunkMsg {
+    message FileRequestMsg {
         string path = 1;
-        bool name = 2;
-        uint32 chunkNumber = 3;
-        uint32 allChunks = 4;
-        uint32 chunkSize = 5;
-        bytes data = 6;
+    }
+
+    message FileChunkMsg {
+        string uuid = 1;
+        string fileName = 2;
+        uint32 fileSize = 3;
+        uint32 ordinal = 4;
+        bytes data = 5;
     }
 
     message NATRequestMsg {
@@ -71,10 +75,11 @@ message Message {
     bytes signature = 6;
     oneof payload {
         CommandMsg command = 7;
-        ResponseMsg response = 8;
-        FileChunkMsg fileChunk = 9;
-        NATRequestMsg NATRequest = 10;
-        NATCheckMsg NATCheck = 11;
+        CommandResponseMsg response = 8;
+        FileRequestMsg fileRequest = 9;
+        FileChunkMsg fileChunk = 10;
+        NATRequestMsg NATRequest = 11;
+        NATCheckMsg NATCheck = 12;
         FindNodeMsg findNode = 13;
         FoundNodesMsg foundNodes = 14;
     }
