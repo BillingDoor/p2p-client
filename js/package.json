@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "generate:proto": "./generate_protobuf.sh",
     "compile": "webpack --config webpack.config.js",
     "compile:watch": "webpack --config webpack.config.js --watch",
     "start": "npm run compile && node dist/app.js",
