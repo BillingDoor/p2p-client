@@ -1,7 +1,7 @@
-import * as bigInt from 'big-integer';
-
-import { Address } from '@models';
 import { Message } from '@protobuf/Message_pb';
+import { generateID } from '@utils/random-id';
+
+import { Address } from './address';
 
 export class Contact {
   address: Address;
@@ -12,7 +12,7 @@ export class Contact {
     const { address, guid, isNAT } = config;
 
     this.address = address;
-    this.guid = guid || Contact.generateGUID();
+    this.guid = guid || generateID();
     this.isNAT = isNAT || false;
   }
 
@@ -39,9 +39,5 @@ export class Contact {
       guid,
       isNAT
     });
-  }
-
-  static generateGUID() {
-    return bigInt.randBetween(0, 2 ** 64).toString();
   }
 }

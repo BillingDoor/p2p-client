@@ -1,11 +1,11 @@
+import { reject, equals, contains } from 'ramda';
 import { first, tap, filter, delay } from 'rxjs/operators';
-import { spawn } from 'child_process';
+import { exec } from 'child_process';
 
 import { Address, Contact } from '@models';
 import { P2PLayer } from '@layers/p2p-layer/p2p-layer';
 import { Message } from '@protobuf/Message_pb';
 import logger from '@utils/logging';
-import { StringDecoder } from 'string_decoder';
 
 export class BusinessLayer {
   private pingedNodes: Contact[] = [];
@@ -19,37 +19,24 @@ export class BusinessLayer {
       to: bootstrapNode
     });
 
-    this.worker
-      .on(Message.MessageType.FOUND_NODES)
-      .pipe(
-        first(),
-        this.addNodeToRoutingTable(),
-        this.pingNodes(),
-        delay(1000),
-        tap(() => {
-          this.pingedNodes.forEach((node) =>
-            this.worker.routingTable.removeNode(node)
-          );
-          this.pingedNodes = [];
-          this.worker.command({
-            command: 'ls',
-            to: new Contact({ address: bootstrapNode })
-          });
-        })
-      )
-      .subscribe();
-
-    return true;
+    await this.worker.command({
+      to: new Contact({ address: bootstrapNode }),
+      command: 'ls',
+      shouldRespond: true
+    });
   }
 
   close() {
+    logger.info('Business layer: closing.');
     this.worker.leave();
     this.worker.close();
   }
 
   private handleMessages() {
     this.handleCommandMessage();
+    this.handleCommandResponseMessage();
     this.handleFindNodeMessage();
+    this.handleFoundNodesMessage();
     this.handleLeaveMessage();
     this.handlePingMessage();
     this.handlePingResponseMessage();
@@ -59,23 +46,71 @@ export class BusinessLayer {
     this.worker
       .on(Message.MessageType.COMMAND)
       .pipe(
+        tap(() => logger.info('Business layer: got command message')),
         tap(async (msg) => {
-          console.log('working');
+          const sender = checkSender(msg);
           const commandMsg = msg.getCommand();
           if (commandMsg) {
             if (commandMsg.getShouldrespond()) {
-              // const { stdout, stderr } = await exec(commandMsg.getCommand());
-              // this.worker.co
+              exec(
+                commandMsg.getCommand(),
+                (error: Error | null, stdout: string, stderr: string) => {
+                  let value: string;
+                  let status: Message.Status;
+
+                  if (error) {
+                    value = stderr;
+                    status = Message.Status.FAIL;
+                  } else {
+                    value = stdout;
+                    status = Message.Status.OK;
+                  }
+
+                  logger.info(
+                    `Business layer: Executed command ${commandMsg.getCommand()}`
+                  );
+                  logger.info(
+                    `Business layer: Command output:\n ${
+                      error ? stderr : stdout
+                    }`
+                  );
+
+                  this.worker.commandResponse({
+                    to: Contact.from(sender),
+                    value,
+                    status,
+                    command: commandMsg.getCommand()
+                  });
+                }
+              );
             } else {
-              const bla = spawn(commandMsg.getCommand());
-              bla.stdout.on('data', (data: Buffer) => {
-                console.log(new StringDecoder('utf8').write(data));
-              });
+              exec(
+                commandMsg.getCommand(),
+                (error: Error | null, stdout: string, stderr: string) => {
+                  logger.info(
+                    `Business layer: Executed command ${commandMsg.getCommand()}`
+                  );
+                  logger.info(
+                    `Business layer: Command output:\n ${
+                      error ? stderr : stdout
+                    }`
+                  );
+                }
+              );
             }
           } else {
-            logger.warn('Business layer: Command message not set.');
+            logger.error('Business layer: Command message not set.');
           }
         })
+      )
+      .subscribe();
+  }
+
+  private handleCommandResponseMessage() {
+    this.worker
+      .on(Message.MessageType.COMMAND_RESPONSE)
+      .pipe(
+        tap(() => logger.info('Business layer: got command response message'))
       )
       .subscribe();
   }
@@ -84,6 +119,7 @@ export class BusinessLayer {
     this.worker
       .on(Message.MessageType.FIND_NODE)
       .pipe(
+        tap(() => logger.info('Business layer: got find node message')),
         this.addNodeToRoutingTable(),
         tap((msg) => {
           const sender = checkSender(msg);
@@ -101,12 +137,26 @@ export class BusinessLayer {
       .subscribe();
   }
 
+  private handleFoundNodesMessage() {
+    this.worker
+      .on(Message.MessageType.FOUND_NODES)
+      .pipe(
+        first(),
+        tap(() => logger.info('Business layer: got found nodes message')),
+        this.addNodeToRoutingTable(),
+        this.pingNodes(),
+        delay(5000),
+        this.removeNotRespondingForPing()
+      )
+      .subscribe();
+  }
+
   private handleLeaveMessage() {
     this.worker
       .on(Message.MessageType.LEAVE)
       .pipe(
+        tap(() => logger.info('Business layer: got leave message')),
         tap((msg) => {
-          logger.info('Business layer: got leave message');
           const sender = checkSender(msg);
           this.worker.routingTable.removeNode(Contact.from(sender));
         })
@@ -118,6 +168,7 @@ export class BusinessLayer {
     this.worker
       .on(Message.MessageType.PING)
       .pipe(
+        tap(() => logger.info('Business layer: got ping message')),
         this.addNodeToRoutingTable(),
         tap((msg) => {
           const sender = checkSender(msg);
@@ -133,20 +184,21 @@ export class BusinessLayer {
     this.worker
       .on(Message.MessageType.PING_RESPONSE)
       .pipe(
+        tap(() => logger.info('Business layer: got ping response message')),
         filter((msg) => {
           const sender = checkSender(msg);
-          return this.pingedNodes.includes(Contact.from(sender));
+          return contains(Contact.from(sender), this.pingedNodes);
         }),
-        this.addNodeToRoutingTable()
+        this.addNodeToRoutingTable(),
+        tap((msg) => {
+          const sender = checkSender(msg);
+          this.pingedNodes = reject(
+            equals(Contact.from(sender)),
+            this.pingedNodes
+          );
+        })
       )
       .subscribe();
-  }
-
-  private addNodeToRoutingTable(node?: Address) {
-    return tap((msg: Message) => {
-      const sender = checkSender(msg);
-      this.worker.routingTable.addNode(Contact.from(sender));
-    });
   }
 
   private pingNodes() {
@@ -158,6 +210,22 @@ export class BusinessLayer {
         this.worker.ping(node);
         this.pingedNodes = [...this.pingedNodes, node];
       });
+    });
+  }
+
+  private removeNotRespondingForPing() {
+    return tap(() => {
+      this.pingedNodes.forEach((node) =>
+        this.worker.routingTable.removeNode(node)
+      );
+      this.pingedNodes = [];
+    });
+  }
+
+  private addNodeToRoutingTable(node?: Address) {
+    return tap((msg: Message) => {
+      const sender = checkSender(msg);
+      this.worker.routingTable.addNode(Contact.from(sender));
     });
   }
 }

@@ -8,13 +8,13 @@ import { BusinessLayer } from '@layers/business-layer/business-layer';
 import { ApplicationLayer } from '@layers/application-layer/application-layer';
 
 const bootstrapNode = spawnNode(1337);
-const nodes = [spawnNode(1338), spawnNode(1339), spawnNode(1340)];
+const nodes = [spawnNode(1338), spawnNode(1339)];
 
 nodes.forEach((node) =>
- node.launch({
-   host: 'localhost',
-   port: 1336
- })
+  node.launch({
+    host: 'localhost',
+    port: 1337
+  })
 );
 
 const decoder = new StringDecoder('utf8');
@@ -25,10 +25,10 @@ process.stdin.on('data', function(input: Buffer) {
   const text = decoder.write(input).trim();
 
   if (text == 'close') {
-    process.stdout.write('Closing application...\n');
     bootstrapNode.close();
-    // nodes.forEach((node) => node.close());
-    // process.exit();
+    process.stdout.write('Closing application...\n');
+    nodes.forEach((node) => node.close());
+    process.exit();
   } else {
     process.stdout.write('> ');
   }
@@ -49,6 +49,4 @@ function spawnNode(port: number) {
   return new ApplicationLayer(businessLayer);
 }
 
-// TODO: pretty debug logs
-// TODO: handle errors
-// * bootstrapNode not listening / not available
+// TODO: flush logs on process exit

@@ -1,22 +1,21 @@
 import { equals } from 'ramda';
-import { Observable, Subject } from 'rxjs';
+import { Observable } from 'rxjs';
 import { map, filter } from 'rxjs/operators';
 
-import { Communication, Contact } from '@models';
+import { Contact } from '@models';
 import { SocketLayer } from '@layers/socket-layer/socket-layer';
 import { Message } from '@protobuf/Message_pb';
+import logger from '@utils/logging';
 
 export class MessageLayer {
   private messages$: Observable<Message>;
-  private messagesToSend$: Subject<Communication<Buffer>>;
 
   constructor(private worker: SocketLayer) {
-    this.messagesToSend$ = new Subject();
     this.messages$ = this.handleReceivedMessages();
   }
 
   close() {
-    this.messagesToSend$.complete();
+    logger.info('Message layer: closing.');
     this.worker.close();
   }
 

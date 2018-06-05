@@ -1,4 +1,5 @@
 import { Contact } from '@models';
+import { generateID } from '@utils/random-id';
 
 import { Message } from '../Message_pb';
 
@@ -10,7 +11,7 @@ export function prepareBaseMessage(config: {
   const { sender, receiver, type } = config;
   const msg = new Message();
 
-  msg.setUuid(Contact.generateGUID());
+  msg.setUuid(generateID());
   msg.setSender(Contact.toMessageContact(sender));
   msg.setReceiver(Contact.toMessageContact(receiver));
   msg.setType(type);
