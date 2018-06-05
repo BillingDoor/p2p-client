@@ -61,5 +61,6 @@ public class MessageLayer extends Thread {
         logger.info("closing");
         this.interrupt();
         this.socketLayer.shutdown();
+        this.socketLayer.interrupt();
     }
 }

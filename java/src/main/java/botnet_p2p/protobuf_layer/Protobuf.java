@@ -3,7 +3,9 @@ package botnet_p2p.protobuf_layer;
 import botnet_p2p.model.KademliaPeer;
 import botnet_p2p.model.Peer;
 
+import java.math.BigInteger;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -24,7 +26,7 @@ public class Protobuf {
         return Message.newBuilder()
                 .setSender(senderContact)
                 .setReceiver(receiverContact)
-                .setUuid(UUID.randomUUID().toString());
+                .setUuid(new BigInteger(64, new Random()).toString());
     }
 
     public static Message.Builder createBaseMessage(KademliaPeer sender, KademliaPeer receiver) {
