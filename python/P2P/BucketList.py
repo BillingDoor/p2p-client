@@ -9,8 +9,6 @@ logging.basicConfig(
 )
 handler = logging.handlers.RotatingFileHandler(
     "./logs/log.txt",
-    maxBytes=65536,
-    backupCount=10
 )
 log = logging.getLogger(__name__)
 log.addHandler(handler)
@@ -54,6 +52,10 @@ class BucketList(object):
         :return: True if peer is in one of the buckets, otherwise False
         """
         return peer in self.buckets[largest_differing_bit(self.id, peer.id)]
+
+    async def get_routing_table_info(self):
+        all_peers = [peer.get_info() for bucket in self.buckets for peer in bucket]
+        return all_peers
 
     async def get_peer_by_id(self, id):
         """

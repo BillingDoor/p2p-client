@@ -56,6 +56,21 @@ class ProtobufTest(unittest.TestCase):
         self.assertEqual(putils.create_peer_from_contact(mess.foundNodes.nodes[2]), p3)
         self.assertEqual(putils.create_peer_from_contact(mess.foundNodes.nodes[3]), p4)
 
+    def test_creating_file_chunk_message(self):
+        mess = putils.create_file_chunk_message(self.sender, self.receiver, '12', './test.txt', 34434, 0, b'011101')
+
+        self.assertEqual(mess.fileChunk.uuid, '12')
+        self.assertEqual(mess.fileChunk.fileName, './test.txt')
+        self.assertEqual(mess.fileChunk.fileSize, 34434)
+        self.assertEqual(mess.fileChunk.ordinal, 0)
+        self.assertEqual(mess.fileChunk.data, b'011101')
+
+    def test_creating_file_request_message(self):
+        mess = putils.create_file_request_message(self.sender, self.receiver, './test.txt')
+
+        self.assertEqual(mess.type, mess.FILE_REQUEST)
+        self.assertEqual(mess.fileRequest.path, './test.txt')
+
     def test_encoding_and_decoding(self):
         mess = putils.create_ping_message(self.sender, self.receiver)
         self.assertEqual(putils.deserialize_message(putils.serialize_message(mess)), mess)

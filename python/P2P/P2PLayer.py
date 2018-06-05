@@ -10,8 +10,6 @@ logging.basicConfig(
 )
 handler = logging.handlers.RotatingFileHandler(
     os.path.abspath("./logs/log.txt"),
-    maxBytes=65536,
-    backupCount=10
 )
 log = logging.getLogger(__name__)
 log.addHandler(handler)
@@ -63,6 +61,9 @@ class P2PLayer:
             log.debug("Caught CancelledError: Stop handling input from higher layer")
             return
 
+    async def get_routing_table_info(self):
+        routing_table_info = await self._routing_table.get_routing_table_info()
+        return routing_table_info
 
     def start_server(self):
         self.lower_layer.start_server(self.get_myself().ip, self.get_myself().port)

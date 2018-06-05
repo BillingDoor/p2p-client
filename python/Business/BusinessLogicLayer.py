@@ -6,6 +6,9 @@ from python.Protobuf.Message_pb2 import Message
 from python.P2P.peer import Peer
 import os
 import subprocess
+import python.Business.util as file_util
+import random
+
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -13,8 +16,6 @@ logging.basicConfig(
 )
 handler = logging.handlers.RotatingFileHandler(
     os.path.abspath("./logs/log.txt"),
-    maxBytes=65536,
-    backupCount=10
 )
 log = logging.getLogger(__name__)
 log.addHandler(handler)
@@ -26,6 +27,7 @@ class BusinessLogicLayer:
         self.lower_layer = lower_layer
         self._this_peer = lower_layer.get_myself()
         self._pinged_peers = []
+        self._files_being_written = []
 
     async def add_layer_communication(self, lower):
         """
@@ -38,6 +40,111 @@ class BusinessLogicLayer:
         self._lower = lower
         asyncio.ensure_future(self._handle_lower_input())
 
+    async def command(self, target_id, command, should_respond):
+        """
+        Sends command to target peer
+        :param target_id: id of targeted peer
+        :param command: command to send
+        :param should_response: True if receiver should respond to the command
+        :return:SUCCESS or FAILURE
+        """
+        peer = await self.lower_layer.get_peer_by_id(target_id)
+        if peer is None:
+            return StatusMessage.FAILURE
+        message = putils.create_command_message(sender=self.get_myself(),
+                                                receiver=peer,
+                                                command=command,
+                                                should_respond=should_respond
+                                                )
+        try:
+            status = await self._put_message_on_lower(message)
+
+            return status
+        except asyncio.CancelledError:
+            return StatusMessage.FAILURE
+
+    async def ping(self, target_id):
+        """
+        Sends ping message to peer with given target_id
+        :param target_id: id of target peer
+        :return: SUCCESS or FAILURE
+        """
+        peer = await self.lower_layer.get_peer_by_id(target_id)
+        if peer is None:
+            return StatusMessage.FAILURE
+        message = putils.create_ping_message(sender=self.get_myself(), receiver=peer)
+        try:
+            status = await self._put_message_on_lower(message)
+            self._pinged_peers.append((peer, asyncio.ensure_future(self._wait_for_ping_response(peer=peer, timeout=10))))
+            return status
+        except asyncio.CancelledError:
+            return StatusMessage.FAILURE
+
+    def get_myself(self):
+        return self._this_peer
+
+    async def find_node(self, guid, id_of_peer_to_ask):
+        """
+        Create find_node message with given guid to find and peer_to_ask as a receiver of our query and pass it on
+        :param guid: id of peer to ask
+        :param id_of_peer_to_ask: peer to query about wanted peer
+        :return: SUCCESS or FAILURE
+        """
+        peer_to_ask = await self.lower_layer.get_peer_by_id(id_of_peer_to_ask)
+        if peer_to_ask is None:
+            return StatusMessage.FAILURE
+        message = putils.create_find_node_message(sender=self.get_myself(), receiver=peer_to_ask, guid=guid)
+        status = await self._put_message_on_lower(message)
+        return status
+
+    async def join_network(self, bootstrap_node):
+        """
+        Join network that the bootstrap_node belongs to
+        :param bootstrap_node: Bootstrap node we will be asking for information about network
+        :return: SUCCESS or FAILURE
+        """
+        self.start_server()
+        if bootstrap_node:
+            log.debug("Joining network, bootstrap node: {}".format(bootstrap_node))
+            peer_to_ask = Peer(None, bootstrap_node[0], bootstrap_node[1], False)
+            await self.lower_layer.add_peer(peer_to_ask)
+            await self.ping(peer_to_ask.id)
+            log.debug("Waiting for boot node to respond")
+            await asyncio.sleep(4)
+
+            peer_to_ask = await self.lower_layer.get_peer_by_id(peer_to_ask.id)
+            if peer_to_ask is None:
+                log.warning("Bootstrap node is not responding. Failed to bootstrap")
+                await self.stop_server()
+                return StatusMessage.FAILURE
+
+            message = putils.create_find_node_message(sender=self.get_myself(), receiver=peer_to_ask, guid=self.get_myself().id)
+            status = await self._put_message_on_lower(message)
+            if status is StatusMessage.FAILURE:
+                log.warning("Could not send find node message to bootstrap node")
+                await self.stop_server()
+                return status
+        return StatusMessage.SUCCESS
+
+    def start_server(self):
+        """
+        Try to start the server
+        """
+        self.lower_layer.start_server()
+
+    async def stop_server(self):
+        """
+        Try to stop the server
+        """
+        await self.lower_layer.stop_server()
+
+    async def get_routing_table_info(self):
+        """
+        Returns routing table in printable form
+        """
+        routing_table_info = await self.lower_layer.get_routing_table_info()
+        return routing_table_info
+
     async def _handle_lower_input(self):
         try:
             while True:
@@ -45,7 +152,7 @@ class BusinessLogicLayer:
                 message = await self._lower[0].get()
                 log.debug("Got message {!r}; handle it".format(message))
                 await self._handle_message(message)
-                log.debug("Message {!r} sent to the higher layer".format(message))
+                log.debug("Message {!r} handled".format(message))
         except asyncio.CancelledError:
             log.debug("Caught CancelledError: Stop handling input from lower layer")
 
@@ -64,6 +171,96 @@ class BusinessLogicLayer:
             await self._handle_found_nodes_message(message)
         elif message.type == Message.COMMAND:
             await self._handle_command_message(message)
+        elif message.type == Message.COMMAND_RESPONSE:
+            await self._handle_command_response_message(message)
+        elif message.type == Message.FILE_REQUEST:
+            await self._handle_file_request_message(message)
+        elif message.type == Message.FILE_CHUNK:
+            await self._handle_file_chunk_message(message)
+        else:
+            log.warning("Unsupported message type {}".format(message.type))
+
+    async def _handle_file_request_message(self, message):
+        log.debug("Handling FILE_REQUEST message")
+        sender = message.sender
+        sender_peer = putils.create_peer_from_contact(sender)
+        path = message.fileRequest.path
+        log.debug("Peer {} is requesting file {}".format(sender_peer.get_info(), path))
+
+        uuid = str(random.Random().getrandbits(64))
+        ordinal = 0
+        file_size = file_util.get_file_size(path)
+        file_name = path + ".{}".format(self.get_myself().id)
+        log.debug("Start creating file chunks and sending them in messages")
+        for chunk in file_util.chunks_generator(path=path):
+            log.debug("Send file chunk: [ {}, {}, {}, {}, data_chunk_size: {} ]".format(uuid, file_name, file_size, ordinal, len(chunk)))
+            status = await self._file_chunk_message(receiver=sender_peer,
+                                                    uuid=uuid,
+                                                    file_name=file_name,
+                                                    file_size = file_size,
+                                                    ordinal=ordinal,
+                                                    data=chunk
+                                                    )
+            ordinal += 1
+            if status is StatusMessage.FAILURE:
+                log.warning("Could not create file chunk message")
+                return status
+            elif status is StatusMessage.SUCCESS:
+                continue
+        log.debug("Whole file was sent")
+        return StatusMessage.SUCCESS
+
+    async def _handle_file_chunk_message(self, message):
+        """
+        Handle FILE_CHUNK Message
+        :param message: message
+        :return: SUCCESS or FAILURE
+        """
+        log.debug("Handling FILE_CHUNK message")
+        uuid = message.fileChunk.uuid
+        file_name = message.fileChunk.fileName
+        file_size = message.fileChunk.fileSize
+        ordinal = message.fileChunk.ordinal
+        data = message.fileChunk.data
+
+        # We are currently writing this file
+        for file_being_written_uuid in self._files_being_written:
+            if file_being_written_uuid == uuid:
+                log.debug("Adding another chunk to file {}".format(file_name))
+                with open(file_name, 'ab') as file:
+                    file.seek(ordinal * 8192, 0)
+                    file.write(data)
+                    log.debug("Added another chunk to file {}".format(file_name))
+
+                if file_size == file_util.get_file_size(path=file_name):
+                    log.debug("Whole file {} has been writte".format(file_name))
+                    self._files_being_written.remove(file_being_written_uuid)
+                return StatusMessage.SUCCESS
+
+        # That file was not being written
+        self._files_being_written.append(uuid)
+        log.debug("Adding first chunk to file {}".format(file_name))
+        with open(file_name, 'wb') as file:
+            file.seek(ordinal * 8192, 0)
+            file.write(data)
+            log.debug("Added first chunk to file {}".format(file_name))
+
+        if file_size == file_util.get_file_size(path=file_name):
+            log.debug("Whole file {} has been writte".format(file_name))
+
+            self._files_being_written.remove(uuid)
+        return StatusMessage.SUCCESS
+
+    async def _file_chunk_message(self, receiver, uuid, file_name, file_size, ordinal, data):
+        message = putils.create_file_chunk_message(sender=self.get_myself(),
+                                                   receiver=receiver,
+                                                   uuid=uuid,
+                                                   file_name=file_name,
+                                                   file_size=file_size,
+                                                   ordinal=ordinal,
+                                                   data=data)
+        status = await self._put_message_on_lower(message)
+        return status
 
     async def _handle_command_message(self, message):
         log.debug("Handling COMMAND message")
@@ -75,7 +272,7 @@ class BusinessLogicLayer:
         log.debug("COMMAND message was sent from {}".format(sender_peer.get_info()))
         log.debug("COMMAND to run: {}".format(command))
         try:
-            value = subprocess.check_output([command.split()], shell=True).decode('cp1250')
+            value = subprocess.check_output([command.split()], shell=True).decode('utf-8', 'ignore')
 
             if should_respond:
                 mess_status = await self._command_response(receiver=sender_peer, command=command, value=value, status=0)
@@ -240,100 +437,4 @@ class BusinessLogicLayer:
         except asyncio.CancelledError:
             log.debug("Peer {} responded. Cancel removal of him from the routing table.")
 
-    async def command(self, target_id, command, should_respond):
-        """
-        Sends command to target peer
-        :param target_id: id of targeted peer
-        :param command: command to send
-        :param should_response: True if receiver should respond to the command
-        :return:SUCCESS or FAILURE
-        """
-        peer = await self.lower_layer.get_peer_by_id(target_id)
-        if peer is None:
-            return StatusMessage.FAILURE
-        message = putils.create_command_message(sender=self.get_myself(),
-                                                receiver=peer,
-                                                command=command,
-                                                should_respond=should_respond
-                                                )
-        try:
-            status = await self._put_message_on_lower(message)
 
-            return status
-        except asyncio.CancelledError:
-            return StatusMessage.FAILURE
-
-    async def ping(self, target_id):
-        """
-        Sends ping message to peer with given target_id
-        :param target_id: id of target peer
-        :return: SUCCESS or FAILURE
-        """
-        peer = await self.lower_layer.get_peer_by_id(target_id)
-        if peer is None:
-            return StatusMessage.FAILURE
-        message = putils.create_ping_message(sender=self.get_myself(), receiver=peer)
-        try:
-            status = await self._put_message_on_lower(message)
-            self._pinged_peers.append((peer, asyncio.ensure_future(self._wait_for_ping_response(peer=peer, timeout=10))))
-            return status
-        except asyncio.CancelledError:
-            return StatusMessage.FAILURE
-
-    def get_myself(self):
-        return self._this_peer
-
-    async def find_node(self, guid, id_of_peer_to_ask):
-        """
-        Create find_node message with given guid to find and peer_to_ask as a receiver of our query and pass it on
-        :param guid: id of peer to ask
-        :param id_of_peer_to_ask: peer to query about wanted peer
-        :return: SUCCESS or FAILURE
-        """
-        peer_to_ask = await self.lower_layer.get_peer_by_id(id_of_peer_to_ask)
-        if peer_to_ask is None:
-            return StatusMessage.FAILURE
-        message = putils.create_find_node_message(sender=self.get_myself(), receiver=peer_to_ask, guid=guid)
-        status = await self._put_message_on_lower(message)
-        return status
-
-    async def join_network(self, bootstrap_node):
-        """
-        Join network that the bootstrap_node belongs to
-        :param bootstrap_node: Bootstrap node we will be asking for information about network
-        :return: SUCCESS or FAILURE
-        """
-        self.start_server()
-        if bootstrap_node:
-            log.debug("Joining network, bootstrap node: {}".format(bootstrap_node))
-            peer_to_ask = Peer(None, bootstrap_node[0], bootstrap_node[1], False)
-            await self.lower_layer.add_peer(peer_to_ask)
-            await self.ping(peer_to_ask.id)
-            log.debug("Waiting for boot node to respond")
-            await asyncio.sleep(4)
-
-            peer_to_ask = await self.lower_layer.get_peer_by_id(peer_to_ask.id)
-            if peer_to_ask is None:
-                log.warning("Bootstrap node is not responding. Failed to bootstrap")
-                await self.stop_server()
-                return StatusMessage.FAILURE
-
-            message = putils.create_find_node_message(sender=self.get_myself(), receiver=peer_to_ask, guid=self.get_myself().id)
-            status = await self._put_message_on_lower(message)
-            if status is StatusMessage.FAILURE:
-                log.warning("Could not send find node message to bootstrap node")
-                await self.stop_server()
-                return status
-        return StatusMessage.SUCCESS
-
-    def start_server(self):
-        """
-        Try to start the server
-        """
-        self.lower_layer.start_server()
-
-    async def stop_server(self):
-        """
-        Try to stop the server
-        """
-        await self.lower_layer.stop_server()
