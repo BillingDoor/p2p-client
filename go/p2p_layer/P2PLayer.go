@@ -8,29 +8,58 @@ import (
 )
 
 var routingTable models.BucketList
-var BBLMessageChannel chan models.Message
+var BLMessageChannel chan models.Message
 var myNode models.Node
 
 var terminateChannel chan struct{}
 var hasTerminated chan struct{}
 var nextLayerTerminated chan struct{}
+
+var P2PMessageChannel chan models.Message
+
 var mutex = &sync.Mutex{}
 
+var propagationMessages []models.UUID
+
 func InitLayer(selfNode models.Node, messageChannel chan models.Message, terminate chan struct{}, thisTerminated chan struct{}) {
-	BBLMessageChannel = messageChannel
+	BLMessageChannel = messageChannel
 	myNode = selfNode
 	terminateChannel = terminate
 	hasTerminated = thisTerminated
 	nextLayerTerminated = make(chan struct{})
+	P2PMessageChannel = make(chan models.Message)
 	routingTable.Init(myNode)
-	message_layer.InitLayer(myNode, BBLMessageChannel, terminateChannel, nextLayerTerminated)
+	message_layer.InitLayer(myNode, P2PMessageChannel, terminateChannel, nextLayerTerminated)
+	go messageRoutine()
 	log.Println("[P2] Initialized")
-	go func() {
-		<-terminateChannel
-		<-nextLayerTerminated
-		log.Println("[P2] Terminated")
-		hasTerminated <- struct{}{}
-	}()
+}
+
+func messageRoutine() {
+	for {
+		select {
+		case message := <-P2PMessageChannel:
+			uuid := models.GuidFromString(message.Uuid)
+			newMessage := true
+			for _, x := range propagationMessages {
+				if x == uuid {
+					newMessage = false
+					break
+				}
+			}
+			if message.Propagation == true && newMessage {
+				propagationMessages = append(propagationMessages, uuid)
+				for _, node := range routingTable.GetAllNodes() {
+					message_layer.SendMarshaledMessage(node, message)
+				}
+			}
+			BLMessageChannel <- message
+		case <-terminateChannel:
+			<-nextLayerTerminated
+			log.Println("[P2] Terminated")
+			hasTerminated <- struct{}{}
+			return
+		}
+	}
 }
 
 func Ping(selfNode, targetNode models.Node) error {

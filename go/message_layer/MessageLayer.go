@@ -64,6 +64,7 @@ func createBaseMessage(sender, receiver models.Node, messageType models.Message_
 			IsNAT: receiver.IsNAT,
 		},
 		Type: messageType,
+		Uuid: models.GenerateGUID().String(),
 	}
 	return message
 }
@@ -167,4 +168,8 @@ func RequestFile(target models.Node, path string) error {
 		},
 	}
 	return sendMessage(target, message)
+}
+
+func SendMarshaledMessage(target models.Node, msg models.Message) {
+	sendMessage(target, msg)
 }
