@@ -31,7 +31,7 @@ export class RoutingTable {
     const bucketNotFull = this.buckets[bucket].length < RoutingTable.bucketSize;
 
     if (notSelf && bucketNotFull) {
-      logger.info(`P2P layer: Adding node ${node.guid} to routing table`);
+      logger.info(`P2P layer: Adding node ${node.guid} to routing table.`);
       this.buckets[bucket] = [...this.buckets[bucket], node];
       logger.info(
         `RoutingTable: ${JSON.stringify(
@@ -44,7 +44,7 @@ export class RoutingTable {
   }
 
   removeNode(node: Contact): void {
-    logger.info(`P2P layer: Removing node ${node.guid} from routing table`);
+    logger.info(`P2P layer: Removing node ${node.guid} from routing table.`);
     let bucket = this.selectBucket(node.guid);
     this.buckets[bucket] = reject(equals(node), this.buckets[bucket]);
   }

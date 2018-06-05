@@ -8,7 +8,7 @@ import { BusinessLayer } from '@layers/business-layer/business-layer';
 import { ApplicationLayer } from '@layers/application-layer/application-layer';
 
 const bootstrapNode = spawnNode(1337);
-const nodes = [spawnNode(1338), spawnNode(1339)];
+const nodes = [spawnNode(1338), spawnNode(1339), spawnNode(1340)];
 
 nodes.forEach((node) =>
   node.launch({

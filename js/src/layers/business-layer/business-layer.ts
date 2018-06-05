@@ -40,7 +40,7 @@ export class BusinessLayer {
     this.worker
       .on(Message.MessageType.COMMAND)
       .pipe(
-        tap(() => logger.info('Business layer: got command message')),
+        tap(() => logger.info('Business layer: got command message.')),
         tap(async (msg) => {
           const sender = checkSender(msg);
           const commandMsg = msg.getCommand();
@@ -104,7 +104,7 @@ export class BusinessLayer {
     this.worker
       .on(Message.MessageType.COMMAND_RESPONSE)
       .pipe(
-        tap(() => logger.info('Business layer: got command response message'))
+        tap(() => logger.info('Business layer: got command response message.'))
       )
       .subscribe();
   }
@@ -113,7 +113,7 @@ export class BusinessLayer {
     this.worker
       .on(Message.MessageType.FIND_NODE)
       .pipe(
-        tap(() => logger.info('Business layer: got find node message')),
+        tap(() => logger.info('Business layer: got find node message.')),
         this.addNodeToRoutingTable(),
         tap((msg) => {
           const sender = checkSender(msg);
@@ -136,7 +136,7 @@ export class BusinessLayer {
       .on(Message.MessageType.FOUND_NODES)
       .pipe(
         first(),
-        tap(() => logger.info('Business layer: got found nodes message')),
+        tap(() => logger.info('Business layer: got found nodes message.')),
         this.addNodeToRoutingTable(),
         this.pingNodes(),
         delay(5000),
@@ -149,7 +149,7 @@ export class BusinessLayer {
     this.worker
       .on(Message.MessageType.LEAVE)
       .pipe(
-        tap(() => logger.info('Business layer: got leave message')),
+        tap(() => logger.info('Business layer: got leave message.')),
         tap((msg) => {
           const sender = checkSender(msg);
           this.worker.routingTable.removeNode(Contact.from(sender));
@@ -162,7 +162,7 @@ export class BusinessLayer {
     this.worker
       .on(Message.MessageType.PING)
       .pipe(
-        tap(() => logger.info('Business layer: got ping message')),
+        tap(() => logger.info('Business layer: got ping message.')),
         this.addNodeToRoutingTable(),
         tap((msg) => {
           const sender = checkSender(msg);
@@ -178,7 +178,7 @@ export class BusinessLayer {
     this.worker
       .on(Message.MessageType.PING_RESPONSE)
       .pipe(
-        tap(() => logger.info('Business layer: got ping response message')),
+        tap(() => logger.info('Business layer: got ping response message.')),
         filter((msg) => {
           const sender = checkSender(msg);
           return contains(Contact.from(sender), this.pingedNodes);
