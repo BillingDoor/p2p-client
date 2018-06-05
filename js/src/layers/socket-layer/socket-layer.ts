@@ -1,6 +1,7 @@
 import * as net from 'net';
 import { compose, equals, nth, reject as ramdaReject } from 'ramda';
 import { Subject, Observable } from 'rxjs';
+import { share } from 'rxjs/operators';
 
 import { Address, Communication } from '@models';
 import logger from '@utils/logging';
@@ -25,7 +26,7 @@ export class SocketLayer {
   }
 
   getReceivedMessagesStream(): Observable<Buffer> {
-    return this.receivedMessages$.asObservable();
+    return this.receivedMessages$.asObservable().pipe(share());
   }
 
   send(config: Communication<Buffer>): Promise<void> {
