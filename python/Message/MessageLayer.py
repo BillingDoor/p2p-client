@@ -14,6 +14,7 @@ formatter = logging.Formatter('%(name)s: %(message)s',)
 handler.formatter = formatter
 log = logging.getLogger(__name__)
 log.addHandler(handler)
+log.propagate = False
 
 class MessageLayer:
     def __init__(self, lower_layer):

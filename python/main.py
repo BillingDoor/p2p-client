@@ -1,10 +1,11 @@
+import sys
+sys.path.append('../')
 from python.Socket.SocketLayer import SocketLayer
 from python.P2P.P2PLayer import P2PLayer, Peer
 from python.Message.MessageLayer import MessageLayer
 from python.Business.BusinessLogicLayer import BusinessLogicLayer
 from python.Application.ApplicationLayer import Application
 import asyncio
-import sys
 import logging.handlers
 
 logging.basicConfig(
@@ -12,12 +13,14 @@ logging.basicConfig(
     format='%(name)s: %(message)s',
 )
 handler = logging.handlers.RotatingFileHandler(
-    "log.txt",
-    maxBytes=65536,
-    backupCount=10
+    "./logs/log.txt"
 )
 
 log = logging.getLogger(__name__)
+log.addHandler(handler)
+log.propagate = False
+formatter = logging.Formatter('%(name)s: %(message)s')
+handler.formatter = formatter
 
 def _run(cor):
     return asyncio.get_event_loop().run_until_complete(cor)

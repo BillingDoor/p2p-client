@@ -12,6 +12,7 @@ handler = logging.handlers.RotatingFileHandler(
 )
 log = logging.getLogger(__name__)
 log.addHandler(handler)
+log.propagate = False
 
 def largest_differing_bit(value1, value2):
     """

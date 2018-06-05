@@ -15,6 +15,7 @@ formatter = logging.Formatter('%(name)s: %(message)s',)
 handler.formatter = formatter
 log = logging.getLogger(__name__)
 log.addHandler(handler)
+log.propagate = False
 
 async def client(address, message):
     log.debug('connecting to {} port {}'.format(*address))
