@@ -105,6 +105,12 @@ def create_file_chunk_message(sender, receiver, uuid, file_name, file_size, ordi
     msg.fileChunk.data = data
     return msg
 
+def swap_receiver(message, new_receiver):
+    message.receiver.guid = str(new_receiver.id)
+    message.receiver.IP = new_receiver.ip
+    message.receiver.port = new_receiver.port
+    message.receiver.isNAT = new_receiver.is_NAT
+
 def _prepare_base_message(sender, receiver):
     """
     Prepare base for all other messages

@@ -42,7 +42,7 @@ class Application:
     def _print_connected_menu(self):
         self._print_main_menu()
         print("1. Print routing table")
-        print("2. Send file")
+        print("2. Send file request")
         print("3. Send command")
         print("quit. Quit the application")
 
@@ -53,9 +53,19 @@ class Application:
 
     async def _print_routing_table(self):
         routing_table_info = await self._lower_layer.get_routing_table_info()
-        print("|{:^30}|{:^19}|{:^5}|{:^5}".format("ID", "IP", "Port", "Is NAT"))
-        for peer_info in routing_table_info:
-            print("|{:^30}|{:^19}|{:^5}|{:^5}".format(*peer_info))
+        print("|{:^3}|{:^30}|{:^19}|{:^5}|{:^5}".format("ID","ID", "IP", "Port", "Is NAT"))
+        for index, peer_info in zip(range(len(routing_table_info)),routing_table_info):
+            print("|{:^3}|{:^30}|{:^19}|{:^5}|{:^5}".format(index, *peer_info))
+
+    async def _send_file_request(self):
+        print("Index: ")
+        index = (await asyncio.get_event_loop().run_in_executor(None, sys.stdin.readline)).strip().lower()
+        index = int(index)
+        print("Filename: ")
+        filename = (await asyncio.get_event_loop().run_in_executor(None, sys.stdin.readline)).strip()
+        routing_table_info = await self._lower_layer.get_routing_table_info()
+        await self._lower_layer.file_request(routing_table_info[index][0], filename)
+
 
     async def _aio_readline(self):
         connected = False
@@ -68,7 +78,8 @@ class Application:
                         # Print routing table
                         await self._print_routing_table()
                     elif line == '2':
-                        pass
+                        await self._print_routing_table()
+                        await self._send_file_request()
                     elif line == '3':
                         pass
                     elif line == 'quit':
