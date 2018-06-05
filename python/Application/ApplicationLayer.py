@@ -36,14 +36,15 @@ class Application:
             loop.run_until_complete(task)
 
     def _print_main_menu(self):
-        print("="*25)
-        print("{:^25}".format('P2P Application'))
+        print("="*30)
+        print("{:^30}".format('P2P Application'))
 
     def _print_connected_menu(self):
         self._print_main_menu()
         print("1. Print routing table")
         print("2. Send file request")
         print("3. Send command")
+        print("4. Ping")
         print("quit. Quit the application")
 
     def _print_not_connected_menu(self):
@@ -64,12 +65,24 @@ class Application:
         print("Filename: ")
         filename = (await asyncio.get_event_loop().run_in_executor(None, sys.stdin.readline)).strip()
         routing_table_info = await self._lower_layer.get_routing_table_info()
+        if index >= len(routing_table_info):
+            print("Wrong index")
+            return
         await self._lower_layer.file_request(routing_table_info[index][0], filename)
 
-
+    async def _ping(self):
+        print("Index: ")
+        index = (await asyncio.get_event_loop().run_in_executor(None, sys.stdin.readline)).strip().lower()
+        index = int(index)
+        routing_table_info = await self._lower_layer.get_routing_table_info()
+        if index >= len(routing_table_info):
+            print("Wrong index")
+            return
+        await self._lower_layer.ping(routing_table_info[index][0])
     async def _send_command(self):
         print("Index: ")
         index = (await asyncio.get_event_loop().run_in_executor(None, sys.stdin.readline)).strip().lower()
+        index = int(index)
         print("Command: ")
         command = (await asyncio.get_event_loop().run_in_executor(None, sys.stdin.readline)).strip()
         print("Should respond?[y/n]: ")
@@ -80,6 +93,9 @@ class Application:
             should_respond = False
 
         routing_table_info = await self._lower_layer.get_routing_table_info()
+        if index >= len(routing_table_info):
+            print("Wrong index")
+            return
         await self._lower_layer.command(routing_table_info[index][0], command, should_respond)
 
     async def _aio_readline(self):
@@ -98,6 +114,9 @@ class Application:
                     elif line == '3':
                         await self._print_routing_table()
                         await self._send_command()
+                    elif line == '4':
+                        await self._print_routing_table()
+                        await self._ping()
                     elif line == 'quit':
                         await self._lower_layer.stop_server()
                         break
@@ -124,6 +143,8 @@ class Application:
                                 status = await self._lower_layer.join_network((ip.strip(), int(port.strip())))
                                 if status is StatusMessage.SUCCESS:
                                     connected = True
+                                else:
+                                    print("Failed to connect to the bootstrap node")
                             else:
                                 print("Invalid port number: {}".format(port.strip()))
                         else:

@@ -114,7 +114,11 @@ class BusinessLogicLayer:
         :param bootstrap_node: Bootstrap node we will be asking for information about network
         :return: SUCCESS or FAILURE
         """
-        self.start_server()
+        sever_status = await self.start_server()
+        if sever_status is StatusMessage.FAILURE:
+            print("Cancel network joining, could not start the server")
+            return sever_status
+
         if bootstrap_node:
             log.debug("Joining network, bootstrap node: {}".format(bootstrap_node))
             peer_to_ask = Peer(None, bootstrap_node[0], bootstrap_node[1], False)
@@ -137,11 +141,11 @@ class BusinessLogicLayer:
                 return status
         return StatusMessage.SUCCESS
 
-    def start_server(self):
+    async def start_server(self):
         """
         Try to start the server
         """
-        self.lower_layer.start_server()
+        return await self.lower_layer.start_server()
 
     async def stop_server(self):
         """
@@ -292,7 +296,7 @@ class BusinessLogicLayer:
         log.debug("COMMAND message was sent from {}".format(sender_peer.get_info()))
         log.debug("COMMAND to run: {}".format(command))
         try:
-            value = subprocess.check_output([command.split()], shell=True).decode('utf-8', 'ignore')
+            value = subprocess.check_output(command.split(), shell=True).decode('utf-8', 'ignore')
 
             if should_respond:
                 mess_status = await self._command_response(receiver=sender_peer, command=command, value=value, status=0)
@@ -319,8 +323,12 @@ class BusinessLogicLayer:
         command = message.response.command
         value = message.response.value
         status = message.response.status
+        print("="*30)
+        print("COMMAND: {}".format(command))
+        print("RESPONSE: {}".format(value))
+        print("="*30)
 
-        log.debug("COMMAND message was sent from {}".format(sender_peer.get_info()))
+        log.debug("COMMAND RESPONSE message was sent from {}".format(sender_peer.get_info()))
         log.debug("COMMAND {} returned {} and status value {}".format(command, value, status))
 
     async def _handle_ping_message(self, message):
