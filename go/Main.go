@@ -7,7 +7,8 @@ import (
 )
 
 func main() {
-	listenPort, _ := strconv.Atoi(os.Args[1])
-	connectPort, _ := strconv.Atoi(os.Args[2])
-	application_layer.RunApplication(uint32(listenPort), uint32(connectPort))
+	ip := os.Args[1]
+	listenPort, _ := strconv.Atoi(os.Args[2])
+	connectPort, _ := strconv.Atoi(os.Args[3])
+	application_layer.RunApplication(ip, uint32(listenPort), uint32(connectPort))
 }

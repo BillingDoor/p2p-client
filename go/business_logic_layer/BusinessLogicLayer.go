@@ -28,7 +28,7 @@ var mainTerminateChannel chan struct{}
 
 var mutex = &sync.Mutex{}
 
-func InitLayer(port uint32, terminate chan struct{}, thisTerminated chan struct{}) (bool, error) {
+func InitLayer(ip string, port uint32, terminate chan struct{}, thisTerminated chan struct{}) (bool, error) {
 	terminateChannel = make(chan struct{})
 	mainTerminateChannel = terminate
 	hasTerminated = thisTerminated
@@ -37,7 +37,7 @@ func InitLayer(port uint32, terminate chan struct{}, thisTerminated chan struct{
 	messagesChannel = make(chan models.Message, 16)
 
 	rand.Seed(time.Now().UnixNano())
-	node, err := generateSelfNode(port)
+	node, err := generateSelfNode(ip, port)
 	if err != nil {
 		return false, err
 	}
@@ -158,6 +158,10 @@ func RequestFile(target models.Node, path string) error {
 
 func GetAllNodes() []models.Node {
 	return p2p_layer.GetAllNodes()
+}
+
+func SendCommandToAll(command string) error {
+	return p2p_layer.CommandPropagate(command, true)
 }
 
 func handleFoundNodes(msg models.Message) {
@@ -281,11 +285,11 @@ func handleLeave(msg models.Message) {
 	p2p_layer.RemoveFromRoutingTable(node)
 }
 
-func generateSelfNode(port uint32) (models.Node, error) {
-	ip, err := getRemoteIP()
-	if err != nil {
-		return models.Node{}, err
-	}
+func generateSelfNode(ip string, port uint32) (models.Node, error) {
+	//ip, err := getRemoteIP()
+	//if err != nil {
+	//	return models.Node{}, err
+	//}
 	isNAT, err := checkNAT()
 	if err != nil {
 		return models.Node{}, err

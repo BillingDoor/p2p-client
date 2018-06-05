@@ -125,13 +125,16 @@ func LeaveNetwork(receiver models.Node) error {
 	return sendMessage(receiver, message)
 }
 
-func Command(target models.Node, command string, shouldRespond bool) error {
+func Command(target models.Node, command string, shouldRespond bool, propagate bool) error {
 	message := createBaseMessage(myNode, target, models.Message_COMMAND)
 	message.Payload = &models.Message_Command{
 		Command: &models.Message_CommandMsg{
 			Command: command,
 			ShouldRespond:  shouldRespond,
 		},
+	}
+	if propagate {
+		message.Propagate = true
 	}
 	return sendMessage(target, message)
 }

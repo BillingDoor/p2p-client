@@ -22,9 +22,9 @@ var bootstrapNode = models.Node{
 	IsNAT: false,
 }
 
-func RunApplication(listenPort uint32, connectPort uint32) {
+func RunApplication(ip string, listenPort uint32, connectPort uint32) {
 	go interruptHandler()
-	business_logic_layer.InitLayer(listenPort, terminateChannel, nextLayerTerminated)
+	business_logic_layer.InitLayer(ip, listenPort, terminateChannel, nextLayerTerminated)
 	log.Printf("[AL] Initialized\n")
 
 	bootstrapNode.Port = connectPort
@@ -83,6 +83,33 @@ func RunApplication(listenPort uint32, connectPort uint32) {
 				idx, _ := strconv.Atoi(tokens[0])
 				node := business_logic_layer.GetAllNodes()[idx]
 				err := business_logic_layer.SendCommand(node, tokens[1])
+				if err != nil {
+					fmt.Println(err)
+				}
+				break
+			case "sendCommandToAll":
+				if len(tokens) < 2 {
+					fmt.Println("To few args.")
+					break
+				}
+				err := business_logic_layer.SendCommandToAll(tokens[1])
+				if err != nil {
+					fmt.Println(err)
+				}
+				break
+			case "requestFile":
+				if len(tokens) < 2 {
+					fmt.Println("To few args.")
+					break
+				}
+				tokens := strings.Split(tokens[1], " ")
+				if len(tokens) < 2 {
+					fmt.Println("To few args.")
+					break
+				}
+				idx, _ := strconv.Atoi(tokens[0])
+				node := business_logic_layer.GetAllNodes()[idx]
+				err := business_logic_layer.RequestFile(node, tokens[1])
 				if err != nil {
 					fmt.Println(err)
 				}

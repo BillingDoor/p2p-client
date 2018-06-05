@@ -52,7 +52,11 @@ func messageRoutine() {
 					message_layer.SendMarshaledMessage(node, message)
 				}
 			}
-			BLMessageChannel <- message
+
+			sender :=message.Sender.ToNode()
+			if !sender.Equals(myNode) {
+				BLMessageChannel <- message
+			}
 		case <-terminateChannel:
 			<-nextLayerTerminated
 			log.Println("[P2] Terminated")
@@ -91,7 +95,11 @@ func LeaveNetwork() error {
 }
 
 func Command(target models.Node, command string, shouldRespond bool) error {
-	return message_layer.Command(target, command, shouldRespond)
+	return message_layer.Command(target, command, shouldRespond, false)
+}
+
+func CommandPropagate(command string, shouldRespond bool) error {
+	return message_layer.Command(routingTable.GetAllNodes()[0], command, shouldRespond, true)
 }
 
 func CommandResponse(targetNode models.Node, command, response string) error {
