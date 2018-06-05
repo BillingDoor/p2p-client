@@ -1,5 +1,5 @@
 import * as net from 'net';
-import { compose, equals, nth, reject as ramdaReject } from 'ramda';
+import { compose, equals, nth, reject as ramdaReject, find } from 'ramda';
 import { Subject, Observable } from 'rxjs';
 
 import { Address, Communication } from '@models';
@@ -36,30 +36,28 @@ export class SocketLayer {
 
     let client: net.Socket;
 
-    const connected = this.connections.find(
+    const connected = find(
       compose(
         equals(address),
         nth(1)
       )
-    );
+    )(this.connections);
 
     return new Promise((resolve, reject) => {
       if (connected) {
-        [, client] = connected;
+        client = (connected as any)[1];
         client.write(prefixedData, () => {
           logger.info('Socket layer: message sent!');
           resolve();
         });
       } else {
         client = new net.Socket();
-        logger.info(`Socket layer: Connecting to ${host}:${port}...`);
         client.connect(
           port,
           host
         );
 
         client.on('connect', () => {
-          logger.info(`Socket layer: Connected to ${host}:${port}!`);
           this.connections = [...this.connections, [address, client]];
           client.write(prefixedData, () => {
             logger.info('Socket layer: message sent!');
@@ -68,7 +66,6 @@ export class SocketLayer {
         });
 
         client.on('close', () => {
-          logger.info(`Socket layer: ${host}:${port} closed connection.`);
           this.connections = ramdaReject(
             compose(
               equals(address),
@@ -89,7 +86,7 @@ export class SocketLayer {
   private handleReceivedMessages(): void {
     logger.info(`Socket layer: Listening on port:${this.port}`);
     this.server = net.createServer((socket) => {
-      let messageLength: number;
+      let messageLength = 0;
       let message = Buffer.alloc(0);
 
       socket.on('data', (data: Buffer) => {
@@ -99,9 +96,14 @@ export class SocketLayer {
         }
         if (message.byteLength >= messageLength + SocketLayer.PREFIX_BYTES) {
           logger.info('Socket layer: received new message!');
-          this.receivedMessages$.next(unPrefixData(message));
+          this.receivedMessages$.next(
+            message.slice(
+              SocketLayer.PREFIX_BYTES,
+              SocketLayer.PREFIX_BYTES + messageLength
+            )
+          );
           messageLength = 0;
-          message = Buffer.alloc(0);
+          message = message.slice(SocketLayer.PREFIX_BYTES + messageLength);
         }
       });
     });
@@ -113,8 +115,4 @@ function prefixData(data: Buffer): Buffer {
   const dataPrefix = Buffer.alloc(SocketLayer.PREFIX_BYTES);
   dataPrefix.writeUInt32BE(data.byteLength, 0);
   return Buffer.concat([dataPrefix, data]);
-}
-
-function unPrefixData(data: Buffer): Buffer {
-  return data.slice(4);
 }

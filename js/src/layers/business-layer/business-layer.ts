@@ -1,14 +1,19 @@
 import { reject, equals, contains } from 'ramda';
 import { first, tap, filter, delay } from 'rxjs/operators';
 import { exec } from 'child_process';
+import * as fs from 'fs';
 
 import { Address, Contact } from '@models';
 import { P2PLayer } from '@layers/p2p-layer/p2p-layer';
 import { Message } from '@protobuf/Message_pb';
 import logger from '@utils/logging';
+import { generateID } from '@utils/random-id';
 
 export class BusinessLayer {
+  static readonly CHUNK_SIZE = 8192;
+
   private pingedNodes: Contact[] = [];
+  private fileUUIDs: string[] = [];
 
   constructor(private worker: P2PLayer) {
     this.handleMessages();
@@ -20,15 +25,26 @@ export class BusinessLayer {
     });
   }
 
+  async requestFile(path: string, address: Address) {
+    return this.worker.fileRequest({
+      to: address,
+      path
+    });
+  }
+
   close() {
     logger.info('Business layer: closing.');
-    this.worker.leave();
+    this.worker.routingTable
+      .getAllNodes()
+      .forEach((node) => this.worker.leave({ to: node }));
     this.worker.close();
   }
 
   private handleMessages() {
     this.handleCommandMessage();
     this.handleCommandResponseMessage();
+    this.handleFileChunkMessage();
+    this.handleFileRequestMessage();
     this.handleFindNodeMessage();
     this.handleFoundNodesMessage();
     this.handleLeaveMessage();
@@ -109,6 +125,91 @@ export class BusinessLayer {
       .subscribe();
   }
 
+  private handleFileChunkMessage() {
+    this.worker
+      .on(Message.MessageType.FILE_CHUNK)
+      .pipe(
+        tap(() => logger.info('Business layer: got file chunk message.')),
+        tap((msg) => {
+          // const sender = checkSender(msg);
+          const fileChunk = msg.getFilechunk();
+          if (fileChunk) {
+            const uuid = fileChunk.getUuid();
+            const fileName = fileChunk.getFilename();
+            const fileSize = fileChunk.getFilesize();
+            const ordinal = fileChunk.getOrdinal();
+            const data = Buffer.from(fileChunk.getData());
+
+            if (this.fileUUIDs.includes(uuid)) {
+              return;
+            }
+
+            fs.open(fileName, 'a', (err, fd) => {
+              if (err) throw err;
+              fs.write(
+                fd,
+                data,
+                null,
+                null,
+                ordinal * BusinessLayer.CHUNK_SIZE,
+                (err) => {
+                  if (err) throw err;
+                  fs.close(fd, (err) => {
+                    if (err) throw err;
+                  });
+                  fs.stat(fileName, (err, stats: fs.Stats) => {
+                    if (stats.size == fileSize) {
+                      logger.info('Business layer: File fully saved.');
+                      this.fileUUIDs = [...this.fileUUIDs, uuid];
+                    }
+                  });
+                }
+              );
+            });
+          } else {
+            logger.warn('Business layer: FileChunk message not set.');
+          }
+        })
+      )
+      .subscribe();
+  }
+
+  private handleFileRequestMessage() {
+    this.worker
+      .on(Message.MessageType.FILE_REQUEST)
+      .pipe(
+        tap(() => logger.info('Business layer: got file request message.')),
+        tap((msg) => {
+          const sender = checkSender(msg);
+          const fileRequest = msg.getFilerequest();
+          if (fileRequest) {
+            const filePath = fileRequest.getPath();
+            const fileName = filePath;
+            const fileSize = fs.statSync(filePath).size;
+            const fileStream = fs.createReadStream(filePath, {
+              highWaterMark: BusinessLayer.CHUNK_SIZE
+            });
+            const uuid = generateID();
+            let ordinal = 0;
+
+            fileStream.on('data', (chunk: Buffer) => {
+              this.worker.fileChunk({
+                to: Contact.from(sender),
+                uuid,
+                fileName: fileName + uuid,
+                fileSize,
+                ordinal: ordinal++,
+                data: chunk
+              });
+            });
+          } else {
+            logger.warn('Business layer: FileRequest message not set.');
+          }
+        })
+      )
+      .subscribe();
+  }
+
   private handleFindNodeMessage() {
     this.worker
       .on(Message.MessageType.FIND_NODE)
@@ -117,11 +218,13 @@ export class BusinessLayer {
         this.addNodeToRoutingTable(),
         tap((msg) => {
           const sender = checkSender(msg);
-          const node = msg.getFindnode();
-          if (node) {
+          const findNode = msg.getFindnode();
+          if (findNode) {
             this.worker.foundNodes({
               to: Contact.from(sender),
-              nodes: this.worker.routingTable.getNearestNodes(node.getGuid())
+              nodes: this.worker.routingTable.getNearestNodes(
+                findNode.getGuid()
+              )
             });
           } else {
             logger.warn('Business layer: FindNode message not set.');
