@@ -20,7 +20,7 @@ export class P2PLayer {
   }
 
   close() {
-    logger.info("P2P layer: closing.");    
+    logger.info('P2P layer: closing.');
     this.worker.close();
   }
 
@@ -56,6 +56,39 @@ export class P2PLayer {
         command,
         sender: this.me,
         receiver: to
+      })
+    );
+  }
+
+  fileChunk(config: {
+    to: Address;
+    fileName: string;
+    fileSize: number;
+    ordinal: number;
+    data: Buffer;
+  }): Promise<void> {
+    logger.info('P2P layer: Creating fileChunk message.');
+    const { to, fileName, fileSize, ordinal, data } = config;
+    return this.worker.send(
+      utils.prepareFileChunkMessage({
+        fileName,
+        fileSize,
+        ordinal,
+        data,
+        sender: this.me,
+        receiver: new Contact({ address: to })
+      })
+    );
+  }
+
+  fileRequest(config: { to: Address; path: string }): Promise<void> {
+    logger.info('P2P layer: Creating fileRequest message.');
+    const { to, path } = config;
+    return this.worker.send(
+      utils.prepareFileRequestMessage({
+        path,
+        sender: this.me,
+        receiver: new Contact({ address: to })
       })
     );
   }
