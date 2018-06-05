@@ -134,7 +134,12 @@ public class ApplicationIntegrationTests {
                                 .setCommand("dir")
                                 .setShouldRespond(true)
                 ).build();
-        message.writeTo(bufferedOutputStream);
+        int size = message.getSerializedSize();
+        ByteBuffer data = ByteBuffer.allocate(size + 4);
+        data.putInt(size);
+        data.put(message.toByteString().toByteArray());
+        data.limit(size);
+        bufferedOutputStream.write(data.array());
         bufferedOutputStream.flush();
 
 
@@ -149,6 +154,7 @@ public class ApplicationIntegrationTests {
         byte[] buffer = new byte[2048];
         int read = bufferedInputStream.read(buffer);
         ByteBuffer messageBuffer = ByteBuffer.wrap(buffer, 0, read);
+        int mSize = messageBuffer.getInt();
         Message receivedMessage = Message.parseFrom(messageBuffer);
 
         // check message
