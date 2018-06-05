@@ -59,7 +59,6 @@ class BusinessLogicLayer:
                                                 )
         try:
             status = await self._put_message_on_lower(message)
-
             return status
         except asyncio.CancelledError:
             return StatusMessage.FAILURE

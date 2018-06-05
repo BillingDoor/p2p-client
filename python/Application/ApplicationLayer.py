@@ -67,6 +67,21 @@ class Application:
         await self._lower_layer.file_request(routing_table_info[index][0], filename)
 
 
+    async def _send_command(self):
+        print("Index: ")
+        index = (await asyncio.get_event_loop().run_in_executor(None, sys.stdin.readline)).strip().lower()
+        print("Command: ")
+        command = (await asyncio.get_event_loop().run_in_executor(None, sys.stdin.readline)).strip()
+        print("Should respond?[y/n]: ")
+        should_respond = (await asyncio.get_event_loop().run_in_executor(None, sys.stdin.readline)).strip()
+        if should_respond.lower() == 'y':
+            should_respond = True
+        else:
+            should_respond = False
+
+        routing_table_info = await self._lower_layer.get_routing_table_info()
+        await self._lower_layer.command(routing_table_info[index][0], command, should_respond)
+
     async def _aio_readline(self):
         connected = False
         try:
@@ -81,14 +96,14 @@ class Application:
                         await self._print_routing_table()
                         await self._send_file_request()
                     elif line == '3':
-                        pass
+                        await self._print_routing_table()
+                        await self._send_command()
                     elif line == 'quit':
                         await self._lower_layer.stop_server()
                         break
                 else:
                     self._print_not_connected_menu()
                     line = (await asyncio.get_event_loop().run_in_executor(None, sys.stdin.readline)).strip().lower()
-                    print("Typed: {}".format(line))
                     if line == '1':
                         print("=" * 25)
                         print("{:^25}".format("Joining the network"))
