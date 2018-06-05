@@ -58,6 +58,13 @@ class BucketList(object):
         all_peers = [peer.get_info() for bucket in self.buckets for peer in bucket]
         return all_peers
 
+    async def get_all_peers(self):
+        """
+        Returns a list of all peers in the routing table
+        :return: List of all Peers
+        """
+        return [peer for bucket in self.buckets for peer in bucket]
+
     async def get_peer_by_id(self, id):
         """
         Return Peer if in routing table. Otherwise None
@@ -107,7 +114,10 @@ class BucketList(object):
 
         await self.lock.acquire()
         log.debug("Removing peer {} from bucket {}".format(peer.get_info(), bucket_number))
-        bucket.remove(peer)
+        if peer in bucket:
+            bucket.remove(peer)
+        else:
+            log.debug("Peer {} is not present in bucket {}".format(peer.get_info(), bucket_number))
         self.lock.release()
 
     async def nearest_nodes(self, key, limit=None):

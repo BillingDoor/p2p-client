@@ -81,7 +81,7 @@ def run_server(ip, port, stop_server_event, queue, main_loop):
     try:
         server = loop.run_until_complete(factory)
     except socket.error as error:
-        log.warning("Could not start the server: {}".format(error))
+        return
 
     log.debug("Starting up server on {}:{}".format(ip, port))
     loop.run_until_complete(_monitor(stop_server_event, server))

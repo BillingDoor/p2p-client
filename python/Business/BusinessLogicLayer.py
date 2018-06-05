@@ -147,6 +147,26 @@ class BusinessLogicLayer:
         """
         return await self.lower_layer.start_server()
 
+    async def leave(self):
+        null_peer = Peer(-1, "127.0.0.1", 22, False)
+        message = putils.create_leave_message(sender=self.get_myself(), receiver=null_peer)
+        try:
+            log.debug("Propagating LEAVE message")
+            status = await self._propagate_message(message)
+            log.debug("LEAVE message propagated")
+            return status
+        except asyncio.CancelledError:
+            return StatusMessage.FAILURE
+
+    async def ping_all(self):
+        null_peer = Peer(-1, "127.0.0.1", 22, False)
+        message = putils.create_ping_message(sender=self.get_myself(), receiver=null_peer)
+        try:
+            status = await self._propagate_message(message)
+            return status
+        except asyncio.CancelledError:
+            return StatusMessage.FAILURE
+
     async def stop_server(self):
         """
         Try to stop the server
@@ -192,6 +212,8 @@ class BusinessLogicLayer:
             await self._handle_file_request_message(message)
         elif message.type == Message.FILE_CHUNK:
             await self._handle_file_chunk_message(message)
+        elif message.type == Message.LEAVE:
+            await self._handle_leave_message(message)
         else:
             log.warning("Unsupported message type {}".format(message.type))
 
@@ -199,10 +221,18 @@ class BusinessLogicLayer:
             await self._propagate_message(message=message)
 
     async def _propagate_message(self, message):
-        for new_receiver in self.lower_layer._routing_table:
-            if new_receiver.id != int(message.receiver.id):
-                putils.swap_receiver(message=message, new_receiver=new_receiver)
-                await self._put_message_on_lower(message)
+        all_peers = await self.lower_layer.get_all_peers()
+        for new_receiver in all_peers:
+            if new_receiver.id != int(message.receiver.guid):
+                new_message = putils.swap_receiver(message=message, sender=self.get_myself(), new_receiver=new_receiver)
+                await self._put_message_on_lower(new_message)
+
+    async def _handle_leave_message(self, message):
+        log.debug("Handling LEAVE message")
+        sender_peer = putils.create_peer_from_contact(message.sender)
+        log.debug("LEAVE message was sent from {}".format(sender_peer.get_info()))
+        log.debug("If peer is in routing table, remove him")
+        await self.lower_layer.remove_peer(sender_peer)
 
     async def _handle_file_request_message(self, message):
         log.debug("Handling FILE_REQUEST message")

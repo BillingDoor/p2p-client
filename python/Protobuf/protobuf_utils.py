@@ -13,9 +13,20 @@ def create_find_node_message(sender, receiver, guid):
     msg.type = msg.FIND_NODE
     return msg
 
+def create_leave_message(sender, receiver):
+    """
+    Creates protobuf message of LEAVE type and returns it as a serialized string of bytes
+    :param sender: Sending Peer
+    :param receiver: Receiving Peer
+    :return: LEAVE Message
+    """
+    msg = _prepare_base_message(sender, receiver)
+    msg.type = msg.LEAVE
+    return msg
+
 def create_ping_message(sender, receiver):
     """
-    Creates protobuf message of PING type and returns it as a serialized string of bytes
+    Creates protobuf message of PING type and returns it
     :param sender: Sending Peer
     :param receiver: Receiving Peer
     :return: PING Message
@@ -26,7 +37,7 @@ def create_ping_message(sender, receiver):
 
 def create_ping_response_message(sender, receiver):
     """
-    Creates protobuf message of PING_RESPONSE type and returns it as a serialized string of bytes
+    Creates protobuf message of PING_RESPONSE type and returns it
     :param sender: Sending Peer
     :param receiver: Receiving Peer
     :return: PING_RESPONSE Message
@@ -37,7 +48,7 @@ def create_ping_response_message(sender, receiver):
 
 def create_command_message(sender, receiver, command, should_respond=False):
     """
-    Creates protobuf message of COMMAND type and returns it as a serialized string of bytes
+    Creates protobuf message of COMMAND type and returns it
     :param sender: Sending Peer
     :param receiver: Receiving Peer
     :param command: Command to send
@@ -105,11 +116,16 @@ def create_file_chunk_message(sender, receiver, uuid, file_name, file_size, ordi
     msg.fileChunk.data = data
     return msg
 
-def swap_receiver(message, new_receiver):
-    message.receiver.guid = str(new_receiver.id)
-    message.receiver.IP = new_receiver.ip
-    message.receiver.port = new_receiver.port
-    message.receiver.isNAT = new_receiver.is_NAT
+def swap_receiver(message, sender, new_receiver):
+    new_message = _prepare_base_message(sender=sender, receiver=new_receiver)
+    new_message.CopyFrom(message)
+
+    new_message.receiver.guid = str(new_receiver.id)
+    new_message.receiver.IP = new_receiver.ip
+    new_message.receiver.port = new_receiver.port
+    new_message.receiver.isNAT = new_receiver.is_NAT
+
+    return new_message
 
 def _prepare_base_message(sender, receiver):
     """

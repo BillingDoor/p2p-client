@@ -45,6 +45,7 @@ class Application:
         print("2. Send file request")
         print("3. Send command")
         print("4. Ping")
+        print("5. Ping all")
         print("quit. Quit the application")
 
     def _print_not_connected_menu(self):
@@ -79,6 +80,10 @@ class Application:
             print("Wrong index")
             return
         await self._lower_layer.ping(routing_table_info[index][0])
+
+    async def _ping_all(self):
+        await self._lower_layer.ping_all()
+
     async def _send_command(self):
         print("Index: ")
         index = (await asyncio.get_event_loop().run_in_executor(None, sys.stdin.readline)).strip().lower()
@@ -117,14 +122,19 @@ class Application:
                     elif line == '4':
                         await self._print_routing_table()
                         await self._ping()
+                    elif line == '5':
+                        await self._ping_all()
                     elif line == 'quit':
+                        await self._lower_layer.leave()
+                        print("Quiting...")
+                        await asyncio.sleep(3)
                         await self._lower_layer.stop_server()
                         break
                 else:
                     self._print_not_connected_menu()
                     line = (await asyncio.get_event_loop().run_in_executor(None, sys.stdin.readline)).strip().lower()
                     if line == '1':
-                        print("=" * 25)
+                        print("=" * 30)
                         print("{:^25}".format("Joining the network"))
                         print("Input IP of the bootstrap node(or None if this is a bootstrap node):")
                         ip = await asyncio.get_event_loop().run_in_executor(None, sys.stdin.readline)

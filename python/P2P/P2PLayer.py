@@ -101,6 +101,14 @@ class P2PLayer:
         """
         return await self._routing_table.get_peer_by_id(id)
 
+    async def get_all_peers(self):
+        """
+        Returns a list of all peers in the routing table
+        :return: List of all Peers
+        """
+        return await self._routing_table.get_all_peers()
+
+
     async def get_nearest_peers(self, wanted_peer_id, limit=None):
         """
         Return peers nearest to the one with wanted id
