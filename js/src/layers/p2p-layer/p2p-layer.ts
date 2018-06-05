@@ -20,13 +20,18 @@ export class P2PLayer {
   }
 
   close() {
+    logger.info("P2P layer: closing.");    
     this.worker.close();
   }
 
-  command(config: { to: Contact; command: string; shouldRespond?: boolean }) {
-    const { to, command, shouldRespond = false } = config;
+  command(config: {
+    to: Contact;
+    command: string;
+    shouldRespond?: boolean;
+  }): Promise<void> {
     logger.info('P2P layer: Creating command message');
-    this.worker.send(
+    const { to, command, shouldRespond = false } = config;
+    return this.worker.send(
       utils.prepareCommandMessage({
         command,
         shouldRespond,
@@ -36,35 +41,41 @@ export class P2PLayer {
     );
   }
 
-  // commandResponse(config: { to: Contact; value: string; shouldRespond?: boolean }) {
-  //   const { to, command, shouldRespond = false } = config;
-  //   logger.info('P2P layer: Creating command message');
-  //   this.worker.send(
-  //     utils.prepareCommandMessage({
-  //       command,
-  //       shouldRespond,
-  //       sender: this.me,
-  //       receiver: to
-  //     })
-  //   );
-  // }
-
-  findNode(config: { to: Address; guid?: string }): Promise<void> {
-    const { to, guid = this.me.guid } = config;
-    logger.info('P2P layer: Creating findNode message');
+  commandResponse(config: {
+    to: Contact;
+    value: string;
+    status: Message.Status;
+    command: string;
+  }): Promise<void> {
+    logger.info('P2P layer: Creating command response message');
+    const { to, value, status, command } = config;
     return this.worker.send(
-      utils.prepareFindNodeMessage({
-        node: guid,
+      utils.prepareCommandResponseMessage({
+        value,
+        status,
+        command,
         sender: this.me,
-        receiver: new Contact({ address: to, guid: 'not_set' })
+        receiver: to
       })
     );
   }
 
-  foundNodes(config: { to: Contact; nodes: Contact[] }) {
+  findNode(config: { to: Address; guid?: string }): Promise<void> {
+    logger.info('P2P layer: Creating findNode message');
+    const { to, guid = this.me.guid } = config;
+    return this.worker.send(
+      utils.prepareFindNodeMessage({
+        node: guid,
+        sender: this.me,
+        receiver: new Contact({ address: to })
+      })
+    );
+  }
+
+  foundNodes(config: { to: Contact; nodes: Contact[] }): Promise<void> {
+    logger.info('P2P layer: Creating foundNodes message');
     const { to, nodes } = config;
-    logger.info(`P2P layer: Creating foundNodes message:`, nodes);
-    this.worker.send(
+    return this.worker.send(
       utils.prepareFoundNodesMessage({
         nodes: nodes.map(Contact.toMessageContact),
         sender: this.me,
@@ -86,9 +97,9 @@ export class P2PLayer {
     );
   }
 
-  ping(node: Contact) {
+  ping(node: Contact): Promise<void> {
     logger.info('P2P layer: Creating ping message');
-    this.worker.send(
+    return this.worker.send(
       utils.prepareBaseMessage({
         type: Message.MessageType.PING,
         sender: this.me,
@@ -97,10 +108,10 @@ export class P2PLayer {
     );
   }
 
-  pingResponse(config: { to: Contact }) {
-    const { to } = config;
+  pingResponse(config: { to: Contact }): Promise<void> {
     logger.info('P2P layer: Creating pingResponse message');
-    this.worker.send(
+    const { to } = config;
+    return this.worker.send(
       utils.prepareBaseMessage({
         type: Message.MessageType.PING_RESPONSE,
         sender: this.me,

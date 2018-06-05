@@ -8,12 +8,13 @@ export class ApplicationLayer {
   async launch(bootstrapNode: Address) {
     try {
       await this.worker.joinNetwork(bootstrapNode);
-    } catch (e) {
+    } catch (err) {
       logger.error("Application layer: couldn't connect to bootstrap node.");
     }
   }
 
   close() {
+    logger.info('Application layer: closing.');
     this.worker.close();
   }
 }

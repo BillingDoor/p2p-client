@@ -18,7 +18,7 @@ export class SocketLayer {
   }
 
   close(): void {
-    logger.info('Socket layer: closing connections.');
+    logger.info('Socket layer: closing.');
     this.server.close();
     this.receivedMessages$.complete();
     this.connections.forEach(([address, socket]) => socket.destroy());
@@ -36,33 +36,50 @@ export class SocketLayer {
 
     let client: net.Socket;
 
-    const connected = this.connections.find(compose(equals(address), nth(1)));
+    const connected = this.connections.find(
+      compose(
+        equals(address),
+        nth(1)
+      )
+    );
 
     return new Promise((resolve, reject) => {
       if (connected) {
         [, client] = connected;
-        client.write(prefixedData);
+        client.write(prefixedData, () => {
+          logger.info('Socket layer: message sent!');
+          resolve();
+        });
       } else {
         client = new net.Socket();
         logger.info(`Socket layer: Connecting to ${host}:${port}...`);
-        client.connect(port, host);
+        client.connect(
+          port,
+          host
+        );
 
         client.on('connect', () => {
           logger.info(`Socket layer: Connected to ${host}:${port}!`);
           this.connections = [...this.connections, [address, client]];
-          client.write(prefixedData);
+          client.write(prefixedData, () => {
+            logger.info('Socket layer: message sent!');
+            resolve();
+          });
         });
 
         client.on('close', () => {
+          logger.info(`Socket layer: ${host}:${port} closed connection.`);
           this.connections = ramdaReject(
-            compose(equals(address), nth(1)),
+            compose(
+              equals(address),
+              nth(1)
+            ),
             this.connections
           );
         });
 
-        client.on('drain', resolve);
-
         client.on('error', () => {
+          logger.error('Socket layer: message not sent!');
           reject();
         });
       }
@@ -81,7 +98,7 @@ export class SocketLayer {
           messageLength = message.readUInt32BE(0);
         }
         if (message.byteLength >= messageLength + SocketLayer.PREFIX_BYTES) {
-          logger.info('Socket layer: new message!');
+          logger.info('Socket layer: received new message!');
           this.receivedMessages$.next(unPrefixData(message));
           messageLength = 0;
           message = Buffer.alloc(0);
