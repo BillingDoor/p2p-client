@@ -54,6 +54,7 @@ public class ApplicationLayer {
         // command <command> <peer id> - send command to peer
         // file_request <path> <peer id> - request file from peer
         // ping <peer id> <propagate> // yes/no
+        // exit
         Scanner scanner = new Scanner(System.in);
 
         while (true) {

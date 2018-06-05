@@ -6,6 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static botnet_p2p.MessageOuterClass.Message;
 
@@ -24,10 +25,12 @@ class KadMessageHandler {
     void handleFindNode(Message message) {
         KademliaPeer sender = KademliaPeer.fromContact(message.getSender());
 
-        // respond with nearest nodes list
+        // respond with nearest nodes list, except sender node
         List<KademliaPeer> nearestPeers = this.p2pLayer.getNearestPeers(
-                message.getFindNode().getGuid()
-        );
+                message.getFindNode().getGuid())
+                .stream()
+                .filter(kademliaPeer -> !kademliaPeer.getGuid().equals(sender.getGuid()))
+                .collect(Collectors.toList());
         p2pLayer.foundNodes(sender, me, nearestPeers);
         addToRoutingTable(sender);
     }
