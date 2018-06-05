@@ -11,10 +11,7 @@ import java.net.ConnectException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
-import java.nio.channels.SelectionKey;
-import java.nio.channels.Selector;
-import java.nio.channels.ServerSocketChannel;
-import java.nio.channels.SocketChannel;
+import java.nio.channels.*;
 import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CountDownLatch;
@@ -63,19 +60,24 @@ public class SocketLayer extends Thread {
 
     @Override
     public void run() {
+        try {
+            selector = Selector.open();
+            serverSocketChannel = ServerSocketChannel.open();
+            serverSocketChannel.configureBlocking(false);
+            serverSocketChannel.bind(new InetSocketAddress("localhost", port));
+            serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
+        } catch (ClosedChannelException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if (initLatch != null) {
+            this.initLatch.countDown();
+        }
+
         while (true) {
             try {
-                selector = Selector.open();
-                serverSocketChannel = ServerSocketChannel.open();
-                serverSocketChannel.configureBlocking(false);
-                serverSocketChannel.bind(new InetSocketAddress("localhost", port));
-                serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
-
-                if (initLatch != null) {
-                    this.initLatch.countDown();
-                }
-
-
                 // blocking call, waiting for at least one ready channel
                 int channels = selector.select();
 

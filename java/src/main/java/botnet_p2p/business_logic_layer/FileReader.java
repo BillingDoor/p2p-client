@@ -31,7 +31,7 @@ class FileReader {
                 size += read;
                 chunks.add(buffer.clone());
             }
-            int bytesInLast = chunkSize * chunks.size() - size;
+            int bytesInLast = size - chunkSize * (chunks.size()-1);
             byte[] last = new byte[bytesInLast];
             for (int i = 0; i < bytesInLast; i++) {
                 last[i] = chunks.get(chunks.size() - 1)[i];
