@@ -19,22 +19,18 @@ import static botnet_p2p.MessageOuterClass.Message;
 
 class ChunkReader {
     private static final Logger logger = LogManager.getLogger(ChunkReader.class);
+    private static int CHUNK_SIZE = 8192;
     private Map<String, ReceivedFile> receivedFiles = new HashMap<>();
     private String receivedFilesLocation;
+
 
     public ChunkReader(String receivedFilesLocation) {
         this.receivedFilesLocation = receivedFilesLocation;
     }
 
-    @AllArgsConstructor
-    class ReceivedFile {
-        String fileName;
-        int fileSize;
-        int chunksCount;
-        int chunkSize;
-        int chunksRead;
-        String targetFileName;
-        KademliaPeer sender;
+    public ChunkReader(String receivedFilesLocation, int chunkSize) {
+        this.receivedFilesLocation = receivedFilesLocation;
+        CHUNK_SIZE = chunkSize;
     }
 
     public void read(Message.FileChunkMsg fileChunk, KademliaPeer sender) {
@@ -48,9 +44,8 @@ class ChunkReader {
     private void handleNewFile(Message.FileChunkMsg fileChunk, KademliaPeer sender) {
         // ordinals: 0,1,2,..
 
-        int chunkSize = fileChunk.getData().size();
-        int chunksCount = (fileChunk.getFileSize() + chunkSize - 1) / chunkSize;
-        boolean isLastChunk = (fileChunk.getOrdinal() + 1) * chunkSize >= fileChunk.getFileSize();
+        int chunkSize = CHUNK_SIZE;
+        int chunksCount = (fileChunk.getFileSize() + chunkSize - 1) / CHUNK_SIZE;
         String targetFileName = new String(Base64.getEncoder().encode(fileChunk.getFileName().getBytes()));
         //String targetFileName = fileChunk.getFileName()+ "." + sender.getGuid();
 
@@ -58,7 +53,6 @@ class ChunkReader {
                 fileChunk.getFileName(),
                 fileChunk.getFileSize(),
                 chunksCount,
-                chunkSize,
                 0,
                 targetFileName,
                 sender
@@ -71,7 +65,7 @@ class ChunkReader {
             writer.print("");
             writer.close();
 
-            // create a file with target size
+            // create a file with target size, zero filled
             RandomAccessFile randomAccessFile = new RandomAccessFile(
                     FileSystems.getDefault().getPath(receivedFilesLocation + targetFileName).toFile(),
                     "rw");
@@ -82,27 +76,22 @@ class ChunkReader {
                 randomAccessFile.write(b);
             }
 
-            // write remaining bytes
+            // write remaining zero bytes
             randomAccessFile.write(b, 0,
                     fileChunk.getFileSize() - (fileChunk.getFileSize() / 1024) * 1024);
 
 
             // save current chunk
-            long position = fileChunk.getOrdinal() * chunkSize;
+            long position = fileChunk.getOrdinal() * CHUNK_SIZE;
             randomAccessFile.seek(position);
-            if (isLastChunk) {
-                int bytesInLastChunk =
-                        chunkSize - (chunksCount * fileChunk.getData().size() - fileChunk.getFileSize());
-                randomAccessFile.write(fileChunk.getData().toByteArray(), 0, bytesInLastChunk);
-            } else {
-                randomAccessFile.write(fileChunk.getData().toByteArray());
-            }
+            randomAccessFile.write(fileChunk.getData().toByteArray());
+
 
             receivedFile.chunksRead++;
             randomAccessFile.close();
 
             if (receivedFile.chunksRead == chunksCount) {
-                logger.info("file: " + receivedFile.fileName + " is ready as "+ receivedFile.targetFileName);
+                logger.info("file: " + receivedFile.fileName + " is ready as " + receivedFile.targetFileName);
                 receivedFiles.remove(fileChunk.getUuid());
             }
         } catch (FileNotFoundException e) {
@@ -122,11 +111,6 @@ class ChunkReader {
             receivedFiles.remove(fileChunk.getUuid());
             return;
         }
-        if (receivedFile.chunkSize != fileChunk.getData().size()) {
-            logger.error("chunk size has changed");
-            receivedFiles.remove(fileChunk.getUuid());
-            return;
-        }
         if (!receivedFile.fileName.equals(fileChunk.getFileName())) {
             logger.error("filename has changed");
             receivedFiles.remove(fileChunk.getUuid());
@@ -138,8 +122,6 @@ class ChunkReader {
             return;
         }
 
-        boolean isLastChunk = (fileChunk.getOrdinal() + 1) * receivedFile.chunkSize >= fileChunk.getFileSize();
-
 
         try {
             // open a file with target size
@@ -148,21 +130,18 @@ class ChunkReader {
                     "rw");
 
             // save current chunk
-            long position = fileChunk.getOrdinal() * receivedFile.chunkSize;
+            long position = fileChunk.getOrdinal() * CHUNK_SIZE;
             randomAccessFile.seek(position);
-            if (isLastChunk) {
-                int bytesInLastChunk =
-                        receivedFile.chunkSize - (receivedFile.chunksCount * fileChunk.getData().size() - fileChunk.getFileSize());
-                randomAccessFile.write(fileChunk.getData().toByteArray(), 0, bytesInLastChunk);
-            } else {
-                randomAccessFile.write(fileChunk.getData().toByteArray());
-            }
+
+
+            randomAccessFile.write(fileChunk.getData().toByteArray());
+
 
             receivedFile.chunksRead++;
             randomAccessFile.close();
 
             if (receivedFile.chunksRead == receivedFile.chunksCount) {
-                logger.info("file: " + receivedFile.fileName + " is ready as "+ receivedFile.targetFileName);
+                logger.info("file: " + receivedFile.fileName + " is ready as " + receivedFile.targetFileName);
                 receivedFiles.remove(fileChunk.getUuid());
             }
         } catch (FileNotFoundException e) {
@@ -172,5 +151,15 @@ class ChunkReader {
         }
 
 
+    }
+
+    @AllArgsConstructor
+    class ReceivedFile {
+        String fileName;
+        int fileSize;
+        int chunksCount;
+        int chunksRead;
+        String targetFileName;
+        KademliaPeer sender;
     }
 }

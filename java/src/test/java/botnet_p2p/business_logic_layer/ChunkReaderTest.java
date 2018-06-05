@@ -44,19 +44,26 @@ public class ChunkReaderTest {
         Message.FileChunkMsg chunk1 = Message.FileChunkMsg.newBuilder()
                 .setData(ByteString.copyFrom("other".getBytes()))
                 .setFileName("file")
-                .setFileSize(10)
+                .setFileSize(11)
                 .setOrdinal(0)
                 .setUuid("xyz")
                 .build();
         Message.FileChunkMsg chunk2 = Message.FileChunkMsg.newBuilder()
                 .setData(ByteString.copyFrom(" data".getBytes()))
                 .setFileName("file")
-                .setFileSize(10)
+                .setFileSize(11)
                 .setOrdinal(1)
                 .setUuid("xyz")
                 .build();
+        Message.FileChunkMsg chunk3 = Message.FileChunkMsg.newBuilder()
+                .setData(ByteString.copyFrom("x".getBytes()))
+                .setFileName("file")
+                .setFileSize(11)
+                .setOrdinal(2)
+                .setUuid("xyz")
+                .build();
 
-        ChunkReader chunkReader = new ChunkReader(SAVE_LOCATION);
+        ChunkReader chunkReader = new ChunkReader(SAVE_LOCATION, 5);
         chunkReader.read(
                 chunk2,
                 KADEMLIA_PEER
@@ -65,10 +72,14 @@ public class ChunkReaderTest {
                 chunk1,
                 KADEMLIA_PEER
         );
+        chunkReader.read(
+                chunk3,
+                KADEMLIA_PEER
+        );
 
         String targetFileName = new String(Base64.getEncoder().encode("file".getBytes()));
         assertEquals("Files are different",
-                "other data",
+                "other datax",
                 FileUtils.readFileToString(new File(SAVE_LOCATION + targetFileName), "utf-8"));
     }
 
@@ -82,14 +93,14 @@ public class ChunkReaderTest {
                 .setUuid("xyz")
                 .build();
         Message.FileChunkMsg chunk2 = Message.FileChunkMsg.newBuilder()
-                .setData(ByteString.copyFrom("YESno".getBytes()))
+                .setData(ByteString.copyFrom("YES".getBytes()))
                 .setFileName("file")
                 .setFileSize(8)
                 .setOrdinal(1)
                 .setUuid("xyz")
                 .build();
 
-        ChunkReader chunkReader = new ChunkReader(SAVE_LOCATION);
+        ChunkReader chunkReader = new ChunkReader(SAVE_LOCATION, 5);
         chunkReader.read(
                 chunk1,
                 KADEMLIA_PEER
