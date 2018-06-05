@@ -11,6 +11,7 @@ public class ApplicationLayer {
     private static final Logger logger = LogManager.getLogger(ApplicationLayer.class);
 
     private BusinessLogicLayer businessLogicLayer;
+    private boolean isShuttingDown = false;
 
     public ApplicationLayer(BusinessLogicLayer businessLogicLayer) {
         this.businessLogicLayer = businessLogicLayer;
@@ -30,8 +31,11 @@ public class ApplicationLayer {
     }
 
     public void shutdown() {
-        logger.info("closing");
-        businessLogicLayer.shutdown();
+        if(!isShuttingDown) {
+            logger.info("closing");
+            isShuttingDown = true;
+            businessLogicLayer.shutdown();
+        }
     }
 
     private void printRoutingTable() {
@@ -78,9 +82,12 @@ public class ApplicationLayer {
                         continue;
                     }
                     businessLogicLayer.sendPing(split[1], split[2]);
+                } else if (command.startsWith("exit")) {
+                    this.shutdown();
+                    break;
                 }
-            } catch (Exception ignored) {
-
+            } catch (Exception e) {
+                logger.error(e.getMessage());
             }
         }
     }

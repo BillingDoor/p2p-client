@@ -17,7 +17,7 @@ import static botnet_p2p.MessageOuterClass.Message;
 
 class BotMessageHandler {
     private static final Logger logger = LogManager.getLogger(BusinessLogicLayer.class);
-    private static final int CHUNK_SIZE = 4;
+    private static final int CHUNK_SIZE = 8192;
     private P2pLayer p2pLayer;
     private ChunkReader chunkReader;
     private KademliaPeer me;

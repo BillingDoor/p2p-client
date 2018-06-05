@@ -31,6 +31,7 @@ public class SocketLayer extends Thread {
 
     private CountDownLatch initLatch;
     private int port;
+    private boolean socketsClosed = false;
 
 
     public SocketLayer(BlockingQueue<ByteBuffer> receivedMessages,
@@ -62,18 +63,19 @@ public class SocketLayer extends Thread {
 
     @Override
     public void run() {
-        try {
-            selector = Selector.open();
-            serverSocketChannel = ServerSocketChannel.open();
-            serverSocketChannel.configureBlocking(false);
-            serverSocketChannel.bind(new InetSocketAddress("localhost", port));
-            serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
+        while (true) {
+            try {
+                selector = Selector.open();
+                serverSocketChannel = ServerSocketChannel.open();
+                serverSocketChannel.configureBlocking(false);
+                serverSocketChannel.bind(new InetSocketAddress("localhost", port));
+                serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
 
-            if (initLatch != null) {
-                this.initLatch.countDown();
-            }
+                if (initLatch != null) {
+                    this.initLatch.countDown();
+                }
 
-            while (true) {
+
                 // blocking call, waiting for at least one ready channel
                 int channels = selector.select();
 
@@ -131,16 +133,19 @@ public class SocketLayer extends Thread {
 
                 // handle pending connect requests
                 connectWaitingConnections();
-            }
-        } catch (InterruptedIOException e) {
-            Thread.currentThread().interrupt();
-            logger.info("Interrupted via InterruptedIOException");
-        } catch (IOException e) {
-            if (isInterrupted()) {
-                logger.info("interrupted");
+
+            } catch (InterruptedIOException e) {
                 Thread.currentThread().interrupt();
-            } else {
-                e.printStackTrace();
+                logger.info("Interrupted via InterruptedIOException");
+                break;
+            } catch (IOException e) {
+                if (isInterrupted()) {
+                    logger.info("interrupted");
+                    Thread.currentThread().interrupt();
+                    break;
+                } else {
+                    e.printStackTrace();
+                }
             }
         }
         logger.info("closing - loop ended");
@@ -232,20 +237,21 @@ public class SocketLayer extends Thread {
     @Override
     public synchronized void interrupt() {
         super.interrupt();
-
-        if (selector != null) {
-            selector.keys().forEach(selectionKey -> {
-                try {
-                    selectionKey.channel().close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            });
-            logger.info("clients sockets closed");
+        if (!socketsClosed) {
+            socketsClosed = true;
+            if (selector != null) {
+                selector.keys().forEach(selectionKey -> {
+                    try {
+                        selectionKey.channel().close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
+                logger.info("clients sockets closed");
+            }
+            nodeManager.closeSockets();
         }
-        nodeManager.closeSockets();
     }
-
     public void shutdown() {
         logger.info("closing");
         this.interrupt();

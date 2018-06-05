@@ -20,13 +20,13 @@ public class App {
             @Override
             public void run() {
                 super.run();
-                applicationLayer.shutdown();
                 logger.info("closing requested");
+                applicationLayer.shutdown();
             }
         }
         Runtime.getRuntime().addShutdownHook(new ShutdownHandler());
 
-        if(System.getProperty("bootstrap")!= null) {
+        if (System.getProperty("bootstrap") != null) {
             applicationLayer.launchClient((Peer) context.getBean("bootstrap"));
         } else {
             applicationLayer.startWithoutBootstrapping();
