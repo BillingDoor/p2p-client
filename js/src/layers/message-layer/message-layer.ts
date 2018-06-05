@@ -1,6 +1,6 @@
 import { equals } from 'ramda';
 import { Observable } from 'rxjs';
-import { map, filter, tap } from 'rxjs/operators';
+import { map, filter, tap, share } from 'rxjs/operators';
 
 import { Contact } from '@models';
 import { SocketLayer } from '@layers/socket-layer/socket-layer';
@@ -48,7 +48,8 @@ export class MessageLayer {
   private handleReceivedMessages() {
     return this.receivedMessages$.pipe(
       tap(() => logger.info('Message layer: decoding message.')),
-      map(decodeMessage)
+      map(decodeMessage),
+      share()
     );
   }
 }
