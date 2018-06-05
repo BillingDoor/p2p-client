@@ -40,6 +40,111 @@ class BusinessLogicLayer:
         self._lower = lower
         asyncio.ensure_future(self._handle_lower_input())
 
+    async def command(self, target_id, command, should_respond):
+        """
+        Sends command to target peer
+        :param target_id: id of targeted peer
+        :param command: command to send
+        :param should_response: True if receiver should respond to the command
+        :return:SUCCESS or FAILURE
+        """
+        peer = await self.lower_layer.get_peer_by_id(target_id)
+        if peer is None:
+            return StatusMessage.FAILURE
+        message = putils.create_command_message(sender=self.get_myself(),
+                                                receiver=peer,
+                                                command=command,
+                                                should_respond=should_respond
+                                                )
+        try:
+            status = await self._put_message_on_lower(message)
+
+            return status
+        except asyncio.CancelledError:
+            return StatusMessage.FAILURE
+
+    async def ping(self, target_id):
+        """
+        Sends ping message to peer with given target_id
+        :param target_id: id of target peer
+        :return: SUCCESS or FAILURE
+        """
+        peer = await self.lower_layer.get_peer_by_id(target_id)
+        if peer is None:
+            return StatusMessage.FAILURE
+        message = putils.create_ping_message(sender=self.get_myself(), receiver=peer)
+        try:
+            status = await self._put_message_on_lower(message)
+            self._pinged_peers.append((peer, asyncio.ensure_future(self._wait_for_ping_response(peer=peer, timeout=10))))
+            return status
+        except asyncio.CancelledError:
+            return StatusMessage.FAILURE
+
+    def get_myself(self):
+        return self._this_peer
+
+    async def find_node(self, guid, id_of_peer_to_ask):
+        """
+        Create find_node message with given guid to find and peer_to_ask as a receiver of our query and pass it on
+        :param guid: id of peer to ask
+        :param id_of_peer_to_ask: peer to query about wanted peer
+        :return: SUCCESS or FAILURE
+        """
+        peer_to_ask = await self.lower_layer.get_peer_by_id(id_of_peer_to_ask)
+        if peer_to_ask is None:
+            return StatusMessage.FAILURE
+        message = putils.create_find_node_message(sender=self.get_myself(), receiver=peer_to_ask, guid=guid)
+        status = await self._put_message_on_lower(message)
+        return status
+
+    async def join_network(self, bootstrap_node):
+        """
+        Join network that the bootstrap_node belongs to
+        :param bootstrap_node: Bootstrap node we will be asking for information about network
+        :return: SUCCESS or FAILURE
+        """
+        self.start_server()
+        if bootstrap_node:
+            log.debug("Joining network, bootstrap node: {}".format(bootstrap_node))
+            peer_to_ask = Peer(None, bootstrap_node[0], bootstrap_node[1], False)
+            await self.lower_layer.add_peer(peer_to_ask)
+            await self.ping(peer_to_ask.id)
+            log.debug("Waiting for boot node to respond")
+            await asyncio.sleep(4)
+
+            peer_to_ask = await self.lower_layer.get_peer_by_id(peer_to_ask.id)
+            if peer_to_ask is None:
+                log.warning("Bootstrap node is not responding. Failed to bootstrap")
+                await self.stop_server()
+                return StatusMessage.FAILURE
+
+            message = putils.create_find_node_message(sender=self.get_myself(), receiver=peer_to_ask, guid=self.get_myself().id)
+            status = await self._put_message_on_lower(message)
+            if status is StatusMessage.FAILURE:
+                log.warning("Could not send find node message to bootstrap node")
+                await self.stop_server()
+                return status
+        return StatusMessage.SUCCESS
+
+    def start_server(self):
+        """
+        Try to start the server
+        """
+        self.lower_layer.start_server()
+
+    async def stop_server(self):
+        """
+        Try to stop the server
+        """
+        await self.lower_layer.stop_server()
+
+    async def get_routing_table_info(self):
+        """
+        Returns routing table in printable form
+        """
+        routing_table_info = await self.lower_layer.get_routing_table_info()
+        return routing_table_info
+
     async def _handle_lower_input(self):
         try:
             while True:
@@ -332,100 +437,4 @@ class BusinessLogicLayer:
         except asyncio.CancelledError:
             log.debug("Peer {} responded. Cancel removal of him from the routing table.")
 
-    async def command(self, target_id, command, should_respond):
-        """
-        Sends command to target peer
-        :param target_id: id of targeted peer
-        :param command: command to send
-        :param should_response: True if receiver should respond to the command
-        :return:SUCCESS or FAILURE
-        """
-        peer = await self.lower_layer.get_peer_by_id(target_id)
-        if peer is None:
-            return StatusMessage.FAILURE
-        message = putils.create_command_message(sender=self.get_myself(),
-                                                receiver=peer,
-                                                command=command,
-                                                should_respond=should_respond
-                                                )
-        try:
-            status = await self._put_message_on_lower(message)
 
-            return status
-        except asyncio.CancelledError:
-            return StatusMessage.FAILURE
-
-    async def ping(self, target_id):
-        """
-        Sends ping message to peer with given target_id
-        :param target_id: id of target peer
-        :return: SUCCESS or FAILURE
-        """
-        peer = await self.lower_layer.get_peer_by_id(target_id)
-        if peer is None:
-            return StatusMessage.FAILURE
-        message = putils.create_ping_message(sender=self.get_myself(), receiver=peer)
-        try:
-            status = await self._put_message_on_lower(message)
-            self._pinged_peers.append((peer, asyncio.ensure_future(self._wait_for_ping_response(peer=peer, timeout=10))))
-            return status
-        except asyncio.CancelledError:
-            return StatusMessage.FAILURE
-
-    def get_myself(self):
-        return self._this_peer
-
-    async def find_node(self, guid, id_of_peer_to_ask):
-        """
-        Create find_node message with given guid to find and peer_to_ask as a receiver of our query and pass it on
-        :param guid: id of peer to ask
-        :param id_of_peer_to_ask: peer to query about wanted peer
-        :return: SUCCESS or FAILURE
-        """
-        peer_to_ask = await self.lower_layer.get_peer_by_id(id_of_peer_to_ask)
-        if peer_to_ask is None:
-            return StatusMessage.FAILURE
-        message = putils.create_find_node_message(sender=self.get_myself(), receiver=peer_to_ask, guid=guid)
-        status = await self._put_message_on_lower(message)
-        return status
-
-    async def join_network(self, bootstrap_node):
-        """
-        Join network that the bootstrap_node belongs to
-        :param bootstrap_node: Bootstrap node we will be asking for information about network
-        :return: SUCCESS or FAILURE
-        """
-        self.start_server()
-        if bootstrap_node:
-            log.debug("Joining network, bootstrap node: {}".format(bootstrap_node))
-            peer_to_ask = Peer(None, bootstrap_node[0], bootstrap_node[1], False)
-            await self.lower_layer.add_peer(peer_to_ask)
-            await self.ping(peer_to_ask.id)
-            log.debug("Waiting for boot node to respond")
-            await asyncio.sleep(4)
-
-            peer_to_ask = await self.lower_layer.get_peer_by_id(peer_to_ask.id)
-            if peer_to_ask is None:
-                log.warning("Bootstrap node is not responding. Failed to bootstrap")
-                await self.stop_server()
-                return StatusMessage.FAILURE
-
-            message = putils.create_find_node_message(sender=self.get_myself(), receiver=peer_to_ask, guid=self.get_myself().id)
-            status = await self._put_message_on_lower(message)
-            if status is StatusMessage.FAILURE:
-                log.warning("Could not send find node message to bootstrap node")
-                await self.stop_server()
-                return status
-        return StatusMessage.SUCCESS
-
-    def start_server(self):
-        """
-        Try to start the server
-        """
-        self.lower_layer.start_server()
-
-    async def stop_server(self):
-        """
-        Try to stop the server
-        """
-        await self.lower_layer.stop_server()

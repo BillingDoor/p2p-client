@@ -53,6 +53,10 @@ class BucketList(object):
         """
         return peer in self.buckets[largest_differing_bit(self.id, peer.id)]
 
+    async def get_routing_table_info(self):
+        all_peers = [peer.get_info() for bucket in self.buckets for peer in bucket]
+        return all_peers
+
     async def get_peer_by_id(self, id):
         """
         Return Peer if in routing table. Otherwise None

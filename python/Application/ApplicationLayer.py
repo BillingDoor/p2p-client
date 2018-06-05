@@ -51,6 +51,12 @@ class Application:
         print("1. Join the network")
         print("quit. Quit the application")
 
+    async def _print_routing_table(self):
+        routing_table_info = await self._lower_layer.get_routing_table_info()
+        print("|{:^30}|{:^19}|{:^5}|{:^5}".format("ID", "IP", "Port", "Is NAT"))
+        for peer_info in routing_table_info:
+            print("|{:^30}|{:^19}|{:^5}|{:^5}".format(*peer_info))
+
     async def _aio_readline(self):
         connected = False
         try:
@@ -60,7 +66,7 @@ class Application:
                     line = (await asyncio.get_event_loop().run_in_executor(None, sys.stdin.readline)).strip().lower()
                     if line == '1':
                         # Print routing table
-                        pass
+                        await self._print_routing_table()
                     elif line == '2':
                         pass
                     elif line == '3':

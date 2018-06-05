@@ -68,7 +68,6 @@ class P2PTest(unittest.TestCase):
         _run(self.p2pl.remove_peer(peer))
         self.assertIs(None, _run(self.p2pl.get_peer_by_id(1234)))
 
-
     def test_passing_message(self):
         """
         P2P layer got some message from higher layer.
