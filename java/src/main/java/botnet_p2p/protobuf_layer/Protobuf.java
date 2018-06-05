@@ -88,13 +88,15 @@ public class Protobuf {
     public static Message createCommandReponseMessage(KademliaPeer destination,
                                                       KademliaPeer me,
                                                       String response,
-                                                      boolean success) {
+                                                      boolean success,
+                                                      String command) {
         return createBaseMessage(me, destination)
                 .setType(Message.MessageType.COMMAND_RESPONSE)
                 .setResponse(
                         Message.CommandResponseMsg.newBuilder()
                                 .setValue(response)
                                 .setStatus(success ? Message.Status.OK : Message.Status.FAIL)
+                                .setCommand(command)
                                 .build())
                 .build();
     }

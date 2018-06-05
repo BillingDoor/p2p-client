@@ -81,10 +81,10 @@ public class P2pLayer {
                 ));
     }
 
-    public void commandResponse(KademliaPeer destination, KademliaPeer me, String response, boolean success) {
+    public void commandResponse(KademliaPeer destination, KademliaPeer me, String response, boolean success, String command) {
         messageLayer.send(
                 new Communication<>(
-                        Protobuf.createCommandReponseMessage(destination, me, response, success),
+                        Protobuf.createCommandReponseMessage(destination, me, response, success, command),
                         destination.toPeer()
                 ));
     }

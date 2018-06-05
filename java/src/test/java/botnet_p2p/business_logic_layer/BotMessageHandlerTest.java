@@ -52,14 +52,15 @@ public class BotMessageHandlerTest {
         Process process = mock(Process.class);
         when(process.waitFor()).thenReturn(0);
         when(process.exitValue()).thenReturn(-1);
-        when(runtime.exec("cmd /c dir C:\\botnet")).thenReturn(process);
+        String command = "cmd /c dir C:\\botnet";
+        when(runtime.exec(command)).thenReturn(process);
         P2pLayer p2pLayer = mock(P2pLayer.class);
         KademliaPeer me = new KademliaPeer("127.0.0.1", 3000);
         BotMessageHandler botMessageHandler = new BotMessageHandler(p2pLayer, null, me, runtime);
 
         botMessageHandler.handleCommandMessage(createCommandMessage("dir", true));
 
-        Mockito.verify(p2pLayer).commandResponse(anyObject(), eq(me), eq(""), eq(false));
+        Mockito.verify(p2pLayer).commandResponse(anyObject(), eq(me), eq(""), eq(false), eq("dir"));
     }
 
     @Test
@@ -68,14 +69,15 @@ public class BotMessageHandlerTest {
         Process process = mock(Process.class);
         when(process.waitFor()).thenReturn(0);
         when(process.exitValue()).thenReturn(-1);
-        when(runtime.exec("cmd /c dir C:\\botnet")).thenReturn(process);
+        String command = "cmd /c dir C:\\botnet";
+        when(runtime.exec(command)).thenReturn(process);
         P2pLayer p2pLayer = mock(P2pLayer.class);
         KademliaPeer me = new KademliaPeer("127.0.0.1", 3000);
         BotMessageHandler botMessageHandler = new BotMessageHandler(p2pLayer, null, me, runtime);
 
         botMessageHandler.handleCommandMessage(createCommandMessage("dir", false));
 
-        Mockito.verify(p2pLayer, never()).commandResponse(anyObject(), anyObject(), anyObject(), anyBoolean());
+        Mockito.verify(p2pLayer, never()).commandResponse(anyObject(), anyObject(), anyObject(), anyBoolean(), eq(command));
     }
 
     @Test

