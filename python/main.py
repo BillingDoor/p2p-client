@@ -53,11 +53,6 @@ def set_up_layers_communications(socket_layer, message_layer, p2p_layer, busines
 if __name__ == '__main__':
     ip = sys.argv[1]
     port = int(sys.argv[2])
-    if sys.argv[3] != "None":
-        bootstrap_node_ip, bootstrap_node_port = sys.argv[3].split(':')
-        bootstrap_node = (bootstrap_node_ip, int(bootstrap_node_port))
-    else:
-        bootstrap_node = None
 
     layers = set_up_layers(ip, port)
     set_up_layers_communications(*layers[0:-1])

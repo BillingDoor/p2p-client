@@ -69,7 +69,7 @@ class SocketLayer:
         packed_len = struct.pack('>L', len(message))
         return packed_len + message
 
-    def start_server(self, ip, port):
+    async def start_server(self, ip, port):
         self.stop_server_event = threading.Event()
         self.server_thread = threading.Thread(target=run_server,
                                               name="Server({}:{}) Thread".format(ip, port),
@@ -77,8 +77,18 @@ class SocketLayer:
                                                     self._higher[1], asyncio.get_event_loop())
                                               )
         self.server_thread.start()
-        log.debug("Started server thread")
-        self.server_monitor = asyncio.ensure_future(self._monitor_server_thread())
+        print("Wait for server to start")
+        log.debug("Waiting 4 seconds to check if server started")
+        await asyncio.sleep(4)
+
+        if self.server_thread.is_alive():
+            log.debug("Started server thread on {}:{}".format(ip, port))
+            print("Started server thread on {}:{}".format(ip, port))
+            self.server_monitor = asyncio.ensure_future(self._monitor_server_thread())
+            return StatusMessage.SUCCESS
+        else:
+            log.warnning("Could not start server on {}:{}".format(ip, port))
+            return StatusMessage.FAILURE
 
     async def stop_server(self):
         if self.server_monitor:

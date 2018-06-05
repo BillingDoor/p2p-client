@@ -73,8 +73,8 @@ class MessageLayer:
         """
         return self._deserialize_message(message)
 
-    def start_server(self, ip, port):
-        self.lower_layer.start_server(ip, port)
+    async def start_server(self, ip, port):
+        return await self.lower_layer.start_server(ip, port)
 
     async def stop_server(self):
         await self.lower_layer.stop_server()

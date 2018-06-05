@@ -66,8 +66,8 @@ class P2PLayer:
         routing_table_info = await self._routing_table.get_routing_table_info()
         return routing_table_info
 
-    def start_server(self):
-        self.lower_layer.start_server(self.get_myself().ip, self.get_myself().port)
+    async def start_server(self):
+        return await self.lower_layer.start_server(self.get_myself().ip, self.get_myself().port)
 
     async def stop_server(self):
         await self.lower_layer.stop_server()
