@@ -31,6 +31,13 @@ class FileReader {
                 size += read;
                 chunks.add(buffer.clone());
             }
+            int bytesInLast = chunkSize * chunks.size() - size;
+            byte[] last = new byte[bytesInLast];
+            for (int i = 0; i < bytesInLast; i++) {
+                last[i] = chunks.get(chunks.size() - 1)[i];
+            }
+            chunks.remove(chunks.size() - 1);
+            chunks.add(last);
             fis.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
