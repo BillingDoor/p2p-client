@@ -16,6 +16,7 @@ formatter = logging.Formatter('%(name)s: %(message)s',)
 handler.formatter = formatter
 log = logging.getLogger(__name__)
 log.addHandler(handler)
+log.propagate = False
 
 QUEUE = None
 MAIN_LOOP = None

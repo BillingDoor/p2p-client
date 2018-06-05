@@ -21,6 +21,7 @@ log = logging.getLogger(__name__)
 log.addHandler(handler)
 formatter = logging.Formatter('%(name)s: %(message)s')
 handler.formatter = formatter
+log.propagate = False
 
 class BusinessLogicLayer:
     def __init__(self, lower_layer):
@@ -58,7 +59,6 @@ class BusinessLogicLayer:
                                                 )
         try:
             status = await self._put_message_on_lower(message)
-
             return status
         except asyncio.CancelledError:
             return StatusMessage.FAILURE
@@ -191,10 +191,14 @@ class BusinessLogicLayer:
         else:
             log.warning("Unsupported message type {}".format(message.type))
 
+        if message.propagate == True:
+            await self._propagate_message(message=message)
+
     async def _propagate_message(self, message):
         for new_receiver in self.lower_layer._routing_table:
-            putils.swap_receiver(message=message, new_receiver=new_receiver)
-            await self._put_message_on_lower(message)
+            if new_receiver.id != int(message.receiver.id):
+                putils.swap_receiver(message=message, new_receiver=new_receiver)
+                await self._put_message_on_lower(message)
 
     async def _handle_file_request_message(self, message):
         log.debug("Handling FILE_REQUEST message")

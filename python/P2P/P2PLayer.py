@@ -15,6 +15,7 @@ log = logging.getLogger(__name__)
 log.addHandler(handler)
 formatter = logging.Formatter('%(name)s: %(message)s')
 handler.formatter = formatter
+log.propagate = False
 
 class P2PLayer:
     def __init__(self, lower_layer, address, port, id = None):
