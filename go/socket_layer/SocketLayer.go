@@ -65,7 +65,7 @@ func serverRoutine() {
 func spawnConnection(conn net.Conn) {
 	defer conn.Close()
 
-	dataChannel := make(chan []byte)
+	dataChannel := make(chan []byte, 1)
 
 	go func() {
 		for {
@@ -114,35 +114,11 @@ func Send(target models.Node, data []byte) error {
 	mutex.Lock()
 	c, ok := openedConnections[addr]
 	if !ok {
-		channel := make(chan []byte)
-		errorChannel := make(chan error)
+		channel := make(chan []byte, 1)
+		errorChannel := make(chan error, 1)
 		openedConnections[addr] = channel
 		openedConnectionsErrors[addr] = errorChannel
-		go func() {
-			log.Printf("[SL] Connecting to server: %v\n", addr)
-			conn, err := net.Dial("tcp4", addr)
-			if err != nil {
-				errorChannel <- err
-				return
-			}
-			defer conn.Close()
-			for {
-				select {
-				case d := <-channel:
-					log.Printf("[SL] Sending message to %v\n", target)
-					n, err := conn.Write(d)
-					log.Printf("[SL] Sent %d bytes to %v\n", n, conn.RemoteAddr())
-					errorChannel <- err
-					break
-				case <-terminateChannel:
-					log.Printf("[SL] Closing connection with %v\n", conn.RemoteAddr())
-					return
-				}
-			}
-			log.Printf("[SL] Closing connection with %v\n", conn.RemoteAddr())
-			delete(openedConnections, addr)
-			delete(openedConnectionsErrors, addr)
-		}()
+		go handleConn(target, addr, channel, errorChannel)
 		channel <- prefixedData
 	} else {
 		c <- prefixedData
@@ -152,4 +128,34 @@ func Send(target models.Node, data []byte) error {
 	errorChannel, _ := openedConnectionsErrors[addr]
 	err := <-errorChannel
 	return err
+}
+
+
+func handleConn(target models.Node, addr string, channel chan []byte, errorChannel chan error) {
+	log.Printf("[SL] Connecting to server: %v\n", addr)
+	defer delete(openedConnections, addr)
+	defer delete(openedConnectionsErrors, addr)
+
+	conn, err := net.Dial("tcp4", addr)
+	if err != nil {
+		errorChannel <- err
+		return
+	}
+	defer conn.Close()
+	for {
+		select {
+		case d := <-channel:
+			log.Printf("[SL] Sending message to %v\n", target)
+			n, err := conn.Write(d)
+			log.Printf("[SL] Sent %d bytes to %v\n", n, conn.RemoteAddr())
+			errorChannel <- err
+			break
+		case <-terminateChannel:
+			log.Printf("[SL] Closing connection with %v\n", conn.RemoteAddr())
+			return
+		}
+	}
+	log.Printf("[SL] Closing connection with %v\n", conn.RemoteAddr())
+	delete(openedConnections, addr)
+	delete(openedConnectionsErrors, addr)
 }

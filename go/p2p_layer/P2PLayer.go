@@ -46,7 +46,7 @@ func messageRoutine() {
 					break
 				}
 			}
-			if message.Propagation == true && newMessage {
+			if message.Propagate == true && newMessage {
 				propagationMessages = append(propagationMessages, uuid)
 				for _, node := range routingTable.GetAllNodes() {
 					message_layer.SendMarshaledMessage(node, message)
@@ -62,19 +62,19 @@ func messageRoutine() {
 	}
 }
 
-func Ping(selfNode, targetNode models.Node) error {
+func Ping(targetNode models.Node) error {
 	return message_layer.Ping(targetNode)
 }
 
-func PingResponse(selfNode, targetNode models.Node) error {
+func PingResponse(targetNode models.Node) error {
 	return message_layer.PingResponse(targetNode)
 }
 
-func FindNode(selfNode, targetNode models.Node, guid models.UUID) error {
+func FindNode(targetNode models.Node, guid models.UUID) error {
 	return message_layer.FindNode(targetNode, guid)
 }
 
-func FoundNodes(selfNode, targetNode models.Node, guid models.UUID) error {
+func FoundNodes(targetNode models.Node, guid models.UUID) error {
 	mutex.Lock()
 	nodes := routingTable.NearestNodes(guid, 100)
 	mutex.Unlock()
@@ -90,11 +90,11 @@ func LeaveNetwork() error {
 	return err
 }
 
-func Command(sender, target models.Node, command string, shouldRespond bool) error {
+func Command(target models.Node, command string, shouldRespond bool) error {
 	return message_layer.Command(target, command, shouldRespond)
 }
 
-func CommandResponse(selfNode, targetNode models.Node, command, response string) error {
+func CommandResponse(targetNode models.Node, command, response string) error {
 	return message_layer.CommandResponse(targetNode, command, response)
 }
 
@@ -120,4 +120,8 @@ func RemoveFromRoutingTable(node models.Node) {
 	routingTable.Remove(node)
 	mutex.Unlock()
 	log.Printf("[P2] RoutingTable:\n%v", routingTable.String())
+}
+
+func GetAllNodes() []models.Node {
+	return routingTable.GetAllNodes()
 }

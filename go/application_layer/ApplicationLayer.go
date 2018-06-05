@@ -7,48 +7,90 @@ import (
 	"os/signal"
 	"syscall"
 	"log"
+	"fmt"
+	"strings"
+	"strconv"
 	"bufio"
 )
-
-var defaultPort uint32 = 6666
 
 var terminateChannel = make(chan struct{})
 var nextLayerTerminated = make(chan struct{})
 
 var bootstrapNode = models.Node{
-	//Host:  "77.55.235.125",
 	Host:  "127.0.0.1",
-	Port:  defaultPort,
+	Port:  6666,
 	IsNAT: false,
 }
 
 func RunApplication(listenPort uint32, connectPort uint32) {
 	go interruptHandler()
 	business_logic_layer.InitLayer(listenPort, terminateChannel, nextLayerTerminated)
+	log.Printf("[AL] Initialized\n")
+
 	bootstrapNode.Port = connectPort
 	err := business_logic_layer.JoinNetwork(bootstrapNode)
 	if err != nil {
 		log.Printf("[AL] Could not join network, error: %v\nAssuming this is bootstrap node", err)
-
 	}
-	business_logic_layer.RequestFile(bootstrapNode, "./Main.go")
+
+	lineScan := make(chan string, 1)
+
 	go func() {
-		for {
-			reader := bufio.NewReader(os.Stdin)
-			ch, _, _ := reader.ReadRune()
-			if ch == 'x' {
-				close(terminateChannel)
-				return
-			}
-			if ch == 'c' {
-				business_logic_layer.SendCommand(bootstrapNode, "cmd /c dir")
-				return
-			}
+		scanner := bufio.NewScanner(os.Stdin)
+		for scanner.Scan() {
+			lineScan <- scanner.Text()
 		}
 	}()
-	<-terminateChannel
-	<-nextLayerTerminated
-	log.Println("[AL] Terminated")
+
+	for {
+		fmt.Printf("> ")
+		select {
+		case <-terminateChannel:
+			<-nextLayerTerminated
+			log.Println("[AL] Terminated")
+			return
+
+		case line := <-lineScan:
+			tokens := strings.SplitN(line, " ", 2)
+			switch tokens[0] {
+			case "sendFile":
+				if len(tokens) < 2 {
+					fmt.Println("To few args.")
+					break
+				}
+				tokens := strings.Split(tokens[1], " ")
+				if len(tokens) < 3 {
+					fmt.Println("To few args.")
+					break
+				}
+				idx, _ := strconv.Atoi(tokens[0])
+				node := business_logic_layer.GetAllNodes()[idx]
+				err := business_logic_layer.SendFile(node, tokens[1], tokens[2])
+				if err != nil {
+					fmt.Println(err)
+				}
+				break
+			case "sendCommand":
+				if len(tokens) < 3 {
+					fmt.Println("To few args.")
+					break
+				}
+				idx, _ := strconv.Atoi(tokens[1])
+				node := business_logic_layer.GetAllNodes()[idx]
+				err := business_logic_layer.SendCommand(node, tokens[2])
+				if err != nil {
+					fmt.Println(err)
+				}
+				break
+
+			case "list":
+				for id, n := range business_logic_layer.GetAllNodes() {
+					fmt.Printf("%v: %v\n", id, n)
+				}
+				break
+			}
+		}
+	}
 }
 
 func interruptHandler() {

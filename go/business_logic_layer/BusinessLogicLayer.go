@@ -28,8 +28,6 @@ var mainTerminateChannel chan struct{}
 
 var mutex = &sync.Mutex{}
 
-var filesToBeWritten map[models.UUID]*os.File
-
 func InitLayer(port uint32, terminate chan struct{}, thisTerminated chan struct{}) (bool, error) {
 	terminateChannel = make(chan struct{})
 	mainTerminateChannel = terminate
@@ -37,7 +35,6 @@ func InitLayer(port uint32, terminate chan struct{}, thisTerminated chan struct{
 	nextLayerTerminated = make(chan struct{})
 
 	messagesChannel = make(chan models.Message, 16)
-	filesToBeWritten = make(map[models.UUID]*os.File)
 
 	rand.Seed(time.Now().UnixNano())
 	node, err := generateSelfNode(port)
@@ -96,7 +93,7 @@ func messageHandlerLoop() {
 }
 
 func JoinNetwork(bootstrapNode models.Node) error {
-	err := p2p_layer.FindNode(myNode, bootstrapNode, myNode.Guid)
+	err := p2p_layer.FindNode(bootstrapNode, myNode.Guid)
 	if err != nil {
 		return err
 	}
@@ -109,7 +106,7 @@ func LeaveNetwork() {
 }
 
 func SendCommand(target models.Node, command string) error {
-	return p2p_layer.Command(myNode, target, command, true)
+	return p2p_layer.Command(target, command, true)
 }
 
 func SendFile(target models.Node, path, targetPath string) error {
@@ -144,6 +141,10 @@ func RequestFile(target models.Node, path string) {
 	p2p_layer.RequestFile(target, path)
 }
 
+func GetAllNodes() []models.Node {
+	return p2p_layer.GetAllNodes()
+}
+
 func handleFoundNodes(msg models.Message) {
 	foundNodesMsg := msg.GetFoundNodes().Nodes
 	foundNodes := make([]models.Node, 0, len(foundNodesMsg))
@@ -154,8 +155,11 @@ func handleFoundNodes(msg models.Message) {
 	}
 
 	for _, node := range foundNodes {
+		if node.Guid == myNode.Guid {
+			continue
+		}
 		log.Printf("[BL] Pinging node: %v", node.Guid)
-		p2p_layer.Ping(myNode, node)
+		p2p_layer.Ping(node)
 		mutex.Lock()
 		pingedNodes = append(pingedNodes, node)
 		mutex.Unlock()
@@ -173,12 +177,12 @@ func handleFoundNodes(msg models.Message) {
 func handleFindNode(msg models.Message) {
 	p2p_layer.AddNodeToRoutingTable(msg.Sender.ToNode())
 	nodeGUID := models.GuidFromString(msg.GetFindNode().Guid)
-	p2p_layer.FoundNodes(myNode, msg.Sender.ToNode(), nodeGUID)
+	p2p_layer.FoundNodes(msg.Sender.ToNode(), nodeGUID)
 }
 
 func handlePingMessage(msg models.Message) {
 	p2p_layer.AddNodeToRoutingTable(msg.Sender.ToNode())
-	p2p_layer.PingResponse(myNode, msg.Sender.ToNode())
+	p2p_layer.PingResponse(msg.Sender.ToNode())
 }
 
 func handlePingResponse(msg models.Message) {
@@ -225,7 +229,7 @@ func handleCommand(msg models.Message) {
 
 	if shouldSendResponse {
 		target := msg.Sender.ToNode()
-		err := p2p_layer.CommandResponse(myNode, target, commandString, strOutput)
+		err := p2p_layer.CommandResponse(target, commandString, strOutput)
 		log.Println(err)
 	}
 }

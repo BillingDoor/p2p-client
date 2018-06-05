@@ -74,6 +74,7 @@ func sendMessage(target models.Node, msg models.Message) error {
 	if err != nil {
 		return err
 	}
+	log.Printf("[ML] Sending message %v to %v", msg, target)
 	err = socket_layer.Send(target, bytes)
 	return err
 }
