@@ -2,9 +2,9 @@ import { Contact } from '@models';
 
 import { Message } from '../Message_pb';
 import { prepareBaseMessage } from './base-message';
+import { generateID } from '@utils/random-id';
 
 export function prepareFileChunkMessage(config: {
-  uuid: string;
   fileName: string;
   fileSize: number;
   ordinal: number;
@@ -12,7 +12,8 @@ export function prepareFileChunkMessage(config: {
   sender: Contact;
   receiver: Contact;
 }) {
-  const { uuid, fileName, fileSize, ordinal, data, sender, receiver } = config;
+  const { fileName, fileSize, ordinal, data, sender, receiver } = config;
+  const uuid = generateID();
 
   const fileChunkMsg = new Message.FileChunkMsg();
   fileChunkMsg.setUuid(uuid);
@@ -22,7 +23,7 @@ export function prepareFileChunkMessage(config: {
   fileChunkMsg.setData(Uint8Array.from(data));
 
   const msg = prepareBaseMessage({
-    type: Message.MessageType.FILE_CHUNK,
+    type: Message.MessageType.COMMAND,
     sender,
     receiver
   });

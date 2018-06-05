@@ -87,7 +87,7 @@ class SocketLayer:
             self.server_monitor = asyncio.ensure_future(self._monitor_server_thread())
             return StatusMessage.SUCCESS
         else:
-            log.warnning("Could not start server on {}:{}".format(ip, port))
+            log.warning("Could not start server on {}:{}".format(ip, port))
             return StatusMessage.FAILURE
 
     async def stop_server(self):
