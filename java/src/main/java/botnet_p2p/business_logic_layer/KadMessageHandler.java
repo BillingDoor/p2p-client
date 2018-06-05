@@ -58,7 +58,7 @@ class KadMessageHandler {
                 // pinging nodes that we got from bootstrapNode
                 KademliaPeer peer = KademliaPeer.fromContact(contact);
                 logger.info("pinging node: " + peer.getGuid());
-                p2pLayer.ping(peer, me);
+                p2pLayer.ping(peer, me, false);
                 pingedNodes.add(peer);
             }
         });

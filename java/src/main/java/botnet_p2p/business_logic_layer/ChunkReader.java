@@ -52,6 +52,7 @@ class ChunkReader {
         int chunksCount = (fileChunk.getFileSize() + chunkSize - 1) / chunkSize;
         boolean isLastChunk = (fileChunk.getOrdinal() + 1) * chunkSize >= fileChunk.getFileSize();
         String targetFileName = new String(Base64.getEncoder().encode(fileChunk.getFileName().getBytes()));
+        //String targetFileName = fileChunk.getFileName()+ "." + sender.getGuid();
 
         ReceivedFile receivedFile = new ReceivedFile(
                 fileChunk.getFileName(),
@@ -102,6 +103,7 @@ class ChunkReader {
 
             if (receivedFile.chunksRead == chunksCount) {
                 logger.info("file: " + receivedFile.fileName + " is ready as "+ receivedFile.targetFileName);
+                receivedFiles.remove(fileChunk.getUuid());
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -161,6 +163,7 @@ class ChunkReader {
 
             if (receivedFile.chunksRead == receivedFile.chunksCount) {
                 logger.info("file: " + receivedFile.fileName + " is ready as "+ receivedFile.targetFileName);
+                receivedFiles.remove(fileChunk.getUuid());
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();

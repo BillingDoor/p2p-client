@@ -1,7 +1,5 @@
 package botnet_p2p.business_logic_layer;
 
-import static botnet_p2p.MessageOuterClass.Message;
-
 import botnet_p2p.model.KademliaPeer;
 import com.google.protobuf.ByteString;
 import org.apache.commons.io.FileUtils;
@@ -11,7 +9,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Base64;
 
-import static org.junit.Assert.*;
+import static botnet_p2p.MessageOuterClass.Message;
+import static org.junit.Assert.assertEquals;
 
 public class ChunkReaderTest {
 
@@ -59,11 +58,11 @@ public class ChunkReaderTest {
 
         ChunkReader chunkReader = new ChunkReader(SAVE_LOCATION);
         chunkReader.read(
-                chunk1,
+                chunk2,
                 KADEMLIA_PEER
         );
         chunkReader.read(
-                chunk2,
+                chunk1,
                 KADEMLIA_PEER
         );
 

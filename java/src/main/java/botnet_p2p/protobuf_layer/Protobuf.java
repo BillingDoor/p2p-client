@@ -4,6 +4,7 @@ import botnet_p2p.model.KademliaPeer;
 import botnet_p2p.model.Peer;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static botnet_p2p.MessageOuterClass.Message;
@@ -22,7 +23,8 @@ public class Protobuf {
 
         return Message.newBuilder()
                 .setSender(senderContact)
-                .setReceiver(receiverContact);
+                .setReceiver(receiverContact)
+                .setUuid(UUID.randomUUID().toString());
     }
 
     public static Message.Builder createBaseMessage(KademliaPeer sender, KademliaPeer receiver) {
@@ -31,7 +33,9 @@ public class Protobuf {
 
         return Message.newBuilder()
                 .setSender(senderContact)
-                .setReceiver(receiverContact);
+                .setReceiver(receiverContact)
+                .setPropagate(false)
+                .setUuid(UUID.randomUUID().toString());
     }
 
     public static Message createFindNodeMessage(Peer bootstrapNode, KademliaPeer me) {
@@ -44,9 +48,10 @@ public class Protobuf {
                 .build();
     }
 
-    public static Message createPingMessage(KademliaPeer destination, KademliaPeer me) {
+    public static Message createPingMessage(KademliaPeer destination, KademliaPeer me, boolean propagate) {
         return createBaseMessage(me, destination)
                 .setType(Message.MessageType.PING)
+                .setPropagate(propagate)
                 .build();
     }
 

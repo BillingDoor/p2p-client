@@ -40,10 +40,10 @@ public class P2pLayer {
         return routingTable;
     }
 
-    public void ping(KademliaPeer destination, KademliaPeer me) {
+    public void ping(KademliaPeer destination, KademliaPeer me, boolean propagate) {
         messageLayer.send(
                 new Communication<>(
-                        Protobuf.createPingMessage(destination, me),
+                        Protobuf.createPingMessage(destination, me, propagate),
                         destination.toPeer()
                 ));
 
@@ -113,6 +113,14 @@ public class P2pLayer {
                 ));
     }
 
+    public void forwardMessage(KademliaPeer destination, Message messsage) {
+        messageLayer.send(
+                new Communication<>(
+                        messsage,
+                        destination.toPeer()
+                ));
+    }
+
     public void addToRoutingTable(KademliaPeer peer) {
         this.routingTable.insert(peer);
     }
@@ -136,6 +144,11 @@ public class P2pLayer {
     }
 
     public KademliaPeer getPeer(String id) {
-        return this.routingTable.getPeerById(id);
+        KademliaPeer peer = this.routingTable.getPeerById(id);
+        if(peer == null) {
+            throw new RuntimeException("peer does not exist");
+        }
+        return peer;
     }
+
 }

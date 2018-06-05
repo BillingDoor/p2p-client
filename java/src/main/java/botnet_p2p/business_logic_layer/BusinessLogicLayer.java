@@ -7,7 +7,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
@@ -27,6 +29,7 @@ public class BusinessLogicLayer extends Thread {
     private KadMessageHandler kadMessageHandler;
     private BotMessageHandler botMessageHandler;
     private Semaphore bootstrapFinish;
+    private Set<String> propagatedIds;
 
     public BusinessLogicLayer(P2pLayer p2pLayer, KademliaPeer me, KadMessageHandler kadMessageHandler, BotMessageHandler botMessageHandler) {
         this.p2pLayer = p2pLayer;
@@ -36,6 +39,7 @@ public class BusinessLogicLayer extends Thread {
         this.kadMessageHandler = kadMessageHandler;
         this.botMessageHandler = botMessageHandler;
         this.bootstrapFinish = new Semaphore(0);
+        this.propagatedIds = new HashSet<>();
         logger.info("Hi, I'm " + me.toString());
     }
 
@@ -75,6 +79,16 @@ public class BusinessLogicLayer extends Thread {
     public void requestFile(String path, String id) {
         KademliaPeer destination = p2pLayer.getPeer(id);
         p2pLayer.fileRequest(me, destination, path);
+    }
+
+    public void sendPing(String peerId, String propagate) {
+        if (peerId != null && propagate != null) {
+            if (propagate.equals("yes")) {
+                this.p2pLayer.ping(this.p2pLayer.getPeer(peerId), me, true);
+            } else {
+                this.p2pLayer.ping(this.p2pLayer.getPeer(peerId), me, false);
+            }
+        }
     }
 
     @Override
@@ -160,6 +174,16 @@ public class BusinessLogicLayer extends Thread {
                     continue;
                 }
 
+                if (messsage.getPropagate() && messsage.getUuid() != null) {
+                    if (propagatedIds.contains(messsage.getUuid())) {
+                        logger.info("message already propagated, skipping");
+                        continue;
+                    }
+                    logger.info("propagating message");
+                    propagatedIds.add(messsage.getUuid());
+                    sendToAll(messsage);
+                }
+
                 switch (messsage.getType()) {
                     case PING:
                         kadMessageHandler.handlePingMessage(messsage);
@@ -182,6 +206,9 @@ public class BusinessLogicLayer extends Thread {
                     case FILE_CHUNK:
                         botMessageHandler.handleFileChunkMessage(messsage);
                         break;
+                    case PING_RESPONSE:
+                        logger.info("ping response received");
+                        break;
                     default:
                         logger.error("unsupported message type:" + messsage.getType());
                 }
@@ -192,6 +219,12 @@ public class BusinessLogicLayer extends Thread {
             }
         }
 
+    }
+
+    private void sendToAll(Message messsage) {
+        this.p2pLayer.getPeers().forEach(
+                (peer) -> p2pLayer.forwardMessage(peer, messsage)
+        );
     }
 
     public void shutdown() {
