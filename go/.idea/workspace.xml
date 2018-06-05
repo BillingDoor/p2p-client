@@ -11,20 +11,29 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file leaf-file-name="BusinessLogicLayer.go" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/business_logic_layer/BusinessLogicLayer.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="68">
+              <caret line="16" column="22" selection-start-line="16" selection-start-column="22" selection-end-line="16" selection-end-column="22" />
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="P2PLayer.go" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/p2p_layer/P2PLayer.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-578">
+            <state relative-caret-position="85">
               <caret line="16" selection-start-line="16" selection-end-line="16" selection-end-column="25" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="SocketLayer.go" pinned="false" current-in-tab="true">
+      <file leaf-file-name="SocketLayer.go" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/socket_layer/SocketLayer.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="587">
-              <caret line="147" column="25" selection-start-line="147" selection-start-column="25" selection-end-line="147" selection-end-column="25" />
+            <state relative-caret-position="638">
+              <caret line="135" column="25" lean-forward="true" selection-start-line="135" selection-start-column="25" selection-end-line="135" selection-end-column="25" />
             </state>
           </provider>
         </entry>
@@ -105,8 +114,8 @@
         <option value="$PROJECT_DIR$/application_layer/ApplicationLayer.go" />
         <option value="$PROJECT_DIR$/message_layer/MessageLayer.go" />
         <option value="$PROJECT_DIR$/p2p_layer/P2PLayer.go" />
-        <option value="$PROJECT_DIR$/business_logic_layer/BusinessLogicLayer.go" />
         <option value="$PROJECT_DIR$/socket_layer/SocketLayer.go" />
+        <option value="$PROJECT_DIR$/business_logic_layer/BusinessLogicLayer.go" />
       </list>
     </option>
   </component>
@@ -151,11 +160,6 @@
               <item name="go" type="b2602c69:ProjectViewProjectNode" />
               <item name="go" type="462c0819:PsiDirectoryNode" />
               <item name="p2p_layer" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="go" type="b2602c69:ProjectViewProjectNode" />
-              <item name="go" type="462c0819:PsiDirectoryNode" />
-              <item name="socket_layer" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -258,13 +262,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/old_crap/Network.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2533">
-          <caret line="149" column="53" selection-start-line="149" selection-start-column="53" selection-end-line="149" selection-end-column="53" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Main.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="323">
@@ -528,24 +525,27 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/business_logic_layer/BusinessLogicLayer.go">
+    <entry file="file://$PROJECT_DIR$/socket_layer/SocketLayer.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="190">
-          <caret line="133" column="9" lean-forward="true" selection-start-line="133" selection-start-column="9" selection-end-line="133" selection-end-column="9" />
+        <state relative-caret-position="638">
+          <caret line="135" column="25" lean-forward="true" selection-start-line="135" selection-start-column="25" selection-end-line="135" selection-end-column="25" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/p2p_layer/P2PLayer.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-578">
+        <state relative-caret-position="85">
           <caret line="16" selection-start-line="16" selection-end-line="16" selection-end-column="25" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/socket_layer/SocketLayer.go">
+    <entry file="file://$PROJECT_DIR$/Main.go.2335768725854638797">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/business_logic_layer/BusinessLogicLayer.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="587">
-          <caret line="147" column="25" selection-start-line="147" selection-start-column="25" selection-end-line="147" selection-end-column="25" />
+        <state relative-caret-position="68">
+          <caret line="16" column="22" selection-start-line="16" selection-start-column="22" selection-end-line="16" selection-end-column="22" />
         </state>
       </provider>
     </entry>
