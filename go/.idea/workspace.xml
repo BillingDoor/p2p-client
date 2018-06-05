@@ -11,20 +11,20 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="BusinessLogicLayer.go" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/business_logic_layer/BusinessLogicLayer.go">
+      <file leaf-file-name="P2PLayer.go" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/p2p_layer/P2PLayer.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="655">
-              <caret line="264" column="91" selection-start-line="264" selection-start-column="91" selection-end-line="264" selection-end-column="91" />
+            <state relative-caret-position="-578">
+              <caret line="16" selection-start-line="16" selection-end-line="16" selection-end-column="25" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="P2PLayer.go" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/p2p_layer/P2PLayer.go">
+      <file leaf-file-name="SocketLayer.go" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/socket_layer/SocketLayer.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="417">
-              <caret line="75" column="9" selection-start-line="75" selection-start-column="9" selection-end-line="75" selection-end-column="9" />
+            <state relative-caret-position="587">
+              <caret line="147" column="25" selection-start-line="147" selection-start-column="25" selection-end-line="147" selection-end-column="25" />
             </state>
           </provider>
         </entry>
@@ -41,8 +41,17 @@
       <file leaf-file-name="ApplicationLayer.go" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/application_layer/ApplicationLayer.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="425">
-              <caret line="33" column="55" selection-start-line="33" selection-start-column="55" selection-end-line="33" selection-end-column="55" />
+            <state relative-caret-position="264">
+              <caret line="33" column="32" selection-start-line="33" selection-start-column="32" selection-end-line="33" selection-end-column="32" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="BusinessLogicLayer.go" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/../../../Go/src/github.com/lampo100/botnet_p2p/business_logic_layer/BusinessLogicLayer.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="275">
+              <caret line="114" column="5" selection-start-line="114" selection-start-column="5" selection-end-line="114" selection-end-column="5" />
             </state>
           </provider>
         </entry>
@@ -93,11 +102,11 @@
         <option value="$PROJECT_DIR$/models/Node.go" />
         <option value="$PROJECT_DIR$/models/BucketList.go" />
         <option value="$PROJECT_DIR$/../../../Go/src/github.com/lampo100/botnet_p2p/message_layer/MessageLayer.go" />
-        <option value="$PROJECT_DIR$/socket_layer/SocketLayer.go" />
         <option value="$PROJECT_DIR$/application_layer/ApplicationLayer.go" />
         <option value="$PROJECT_DIR$/message_layer/MessageLayer.go" />
         <option value="$PROJECT_DIR$/p2p_layer/P2PLayer.go" />
         <option value="$PROJECT_DIR$/business_logic_layer/BusinessLogicLayer.go" />
+        <option value="$PROJECT_DIR$/socket_layer/SocketLayer.go" />
       </list>
     </option>
   </component>
@@ -127,6 +136,26 @@
             <path>
               <item name="go" type="b2602c69:ProjectViewProjectNode" />
               <item name="go" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="go" type="b2602c69:ProjectViewProjectNode" />
+              <item name="go" type="462c0819:PsiDirectoryNode" />
+              <item name="application_layer" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="go" type="b2602c69:ProjectViewProjectNode" />
+              <item name="go" type="462c0819:PsiDirectoryNode" />
+              <item name="business_logic_layer" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="go" type="b2602c69:ProjectViewProjectNode" />
+              <item name="go" type="462c0819:PsiDirectoryNode" />
+              <item name="p2p_layer" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="go" type="b2602c69:ProjectViewProjectNode" />
+              <item name="go" type="462c0819:PsiDirectoryNode" />
+              <item name="socket_layer" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -229,14 +258,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/Globals.go" />
-    <entry file="file://$PROJECT_DIR$/old_crap/Kademlia.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1479">
-          <caret line="91" selection-start-line="91" selection-end-line="91" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/old_crap/Network.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2533">
@@ -386,13 +407,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../../../Go/src/github.com/lampo100/botnet_p2p/business_logic_layer/BusinessLogicLayer.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1598">
-          <caret line="98" column="48" selection-start-line="98" selection-start-column="48" selection-end-line="98" selection-end-column="48" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../../../Go/src/github.com/lampo100/botnet_p2p/models/Node.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="442">
@@ -470,13 +484,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/socket_layer/SocketLayer.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="561">
-          <caret line="39" column="13" lean-forward="true" selection-start-line="39" selection-start-column="13" selection-end-line="39" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://D:/LIBS/Go/src/os/file.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="282">
@@ -491,13 +498,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/p2p_layer/P2PLayer.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="417">
-          <caret line="75" column="9" selection-start-line="75" selection-start-column="9" selection-end-line="75" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/xDDDD.txt">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -508,17 +508,44 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/Main.go.6832492032034518211">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Main.go.15737942503149374592">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
     <entry file="file://$PROJECT_DIR$/application_layer/ApplicationLayer.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="425">
-          <caret line="33" column="55" selection-start-line="33" selection-start-column="55" selection-end-line="33" selection-end-column="55" />
+        <state relative-caret-position="264">
+          <caret line="33" column="32" selection-start-line="33" selection-start-column="32" selection-end-line="33" selection-end-column="32" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../../Go/src/github.com/lampo100/botnet_p2p/business_logic_layer/BusinessLogicLayer.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="275">
+          <caret line="114" column="5" selection-start-line="114" selection-start-column="5" selection-end-line="114" selection-end-column="5" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/business_logic_layer/BusinessLogicLayer.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="655">
-          <caret line="264" column="91" selection-start-line="264" selection-start-column="91" selection-end-line="264" selection-end-column="91" />
+        <state relative-caret-position="190">
+          <caret line="133" column="9" lean-forward="true" selection-start-line="133" selection-start-column="9" selection-end-line="133" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/p2p_layer/P2PLayer.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-578">
+          <caret line="16" selection-start-line="16" selection-end-line="16" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/socket_layer/SocketLayer.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="587">
+          <caret line="147" column="25" selection-start-line="147" selection-start-column="25" selection-end-line="147" selection-end-column="25" />
         </state>
       </provider>
     </entry>

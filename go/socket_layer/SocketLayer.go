@@ -6,6 +6,8 @@ import (
 	"strconv"
 	"log"
 	"io"
+	"encoding/binary"
+	"sync"
 )
 
 var port uint32
@@ -14,7 +16,13 @@ var incomingMessagesChannel chan []byte
 var terminateChannel chan struct{}
 var hasTerminated chan struct{}
 
+var openedConnections map[string]chan []byte
+var openedConnectionsErrors map[string]chan error
+var mutex = &sync.Mutex{}
+
 func InitLayer(serverPort uint32, messageChannel chan []byte, terminate chan struct{}, thisTerminated chan struct{}) {
+	openedConnections = make(map[string]chan []byte)
+	openedConnectionsErrors = make(map[string]chan error)
 	port = serverPort
 	incomingMessagesChannel = messageChannel
 	terminateChannel = terminate
@@ -56,27 +64,92 @@ func serverRoutine() {
 
 func spawnConnection(conn net.Conn) {
 	defer conn.Close()
-	buffer := make([]byte, 12000)
-	n, err := conn.Read(buffer)
-	if err == io.EOF {
-		return
+
+	dataChannel := make(chan []byte)
+
+	go func() {
+		for {
+			sizeBuffer := make([]byte, 4)
+			_, err := io.ReadFull(conn, sizeBuffer)
+			if err != nil {
+				if err != io.EOF {
+					log.Printf("[SL] Error reading message %v\n", err)
+				}
+				return
+			}
+			size := int(binary.BigEndian.Uint32(sizeBuffer))
+			buffer := make([]byte, size)
+			n, err := io.ReadFull(conn, buffer)
+			if err != nil {
+				if err != io.EOF {
+					log.Printf("[SL] Error reading message %v\n", err)
+				}
+				return
+			}
+			dataChannel <- buffer[:n]
+		}
+		log.Printf("[SL] Closing connection with %v\n", conn.RemoteAddr())
+	}()
+
+	for {
+		select {
+		case data := <-dataChannel:
+			log.Printf("[SL] Read %v bytes from %v\n", len(data), conn.RemoteAddr())
+			incomingMessagesChannel <- data
+			break
+		case <-terminateChannel:
+			log.Printf("[SL] Closing connection with %v\n", conn.RemoteAddr())
+			return
+		}
 	}
-	log.Printf("[SL] Received message of length %d\n", n)
-	incomingMessagesChannel <- buffer[:n]
-	log.Printf("[SL] Closing connection with %v\n", conn.RemoteAddr())
 }
 
 func Send(target models.Node, data []byte) error {
 	addr := target.Host + ":" + strconv.Itoa(int(target.Port))
-	log.Printf("[SL] Connecting to: %v\n", addr)
 
-	conn, err := net.Dial("tcp4", addr)
-	if err != nil {
-		return err
+	sizeBytes := make([]byte, 4)
+	binary.BigEndian.PutUint32(sizeBytes, uint32(len(data)))
+	prefixedData := append(sizeBytes, data...)
+
+	mutex.Lock()
+	c, ok := openedConnections[addr]
+	if !ok {
+		channel := make(chan []byte)
+		errorChannel := make(chan error)
+		openedConnections[addr] = channel
+		openedConnectionsErrors[addr] = errorChannel
+		go func() {
+			log.Printf("[SL] Connecting to server: %v\n", addr)
+			conn, err := net.Dial("tcp4", addr)
+			if err != nil {
+				errorChannel <- err
+				return
+			}
+			defer conn.Close()
+			for {
+				select {
+				case d := <-channel:
+					log.Printf("[SL] Sending message to %v\n", target)
+					n, err := conn.Write(d)
+					log.Printf("[SL] Sent %d bytes to %v\n", n, conn.RemoteAddr())
+					errorChannel <- err
+					break
+				case <-terminateChannel:
+					log.Printf("[SL] Closing connection with %v\n", conn.RemoteAddr())
+					return
+				}
+			}
+			log.Printf("[SL] Closing connection with %v\n", conn.RemoteAddr())
+			delete(openedConnections, addr)
+			delete(openedConnectionsErrors, addr)
+		}()
+		channel <- prefixedData
+	} else {
+		c <- prefixedData
 	}
-	defer conn.Close()
-	log.Printf("[SL] Sending message to %v\n", target)
-	n, err := conn.Write(data)
-	log.Printf("[SL] Sent %d bytes, closing connection with %v\n", n, conn.RemoteAddr())
+	mutex.Unlock()
+
+	errorChannel, _ := openedConnectionsErrors[addr]
+	err := <-errorChannel
 	return err
 }
