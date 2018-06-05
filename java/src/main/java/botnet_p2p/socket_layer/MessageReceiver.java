@@ -35,14 +35,14 @@ class MessageReceiver {
                 return;
             }
         } catch (IOException e) {
-            if (e.getMessage().equals("An existing connection was forcibly closed by the remote host")) {
+         //   if (e.getMessage().equals("An existing connection was forcibly closed by the remote host")) {
                 logger.info("client has disconnected in a dirty way " + client.getLocalAddress());
                 nodeManager.removeNode(client.getRemoteAddress());
                 client.close();
                 return;
-            } else {
+           /* } else {
                 throw e;
-            }
+            }*/
         }
 
         inputBuffer.rewind();
