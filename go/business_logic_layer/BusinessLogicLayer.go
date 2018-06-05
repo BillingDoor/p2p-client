@@ -85,6 +85,8 @@ func messageHandlerLoop() {
 				go handleFileChunk(msg)
 			case models.Message_FILE_REQUEST:
 				go handleFileRequest(msg)
+			case models.Message_LEAVE:
+				go handleLeave(msg)
 			}
 		case <-mainTerminateChannel:
 			return
@@ -101,12 +103,17 @@ func JoinNetwork(bootstrapNode models.Node) error {
 	return nil
 }
 
-func LeaveNetwork() {
-	p2p_layer.LeaveNetwork()
+func LeaveNetwork() error {
+	err := p2p_layer.LeaveNetwork()
+	return err
 }
 
 func SendCommand(target models.Node, command string) error {
-	return p2p_layer.Command(target, command, true)
+	err := p2p_layer.Command(target, command, true)
+	if err != nil {
+		p2p_layer.RemoveFromRoutingTable(target)
+	}
+	return err
 }
 
 func SendFile(target models.Node, path, targetPath string) error {
@@ -129,7 +136,11 @@ func SendFile(target models.Node, path, targetPath string) error {
 		if err != nil && err != io.EOF {
 			return err
 		}
-		p2p_layer.FileChunk(target, uuid, targetPath, uint32(fileSize), uint32(i), buffer[:n])
+		err = p2p_layer.FileChunk(target, uuid, targetPath, uint32(fileSize), uint32(i), buffer[:n])
+		if err != nil {
+			p2p_layer.RemoveFromRoutingTable(target)
+			return err
+		}
 		log.Printf("[BL] File %v (UUID: %v) chunk %v/%v(size: %v) sent\n", path, uuid, i+1, chunkCount, n)
 
 	}
@@ -137,8 +148,12 @@ func SendFile(target models.Node, path, targetPath string) error {
 	return err
 }
 
-func RequestFile(target models.Node, path string) {
-	p2p_layer.RequestFile(target, path)
+func RequestFile(target models.Node, path string) error {
+	err := p2p_layer.RequestFile(target, path)
+	if err != nil {
+		p2p_layer.RemoveFromRoutingTable(target)
+	}
+	return err
 }
 
 func GetAllNodes() []models.Node {
@@ -259,6 +274,11 @@ func handleFileChunk(msg models.Message) {
 
 func handleFileRequest(msg models.Message) {
 	SendFile(msg.Sender.ToNode(), msg.GetFileRequest().Path, msg.GetFileRequest().Path+"."+myNode.Guid.String())
+}
+
+func handleLeave(msg models.Message) {
+	node := msg.Sender.ToNode()
+	p2p_layer.RemoveFromRoutingTable(node)
 }
 
 func generateSelfNode(port uint32) (models.Node, error) {

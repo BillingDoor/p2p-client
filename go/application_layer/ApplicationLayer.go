@@ -71,13 +71,18 @@ func RunApplication(listenPort uint32, connectPort uint32) {
 				}
 				break
 			case "sendCommand":
-				if len(tokens) < 3 {
+				if len(tokens) < 2 {
 					fmt.Println("To few args.")
 					break
 				}
-				idx, _ := strconv.Atoi(tokens[1])
+				tokens := strings.SplitN(tokens[1], " ", 2)
+				if len(tokens) < 2 {
+					fmt.Println("To few args.")
+					break
+				}
+				idx, _ := strconv.Atoi(tokens[0])
 				node := business_logic_layer.GetAllNodes()[idx]
-				err := business_logic_layer.SendCommand(node, tokens[2])
+				err := business_logic_layer.SendCommand(node, tokens[1])
 				if err != nil {
 					fmt.Println(err)
 				}

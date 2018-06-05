@@ -68,6 +68,7 @@ func spawnConnection(conn net.Conn) {
 	dataChannel := make(chan []byte, 1)
 
 	go func() {
+		defer log.Printf("[SL] Closing connection with %v\n", conn.RemoteAddr())
 		for {
 			sizeBuffer := make([]byte, 4)
 			_, err := io.ReadFull(conn, sizeBuffer)
@@ -88,7 +89,6 @@ func spawnConnection(conn net.Conn) {
 			}
 			dataChannel <- buffer[:n]
 		}
-		log.Printf("[SL] Closing connection with %v\n", conn.RemoteAddr())
 	}()
 
 	for {
@@ -135,6 +135,7 @@ func handleConn(target models.Node, addr string, channel chan []byte, errorChann
 	log.Printf("[SL] Connecting to server: %v\n", addr)
 	defer delete(openedConnections, addr)
 	defer delete(openedConnectionsErrors, addr)
+	defer log.Printf("[SL] Closing connection with %v\n", addr)
 
 	conn, err := net.Dial("tcp4", addr)
 	if err != nil {
@@ -148,14 +149,20 @@ func handleConn(target models.Node, addr string, channel chan []byte, errorChann
 			log.Printf("[SL] Sending message to %v\n", target)
 			n, err := conn.Write(d)
 			log.Printf("[SL] Sent %d bytes to %v\n", n, conn.RemoteAddr())
+			if err != nil {
+				newConn, newErr := net.Dial("tcp4", addr)
+				if newErr != nil {
+					errorChannel <- err
+					return
+				}
+				conn.Close()
+				conn = newConn
+				_, err = conn.Write(d)
+			}
 			errorChannel <- err
 			break
 		case <-terminateChannel:
-			log.Printf("[SL] Closing connection with %v\n", conn.RemoteAddr())
 			return
 		}
 	}
-	log.Printf("[SL] Closing connection with %v\n", conn.RemoteAddr())
-	delete(openedConnections, addr)
-	delete(openedConnectionsErrors, addr)
 }

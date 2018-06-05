@@ -51,10 +51,11 @@ func (l *BucketList) Insert(node Node) {
 }
 
 func (l *BucketList) Remove(node Node) {
-	for _, bucket := range l.buckets {
+	for idx, bucket := range l.buckets {
 		if bucket.Contains(node) {
 			i := bucket.IndexOf(node)
-			bucket = append(bucket[:i], bucket[i+1:]...)
+			l.buckets[idx] = append(bucket[:i], bucket[i+1:]...)
+			break
 		}
 	}
 }
@@ -89,7 +90,7 @@ func (l *BucketList) String() string {
 	return str
 }
 
-func (l* BucketList) GetAllNodes() []Node {
+func (l *BucketList) GetAllNodes() []Node {
 	nodes := make([]Node, 0)
 	for _, bucket := range l.buckets {
 		for _, node := range bucket {
