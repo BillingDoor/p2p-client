@@ -10,8 +10,6 @@ logging.basicConfig(
 )
 handler = logging.handlers.RotatingFileHandler(
     os.path.abspath("./logs/log.txt"),
-    maxBytes=65536,
-    backupCount=10
 )
 log = logging.getLogger(__name__)
 log.addHandler(handler)

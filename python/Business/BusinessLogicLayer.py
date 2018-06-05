@@ -6,6 +6,9 @@ from python.Protobuf.Message_pb2 import Message
 from python.P2P.peer import Peer
 import os
 import subprocess
+import python.Business.util as file_util
+import random
+
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -13,8 +16,6 @@ logging.basicConfig(
 )
 handler = logging.handlers.RotatingFileHandler(
     os.path.abspath("./logs/log.txt"),
-    maxBytes=65536,
-    backupCount=10
 )
 log = logging.getLogger(__name__)
 log.addHandler(handler)
@@ -26,6 +27,7 @@ class BusinessLogicLayer:
         self.lower_layer = lower_layer
         self._this_peer = lower_layer.get_myself()
         self._pinged_peers = []
+        self._files_being_written = []
 
     async def add_layer_communication(self, lower):
         """
@@ -45,7 +47,7 @@ class BusinessLogicLayer:
                 message = await self._lower[0].get()
                 log.debug("Got message {!r}; handle it".format(message))
                 await self._handle_message(message)
-                log.debug("Message {!r} sent to the higher layer".format(message))
+                log.debug("Message {!r} handled".format(message))
         except asyncio.CancelledError:
             log.debug("Caught CancelledError: Stop handling input from lower layer")
 
@@ -64,6 +66,96 @@ class BusinessLogicLayer:
             await self._handle_found_nodes_message(message)
         elif message.type == Message.COMMAND:
             await self._handle_command_message(message)
+        elif message.type == Message.COMMAND_RESPONSE:
+            await self._handle_command_response_message(message)
+        elif message.type == Message.FILE_REQUEST:
+            await self._handle_file_request_message(message)
+        elif message.type == Message.FILE_CHUNK:
+            await self._handle_file_chunk_message(message)
+        else:
+            log.warning("Unsupported message type {}".format(message.type))
+
+    async def _handle_file_request_message(self, message):
+        log.debug("Handling FILE_REQUEST message")
+        sender = message.sender
+        sender_peer = putils.create_peer_from_contact(sender)
+        path = message.fileRequest.path
+        log.debug("Peer {} is requesting file {}".format(sender_peer.get_info(), path))
+
+        uuid = str(random.Random().getrandbits(64))
+        ordinal = 0
+        file_size = file_util.get_file_size(path)
+        file_name = path + ".{}".format(self.get_myself().id)
+        log.debug("Start creating file chunks and sending them in messages")
+        for chunk in file_util.chunks_generator(path=path):
+            log.debug("Send file chunk: [ {}, {}, {}, {}, data_chunk_size: {} ]".format(uuid, file_name, file_size, ordinal, len(chunk)))
+            status = await self._file_chunk_message(receiver=sender_peer,
+                                                    uuid=uuid,
+                                                    file_name=file_name,
+                                                    file_size = file_size,
+                                                    ordinal=ordinal,
+                                                    data=chunk
+                                                    )
+            ordinal += 1
+            if status is StatusMessage.FAILURE:
+                log.warning("Could not create file chunk message")
+                return status
+            elif status is StatusMessage.SUCCESS:
+                continue
+        log.debug("Whole file was sent")
+        return StatusMessage.SUCCESS
+
+    async def _handle_file_chunk_message(self, message):
+        """
+        Handle FILE_CHUNK Message
+        :param message: message
+        :return: SUCCESS or FAILURE
+        """
+        log.debug("Handling FILE_CHUNK message")
+        uuid = message.fileChunk.uuid
+        file_name = message.fileChunk.fileName
+        file_size = message.fileChunk.fileSize
+        ordinal = message.fileChunk.ordinal
+        data = message.fileChunk.data
+
+        # We are currently writing this file
+        for file_being_written_uuid in self._files_being_written:
+            if file_being_written_uuid == uuid:
+                log.debug("Adding another chunk to file {}".format(file_name))
+                with open(file_name, 'ab') as file:
+                    file.seek(ordinal * 8192, 0)
+                    file.write(data)
+                    log.debug("Added another chunk to file {}".format(file_name))
+
+                if file_size == file_util.get_file_size(path=file_name):
+                    log.debug("Whole file {} has been writte".format(file_name))
+                    self._files_being_written.remove(file_being_written_uuid)
+                return StatusMessage.SUCCESS
+
+        # That file was not being written
+        self._files_being_written.append(uuid)
+        log.debug("Adding first chunk to file {}".format(file_name))
+        with open(file_name, 'wb') as file:
+            file.seek(ordinal * 8192, 0)
+            file.write(data)
+            log.debug("Added first chunk to file {}".format(file_name))
+
+        if file_size == file_util.get_file_size(path=file_name):
+            log.debug("Whole file {} has been writte".format(file_name))
+
+            self._files_being_written.remove(uuid)
+        return StatusMessage.SUCCESS
+
+    async def _file_chunk_message(self, receiver, uuid, file_name, file_size, ordinal, data):
+        message = putils.create_file_chunk_message(sender=self.get_myself(),
+                                                   receiver=receiver,
+                                                   uuid=uuid,
+                                                   file_name=file_name,
+                                                   file_size=file_size,
+                                                   ordinal=ordinal,
+                                                   data=data)
+        status = await self._put_message_on_lower(message)
+        return status
 
     async def _handle_command_message(self, message):
         log.debug("Handling COMMAND message")
@@ -75,7 +167,7 @@ class BusinessLogicLayer:
         log.debug("COMMAND message was sent from {}".format(sender_peer.get_info()))
         log.debug("COMMAND to run: {}".format(command))
         try:
-            value = subprocess.check_output([command.split()], shell=True).decode('cp1250')
+            value = subprocess.check_output([command.split()], shell=True).decode('utf-8', 'ignore')
 
             if should_respond:
                 mess_status = await self._command_response(receiver=sender_peer, command=command, value=value, status=0)

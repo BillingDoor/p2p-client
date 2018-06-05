@@ -78,6 +78,33 @@ def create_found_nodes_message(sender, receiver, nearest_peers):
 
     return msg
 
+def create_file_request_message(sender, receiver, path):
+    message = _prepare_base_message(sender=sender, receiver=receiver)
+    message.type = message.FILE_REQUEST
+    message.fileRequest.path = path
+    return message
+
+def create_file_chunk_message(sender, receiver, uuid, file_name, file_size, ordinal, data):
+    """
+    Prepare FILE_CHUNK message
+    :param sender: Sending peer
+    :param receiver: Receiving peer
+    :param uuid: id of file
+    :param file_name: name of the file
+    :param file_size: name of the whole file
+    :param ordinal: ordinal chunk number
+    :param data: data in this chunk
+    :return: FILE_CHUNK Message
+    """
+    msg = _prepare_base_message(sender=sender, receiver=receiver)
+    msg.type = msg.FILE_CHUNK
+    msg.fileChunk.uuid = uuid
+    msg.fileChunk.fileName = file_name
+    msg.fileChunk.fileSize = file_size
+    msg.fileChunk.ordinal = ordinal
+    msg.fileChunk.data = data
+    return msg
+
 def _prepare_base_message(sender, receiver):
     """
     Prepare base for all other messages

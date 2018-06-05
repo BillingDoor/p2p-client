@@ -9,8 +9,6 @@ logging.basicConfig(
 )
 handler = logging.handlers.RotatingFileHandler(
     os.path.abspath("./logs/log.txt"),
-    maxBytes=65536,
-    backupCount=10,
 )
 formatter = logging.Formatter('%(name)s: %(message)s',)
 handler.formatter = formatter
