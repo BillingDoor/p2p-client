@@ -14,7 +14,7 @@ export function prepareFileRequestMessage(config: {
   fileRequestMsg.setPath(path);
 
   const msg = prepareBaseMessage({
-    type: Message.MessageType.COMMAND,
+    type: Message.MessageType.FILE_REQUEST,
     sender,
     receiver
   });

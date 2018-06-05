@@ -8,6 +8,7 @@ export class ApplicationLayer {
   async launch(bootstrapNode: Address) {
     try {
       await this.worker.joinNetwork(bootstrapNode);
+      await this.worker.requestFile("src/protobuf/Message_pb.d.ts", bootstrapNode);
     } catch (err) {
       logger.error("Application layer: couldn't connect to bootstrap node.");
     }

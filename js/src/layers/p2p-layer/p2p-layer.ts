@@ -61,22 +61,24 @@ export class P2PLayer {
   }
 
   fileChunk(config: {
-    to: Address;
+    to: Contact;
+    uuid: string;
     fileName: string;
     fileSize: number;
     ordinal: number;
     data: Buffer;
   }): Promise<void> {
     logger.info('P2P layer: Creating fileChunk message.');
-    const { to, fileName, fileSize, ordinal, data } = config;
+    const { to, uuid, fileName, fileSize, ordinal, data } = config;
     return this.worker.send(
       utils.prepareFileChunkMessage({
+        uuid,
         fileName,
         fileSize,
         ordinal,
         data,
         sender: this.me,
-        receiver: new Contact({ address: to })
+        receiver: to
       })
     );
   }
@@ -117,16 +119,15 @@ export class P2PLayer {
     );
   }
 
-  leave() {
-    logger.info('P2P layer: Creating leave messages.');
-    this.routingTable.getAllNodes().forEach((node) =>
-      this.worker.send(
-        utils.prepareBaseMessage({
-          type: Message.MessageType.LEAVE,
-          sender: this.me,
-          receiver: node
-        })
-      )
+  leave(config: { to: Contact }) {
+    logger.info('P2P layer: Creating leave message.');
+    const { to } = config;
+    this.worker.send(
+      utils.prepareBaseMessage({
+        type: Message.MessageType.LEAVE,
+        sender: this.me,
+        receiver: to
+      })
     );
   }
 
