@@ -1,7 +1,7 @@
 import { createLogger, format, transports } from 'winston';
 
 const loggingFormat = format.printf((info) => {
-  return `[${info.level}]: ${info.message}`;
+  return `[${info.level}] ${info.message}`;
 });
 
 const logger = createLogger({
