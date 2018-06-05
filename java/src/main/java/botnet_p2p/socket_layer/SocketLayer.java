@@ -145,9 +145,10 @@ public class SocketLayer extends Thread {
                     logger.info("interrupted");
                     Thread.currentThread().interrupt();
                     break;
-                } else {
-                    e.printStackTrace();
                 }
+            } catch (ClosedSelectorException e) {
+                Thread.currentThread().interrupt();
+                break;
             }
         }
         logger.info("closing - loop ended");
@@ -238,7 +239,6 @@ public class SocketLayer extends Thread {
 
     @Override
     public synchronized void interrupt() {
-        super.interrupt();
         if (!socketsClosed) {
             socketsClosed = true;
             if (selector != null) {
@@ -252,8 +252,14 @@ public class SocketLayer extends Thread {
                 logger.info("clients sockets closed");
             }
             nodeManager.closeSockets();
+            try {
+                selector.close();
+            } catch (IOException e) {
+                Thread.currentThread().interrupt();
+            }
         }
     }
+
     public void shutdown() {
         logger.info("closing");
         this.interrupt();
