@@ -18,12 +18,6 @@ export class BusinessLayer {
     await this.worker.findNode({
       to: bootstrapNode
     });
-
-    await this.worker.command({
-      to: new Contact({ address: bootstrapNode }),
-      command: 'ls',
-      shouldRespond: true
-    });
   }
 
   close() {
@@ -67,10 +61,10 @@ export class BusinessLayer {
                   }
 
                   logger.info(
-                    `Business layer: Executed command ${commandMsg.getCommand()}`
+                    `Business layer: Executed command '${commandMsg.getCommand()}'`
                   );
                   logger.info(
-                    `Business layer: Command output:\n ${
+                    `Business layer: Command output:\n${
                       error ? stderr : stdout
                     }`
                   );
@@ -88,10 +82,10 @@ export class BusinessLayer {
                 commandMsg.getCommand(),
                 (error: Error | null, stdout: string, stderr: string) => {
                   logger.info(
-                    `Business layer: Executed command ${commandMsg.getCommand()}`
+                    `Business layer: Executed command '${commandMsg.getCommand()}'`
                   );
                   logger.info(
-                    `Business layer: Command output:\n ${
+                    `Business layer: Command output:\n${
                       error ? stderr : stdout
                     }`
                   );
