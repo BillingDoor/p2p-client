@@ -20,7 +20,7 @@ export class P2PLayer {
   }
 
   close() {
-    logger.info("P2P layer: closing.");    
+    logger.info('P2P layer: closing.');
     this.worker.close();
   }
 
@@ -29,7 +29,7 @@ export class P2PLayer {
     command: string;
     shouldRespond?: boolean;
   }): Promise<void> {
-    logger.info('P2P layer: Creating command message');
+    logger.info('P2P layer: Creating command message.');
     const { to, command, shouldRespond = false } = config;
     return this.worker.send(
       utils.prepareCommandMessage({
@@ -47,7 +47,7 @@ export class P2PLayer {
     status: Message.Status;
     command: string;
   }): Promise<void> {
-    logger.info('P2P layer: Creating command response message');
+    logger.info('P2P layer: Creating command response message.');
     const { to, value, status, command } = config;
     return this.worker.send(
       utils.prepareCommandResponseMessage({
@@ -60,8 +60,41 @@ export class P2PLayer {
     );
   }
 
+  fileChunk(config: {
+    to: Address;
+    fileName: string;
+    fileSize: number;
+    ordinal: number;
+    data: Buffer;
+  }): Promise<void> {
+    logger.info('P2P layer: Creating fileChunk message.');
+    const { to, fileName, fileSize, ordinal, data } = config;
+    return this.worker.send(
+      utils.prepareFileChunkMessage({
+        fileName,
+        fileSize,
+        ordinal,
+        data,
+        sender: this.me,
+        receiver: new Contact({ address: to })
+      })
+    );
+  }
+
+  fileRequest(config: { to: Address; path: string }): Promise<void> {
+    logger.info('P2P layer: Creating fileRequest message.');
+    const { to, path } = config;
+    return this.worker.send(
+      utils.prepareFileRequestMessage({
+        path,
+        sender: this.me,
+        receiver: new Contact({ address: to })
+      })
+    );
+  }
+
   findNode(config: { to: Address; guid?: string }): Promise<void> {
-    logger.info('P2P layer: Creating findNode message');
+    logger.info('P2P layer: Creating findNode message.');
     const { to, guid = this.me.guid } = config;
     return this.worker.send(
       utils.prepareFindNodeMessage({
@@ -73,7 +106,7 @@ export class P2PLayer {
   }
 
   foundNodes(config: { to: Contact; nodes: Contact[] }): Promise<void> {
-    logger.info('P2P layer: Creating foundNodes message');
+    logger.info('P2P layer: Creating foundNodes message.');
     const { to, nodes } = config;
     return this.worker.send(
       utils.prepareFoundNodesMessage({
@@ -85,7 +118,7 @@ export class P2PLayer {
   }
 
   leave() {
-    logger.info('P2P layer: Creating leave messages');
+    logger.info('P2P layer: Creating leave messages.');
     this.routingTable.getAllNodes().forEach((node) =>
       this.worker.send(
         utils.prepareBaseMessage({
@@ -98,7 +131,7 @@ export class P2PLayer {
   }
 
   ping(node: Contact): Promise<void> {
-    logger.info('P2P layer: Creating ping message');
+    logger.info('P2P layer: Creating ping message.');
     return this.worker.send(
       utils.prepareBaseMessage({
         type: Message.MessageType.PING,
@@ -109,7 +142,7 @@ export class P2PLayer {
   }
 
   pingResponse(config: { to: Contact }): Promise<void> {
-    logger.info('P2P layer: Creating pingResponse message');
+    logger.info('P2P layer: Creating pingResponse message.');
     const { to } = config;
     return this.worker.send(
       utils.prepareBaseMessage({

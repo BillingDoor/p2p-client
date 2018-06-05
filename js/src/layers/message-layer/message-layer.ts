@@ -1,6 +1,6 @@
 import { equals } from 'ramda';
 import { Observable } from 'rxjs';
-import { map, filter } from 'rxjs/operators';
+import { map, filter, tap, share } from 'rxjs/operators';
 
 import { Contact } from '@models';
 import { SocketLayer } from '@layers/socket-layer/socket-layer';
@@ -9,8 +9,10 @@ import logger from '@utils/logging';
 
 export class MessageLayer {
   private messages$: Observable<Message>;
+  private receivedMessages$: Observable<Buffer>;
 
   constructor(private worker: SocketLayer) {
+    this.receivedMessages$ = this.worker.getReceivedMessagesStream();
     this.messages$ = this.handleReceivedMessages();
   }
 
@@ -39,11 +41,16 @@ export class MessageLayer {
       throw new Error('Message layer: Cannot send message to self.');
     }
 
+    logger.info('Message layer: encoding message.');
     return this.worker.send({ data: encodeMessage(msg), address });
   }
 
   private handleReceivedMessages() {
-    return this.worker.getReceivedMessagesStream().pipe(map(decodeMessage));
+    return this.receivedMessages$.pipe(
+      tap(() => logger.info('Message layer: decoding message.')),
+      map(decodeMessage),
+      share()
+    );
   }
 }
 
