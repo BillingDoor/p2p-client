@@ -80,6 +80,17 @@ class BusinessLogicLayer:
         except asyncio.CancelledError:
             return StatusMessage.FAILURE
 
+    async def file_request(self, target_id, filepath):
+        peer = await self.lower_layer.get_peer_by_id(target_id)
+        if peer is None:
+            return StatusMessage.FAILURE
+        message = putils.create_file_request_message(sender=self.get_myself(), receiver=peer, path=filepath)
+        try:
+            status = await self._put_message_on_lower(message)
+            return status
+        except asyncio.CancelledError:
+            return StatusMessage.FAILURE
+
     def get_myself(self):
         return self._this_peer
 
@@ -179,6 +190,11 @@ class BusinessLogicLayer:
             await self._handle_file_chunk_message(message)
         else:
             log.warning("Unsupported message type {}".format(message.type))
+
+    async def _propagate_message(self, message):
+        for new_receiver in self.lower_layer._routing_table:
+            putils.swap_receiver(message=message, new_receiver=new_receiver)
+            await self._put_message_on_lower(message)
 
     async def _handle_file_request_message(self, message):
         log.debug("Handling FILE_REQUEST message")
@@ -344,6 +360,8 @@ class BusinessLogicLayer:
         log.debug("FOUND_NODES message was sent from {}".format(sender_peer.get_info()))
         peers = putils.get_peers_from_found_nodes_message(message)
         for peer in peers:
+            if peer.id == self.get_myself().id:
+                continue
             await self.lower_layer.add_peer(peer)
             await self.ping(peer.id)
 
