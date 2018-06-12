@@ -121,8 +121,3 @@ class SocketLayer:
             log.debug("Server stopped and joined correctly")
             return StatusMessage.SUCCESS
 
-    def _kill_server(self):
-        """
-        Last resort function to kill the server
-        """
-        return StatusMessage.FAILURE

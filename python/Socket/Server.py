@@ -27,7 +27,6 @@ async def receive_data(reader, writer):
         log.debug("connection with {} accepted".format(address))
 
         # First we read length
-        message_length = 0
         try:
             data = await reader.readexactly(4)
             if data == '':

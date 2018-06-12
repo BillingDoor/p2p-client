@@ -86,6 +86,8 @@ def create_found_nodes_message(sender, receiver, nearest_peers):
         found_node.IP = peer.ip
         found_node.port = peer.port
         found_node.isNAT = peer.is_NAT
+    else:
+        found_node = msg.foundNodes.nodes.add()
 
     return msg
 

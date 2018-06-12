@@ -46,6 +46,7 @@ class Application:
         print("3. Send command")
         print("4. Ping")
         print("5. Ping all")
+        print("6. Send file to peer")
         print("quit. Quit the application")
 
     def _print_not_connected_menu(self):
@@ -83,6 +84,18 @@ class Application:
 
     async def _ping_all(self):
         await self._lower_layer.ping_all()
+
+    async def _send_file(self):
+        print("Index: ")
+        index = (await asyncio.get_event_loop().run_in_executor(None, sys.stdin.readline)).strip().lower()
+        index = int(index)
+        print("Path: ")
+        filepath = (await asyncio.get_event_loop().run_in_executor(None, sys.stdin.readline)).strip()
+        routing_table_info = await self._lower_layer.get_routing_table_info()
+        if index >= len(routing_table_info):
+            print("Wrong index")
+            return
+        await self._lower_layer.send_file(routing_table_info[index][0], filepath)
 
     async def _send_command(self):
         print("Index: ")
@@ -124,6 +137,9 @@ class Application:
                         await self._ping()
                     elif line == '5':
                         await self._ping_all()
+                    elif line == '6':
+                        await self._print_routing_table()
+                        await self._send_file()
                     elif line == 'quit':
                         await self._lower_layer.leave()
                         print("Quiting...")

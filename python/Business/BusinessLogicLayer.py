@@ -167,6 +167,33 @@ class BusinessLogicLayer:
         except asyncio.CancelledError:
             return StatusMessage.FAILURE
 
+    async def send_file(self, id_of_peer, path):
+        receiver = self.lower_layer.get_peer_by_id(id_of_peer)
+        uuid = str(random.Random().getrandbits(64))
+        ordinal = 0
+        file_size = file_util.get_file_size(path)
+        file_name = path + ".{}".format(self.get_myself().id)
+        log.debug("Start creating file chunks and sending them in messages")
+        for chunk in file_util.chunks_generator(path=path):
+            log.debug(
+                "Send file chunk: [ {}, {}, {}, {}, data_chunk_size: {} ]".format(uuid, file_name, file_size, ordinal,
+                                                                                  len(chunk)))
+            status = await self._file_chunk_message(receiver=receiver,
+                                                    uuid=uuid,
+                                                    file_name=file_name,
+                                                    file_size=file_size,
+                                                    ordinal=ordinal,
+                                                    data=chunk
+                                                    )
+            ordinal += 1
+            if status is StatusMessage.FAILURE:
+                log.warning("Could not create file chunk message")
+                return status
+            elif status is StatusMessage.SUCCESS:
+                continue
+        log.debug("Whole file was sent")
+        return StatusMessage.SUCCESS
+
     async def stop_server(self):
         """
         Try to stop the server
